@@ -66,7 +66,8 @@
 	            <option value="">--请选择--</option>
           		<option value="0">公聊</option>
           		<option value="1">私聊</option>
-          		<option value="2">@TA</option>
+          		<option value="2">公聊，不包含@TA</option>
+          		<option value="3">公聊，@TA</option>
 	          </select>
           </td>
           <th width="10%">内容关键词</th>

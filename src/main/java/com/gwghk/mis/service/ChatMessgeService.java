@@ -151,9 +151,11 @@ public class ChatMessgeService{
 					criteria.orOperator(Criteria.where("nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())),
 							Criteria.where("toUser.nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())));	
 				}else if(toUser.getTalkStyle()==2){
+					criteria.and("toUser.talkStyle").is(0).and("toUser.userId").in("",null);
+				}else if(toUser.getTalkStyle()==3){
 					criteria.and("toUser.talkStyle").is(0).and("toUser.userId").nin("",null);
 				}else{
-					criteria.and("toUser.talkStyle").is(0).and("toUser.userId").in("",null);
+					criteria.and("toUser.talkStyle").is(0);
 				}
 			}
 			if(model.getValid()!=null){
