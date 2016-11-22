@@ -240,7 +240,7 @@ public class ChatGroupService{
 	 * @return
 	 */
 	public List<ChatGroup> getChatGroupList(String...selectField) {
-		Query query = Query.query(Criteria.where("valid").is(1).and("status").is(1));
+		Query query = Query.query(Criteria.where("valid").is(1).and("status").in(1, 2));
 		query.with(new Sort(new Order(Direction.ASC, "groupType"), new Order(Direction.ASC, "level")));
 		if(selectField!=null){
 			return chatGroupDao.findListInclude(ChatGroup.class, query,selectField);
@@ -252,7 +252,7 @@ public class ChatGroupService{
 	 * @return
 	 */
 	public List<ChatGroup> getChatGroupByTypeList(String groupType,String...selectField) {
-		Criteria cri=Criteria.where("valid").is(1).and("status").is(1);
+		Criteria cri=Criteria.where("valid").is(1).and("status").in(1, 2);
 		if(StringUtils.isNotBlank(groupType)){
 			cri.and("groupType").is(groupType);
 		}
@@ -283,7 +283,7 @@ public class ChatGroupService{
 	 * @return
 	 */
 	public List<ChatGroup> getChatGroupListByAuthUser(String userId, String...selectField){
-		Criteria criteria = Criteria.where("valid").is(1).and("status").is(1);
+		Criteria criteria = Criteria.where("valid").is(1).and("status").in(1, 2);
 		if(StringUtils.isNotBlank(userId)){
 			criteria.and("authUsers").is(userId);
 		}
