@@ -3,6 +3,8 @@ package com.gwghk.mis.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 /**
  * 摘要：财经日历
  * 
@@ -102,6 +104,11 @@ public class ZxFinanceData extends BaseModel
 
 	/** 是否有效(0：无效 1：有效 ) */
 	private Integer valid = null;
+
+	/**
+	 * 点评
+	 */
+	private List<ZxFinanceDataComment> comments = null;
 
 	/**
 	 * @return the dataId
@@ -605,6 +612,14 @@ public class ZxFinanceData extends BaseModel
 	public void setValid(Integer valid)
 	{
 		this.valid = valid;
+	}
+
+	public List<ZxFinanceDataComment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<ZxFinanceDataComment> comments) {
+		this.comments = comments;
 	}
 
 	/**

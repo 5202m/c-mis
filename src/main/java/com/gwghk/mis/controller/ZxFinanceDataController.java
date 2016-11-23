@@ -1,13 +1,12 @@
 package com.gwghk.mis.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSONArray;
+import com.gwghk.mis.model.ZxFinanceDataComment;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -260,4 +259,107 @@ public class ZxFinanceDataController extends BaseController{
 		}
 		return j;
 	}
+
+	/**
+	 * 跳转到点评页面（财经日历）
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/zxDataController/review",method=RequestMethod.POST,produces = "plain/text; charset=UTF-8")
+	@ActionVerification(key="review")
+	@ResponseBody
+	public String preReview(HttpServletRequest request, ModelMap map){
+		String dataId = request.getParameter("dataId");
+		if(StringUtils.isBlank(dataId)){
+			return null;
+		}
+		ZxFinanceData data = dataService.findById(dataId);
+		map.put("user", userParam);
+		map.put("data", data);
+		return JSONArray.toJSONString(map);
+	}
+
+	/**
+	 * 保存（财经日历）
+	 * @param request
+	 * @param data
+	 * @return
+	 */
+	@RequestMapping(value="/zxDataController/saveReview",method=RequestMethod.POST)
+	@ResponseBody
+	public AjaxJson saveComment(HttpServletRequest request, ZxFinanceData data){
+		AjaxJson j = new AjaxJson();
+		ApiResult result = null;
+		String dataId = request.getParameter("dataId");
+		String commentId = request.getParameter("id");
+		String comment = request.getParameter("comment");
+		String avatar = request.getParameter("avatar");
+		String userId = request.getParameter("userId");
+		String userName = request.getParameter("name");
+		Date currDate = new Date();
+		data.setDataId(dataId);
+		data.setUpdateUser(userParam.getUserNo());
+		data.setUpdateDate(currDate);
+		data.setUpdateIp(IPUtil.getClientIP(request));
+		ZxFinanceDataComment comments = new ZxFinanceDataComment();
+		if(StringUtils.isNotBlank(commentId)) {
+			comments.setId(commentId);
+			comments.setUpdateDate(currDate);
+			comments.setUpdateIp(data.getUpdateIp());
+			comments.setUpdateUser(userParam.getUserName());
+		}else{
+			comments.setAvatar(avatar);
+			comments.setUserId(userId);
+			comments.setUserName(userName);
+			comments.setCreateIp(data.getUpdateIp());
+			comments.setCreateDate(currDate);
+			comments.setCreateUser(userParam.getUserName());
+		}
+		comments.setValid(1);
+		comments.setComment(comment);
+
+		result = dataService.saveComments(data, comments);
+		if(result.isOk()){
+			j.setSuccess(true);
+			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 保存财经日历点评成功：[" + data.getDataId() + "-" + data.getDescription() + "-" + data.getDataType() + "]!";
+			logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			logger.info("<<save()|"+message);
+		}else{
+			j.setSuccess(false);
+			j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
+			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 保存财经日历点评失败：[" + data.getDataId() + "-" + data.getDescription() + "-" + data.getDataType() + "]!";
+			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			logger.error("<<save()|"+message+",ErrorMsg:"+result.toString());
+		}
+		return j;
+	}
+
+	/**
+	 * 删除（财经日历）
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/zxDataController/delReview",method=RequestMethod.POST)
+	@ActionVerification(key="delete")
+	@ResponseBody
+	public AjaxJson delReview(HttpServletRequest request){
+		String dataId = request.getParameter("dataId");
+		String id = request.getParameter("id");
+		AjaxJson j = new AjaxJson();
+		ApiResult result = dataService.delReview(dataId, id);
+		if(result.isOk()){
+			j.setSuccess(true);
+			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除财经日历点评成功：" + dataId + "!";
+			logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			logger.info("<<delete()|"+message);
+		}else{
+			j.setSuccess(false);
+			j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
+			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除财经日历点评失败：" + dataId + "!";
+			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			logger.error("<<delete()|"+message+",ErrorMsg:"+result.toString());
+		}
+		return j;
+	}
+
 }

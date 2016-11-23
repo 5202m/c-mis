@@ -24,6 +24,7 @@ var ZxData = {
 		this.initDicts($("#zxData_valid"));
 		this.initGrid();
 		this.setEvent();
+		this.setEventView();
 	},
 	/**
 	 * 功能：dataGrid初始化
@@ -399,6 +400,224 @@ var ZxData = {
 		var loc_dataId = $(item).siblings("input").val();
 		var url = formatUrl(basePath + '/zxDataController/delete.do');
 		goldOfficeUtils.deleteOne(ZxData.gridId, loc_dataId, url, "确认删除吗？");
+	},
+
+	setEventView : function(){
+		var loc_datagrid = $("#zxDataReview_datagrid").datagrid({
+			fit : false,
+			fitColumns : true,
+			idField : "id",
+			columns : [[
+				{title : $.i18n.prop("common.operate"), field:'op', formatter: function(value, rowData, rowIndex){
+					$("#zxDataReview_datagrid_rowOperation input").val(rowIndex);
+					return $("#zxDataReview_datagrid_rowOperation").html();
+				}},
+				{title : "序号",field : 'id'},
+				{title : "分析师",field : 'userName'},
+				{title : "点评内容",field : 'comment'}
+			]]
+		});
+
+		$("#zxDataReview_page").pagination({
+			pageSize : 15,
+			pageList : [15, 30, 50, 100]
+		});
+	},
+	/**
+	 * 设置作者列表
+	 * @param id
+	 */
+	setAuthorList:function(){
+		$('#zxDataReview_Form #authorAvatar').combogrid({
+			idField:'userNo',
+			textField:'userName',
+			url:basePath+'/userController/getAnalystList.do?hasOther=true',
+			columns:[[
+				{field : 'userNo',hidden:true},
+				{field : 'author_Key_id',hidden:true,formatter : function(value, rowData, rowIndex) {
+					return 'author_Key_id';
+				}},
+				{field : 'userName',title : '姓名',width:100},
+				{field : 'position',hidden:true},
+				{field : 'avatar',title : '头像',width:40,formatter : function(value, rowData, rowIndex) {
+					if(isBlank(value)){
+						return '';
+					}
+					return '<img src="'+value+'" style="height:35px;width:35px;"/>';
+				}}
+			]],
+			onSelect:function(rowIndex, rowData){
+				$('#zxDataReview_Form input[name=userId]').val(rowData.userNo);
+				$('#zxDataReview_Form input[name=name]').val(rowData.userName);
+				$('#zxDataReview_Form input[name=avatar]').val(rowData.avatar);
+			}
+		});
+	},
+	/**
+	 * 打开点评
+	 * @param item
+	 */
+	review:function(item){
+		var loc_dataId = null;
+		if(typeof item === "string"){
+			loc_dataId = item;
+		}else{
+			loc_dataId = $(item).siblings("input").val();
+		}
+		var url = formatUrl(basePath + '/zxDataController/review.do');
+		goldOfficeUtils.ajax({
+			url : url,
+			data : {
+				dataId : loc_dataId
+			},
+			success: function(data) {
+				if (data) {
+					var loc_dataInfo = data.data;
+					var user = data.user;
+					goldOfficeUtils.openSimpleDialog({
+						dialogId : "zxDataView_win",
+						title : '点评数据',
+						width : 600,
+						height : 400,
+						onOpen : function(){
+							ZxData.setAuthorList();
+							if(/^analyst_/.test(user.role.roleNo)) {
+								$('#zxDataReview_Form #authorAvatar').combogrid('setValue', user.userNo);
+							}
+							ZxData.viewComments(loc_dataInfo);
+						},
+						buttons	 : [{
+								text : '提交',
+								iconCls : "ope-edit",
+								handler : function() {
+									ZxData.saveReview();
+								}
+							},
+							{
+								text : '关闭',
+								iconCls : "ope-close",
+								handler : function() {
+									$("#zxDataView_win").dialog("close");
+								}
+							}]
+					});
+				}else{
+					$.messager.alert($.i18n.prop("common.operate.tips"),'获取点评数据信息失败!','error');
+				}
+			}
+		});
+	},
+
+	/**
+	 * 显示点评数据
+	 * @param data
+	 */
+	viewComments : function(data){
+		$('#zxDataReview_Form input[name="dataId"]').val(data.dataId);
+
+		//点评数据
+		var comments = [];
+		if(isValid(data.comments) && data.comments.length>0) {
+			$.each(data.comments, function (i, row) {
+				if (row.valid == 1) {
+					comments.push(row);
+				}
+			});
+			comments = comments ? comments.reverse() : [];
+		}
+
+		$("#zxDataReview_datagrid").datagrid("loadData", comments.slice(0, 15));
+		$("#zxDataReview_page").pagination('refresh', {
+			total : comments.length,
+			onSelectPage : function(pageNo, pageSize) {
+				var start = (pageNo - 1) * pageSize;
+				var end = start + pageSize;
+				$("#zxDataReview_page").datagrid("loadData", comments.slice(start, end));
+			}
+		});
+	},
+
+	/**
+	 * 保存点评
+	 */
+	saveReview:function(){
+		var dataId = $('#zxDataReview_Form input[name="dataId"]').val();
+		var id = $('#zxDataReview_Form input[name="id"]').val();
+		var comment = $('#zxDataReview_Form #comment').val();
+		var avatar = $('#zxDataReview_Form input[name="avatar"]').val();
+		var userId = $('#zxDataReview_Form input[name="userId"]').val();
+		var name = $('#zxDataReview_Form input[name="name"]').val();
+		var url = formatUrl(basePath + '/zxDataController/saveReview.do');
+		goldOfficeUtils.ajax({
+			url : url,
+			data : {
+				dataId : dataId,
+				id : id,
+				userId: userId,
+				name: name,
+				avatar: avatar,
+				comment : comment
+			},
+			success: function(data) {
+				if (data.success) {
+					$.messager.alert($.i18n.prop("common.operate.tips"),'点评成功!','info', function(){
+						ZxData.review($('#zxDataReview_Form input[name="dataId"]').val());
+						ZxData.cancelEdit();
+					});
+				}else{
+					$.messager.alert($.i18n.prop("common.operate.tips"),'点评失败，原因：'+data.msg,'error');
+				}
+			}
+		});
+	},
+	/**
+	 * 修改点评
+	 *
+	 * @param item
+	 */
+	editReview : function(item){
+		var rowIndex = $(item).siblings("input").val();
+		var row = $('#zxDataReview_datagrid').datagrid('getData').rows[rowIndex];
+		$('#zxDataReview_Form input[name="id"]').val(row.id);
+		$('#zxDataReview_Form #comment').val(row.comment);
+		$('#zxDataReview_Form #authorAvatar').combogrid('setValue', row.userId);
+	},
+	/**
+	 * 取消修改
+	 */
+	cancelEdit : function(){
+		$('#zxDataReview_Form input[name="id"]').val('');
+		$('#zxDataReview_Form #comment').val('');
+	},
+	/**
+	 * 删除点评
+	 * @param item
+	 */
+	delReview : function(item){
+		var rowIndex = $(item).siblings("input").val();
+		var row = $('#zxDataReview_datagrid').datagrid('getData').rows[rowIndex];
+		var url = formatUrl(basePath + '/zxDataController/delReview.do');
+		var message = "您确定要删除记录吗?";
+		var dataId = $('#zxDataReview_Form input[name="dataId"]').val();
+		$.messager.confirm("操作提示", message , function(r) {
+			if (r) {
+				goldOfficeUtils.ajax({
+					url : url,
+					data : {
+						dataId : dataId,
+						id : row.id
+					},
+					success: function(data) {
+						if (data.success) {
+							$('#zxDataReview_datagrid').datagrid('deleteRow', rowIndex);
+							$.messager.alert($.i18n.prop("common.operate.tips"),'删除成功!','info');
+						}else{
+							$.messager.alert($.i18n.prop("common.operate.tips"),'删除失败，原因：'+data.msg,'error');
+						}
+					}
+				});
+			}
+		});
 	}
 };
 		

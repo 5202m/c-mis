@@ -1,5 +1,7 @@
 package com.gwghk.mis.dao;
 
+import com.gwghk.mis.model.ZxFinanceDataComment;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -11,6 +13,7 @@ import com.gwghk.mis.common.model.Page;
 import com.gwghk.mis.model.ZxFinanceData;
 import com.gwghk.mis.model.ZxFinanceDataCfg;
 import com.mongodb.WriteResult;
+import org.springframework.util.StringUtils;
 
 /**
  * 财经日历DAO<BR>
@@ -69,4 +72,41 @@ public class ZxFinanceDataDao extends MongoDBBaseDao {
 				, Update.update("valid", 0), ZxFinanceDataCfg.class);
 		return wr != null && wr.getN() > 0;
 	}
+
+	/**
+	 * 添加/修改点评
+	 * @param data
+	 * @param comment
+	 * @return
+	 */
+	public boolean saveComment(ZxFinanceData data, ZxFinanceDataComment comment){
+		WriteResult wr=null;
+		if(StringUtils.isEmpty(comment.getId())){
+			comment.setId(new ObjectId().toString());
+			wr = this.mongoTemplate.updateMulti(new Query(Criteria.where("_id").is(data.getDataId())),new Update()
+					.push("comments", comment)
+					, ZxFinanceData.class);
+		} else {
+			wr = this.mongoTemplate.updateMulti(new Query(Criteria.where("_id").is(data.getDataId()).and("comments._id").is(new ObjectId(comment.getId()))),new Update()
+							.set("comments.$.comment",comment.getComment())
+							.set("comments.$.updateDate", comment.getUpdateDate())
+							.set("comments.$.updateIp", comment.getUpdateIp())
+							.set("comments.$.updateUser", comment.getUpdateUser())
+					, ZxFinanceData.class);
+		}
+		return wr!=null&&wr.getN()>0;
+	}
+
+	/**
+	 * 删除点评（财经日历）
+	 * @param dataId
+	 * @param id
+	 * @return
+	 */
+	public boolean delReview(String dataId, String id) {
+		WriteResult wr = this.mongoTemplate.updateMulti(Query.query(Criteria.where("_id").is(dataId).and("comments._id").is(new ObjectId(id)))
+				, new Update().set("comments.$.valid", 0), ZxFinanceData.class);
+		return wr != null && wr.getN() > 0;
+	}
+
 }

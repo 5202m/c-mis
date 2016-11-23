@@ -169,7 +169,7 @@ public class ChatApiService{
     
     /**
      * socket通知客户端,晒单审核完成后，通知到客户端
-     * @param sendData
+     * @param tradeInfo
      * @return
      */
     public boolean showTradeNotice(String tradeInfo){
@@ -191,7 +191,8 @@ public class ChatApiService{
     
     /**
      * 新增或修改规则通知
-     * @param sendData
+     * @param roomIds
+	 * @param ruleInfo
      * @return
      */
     public boolean modifyRuleNotice(String roomIds,String ruleInfo){
@@ -211,4 +212,28 @@ public class ChatApiService{
 			return false;
 		}
     }
+
+	/**
+	 * 财经日历点评
+	 * @param reviewData
+	 * @return
+	 */
+	public boolean zxFinanceReviewNotice(String financeData, String reviewData){
+		Map<String, String> paramMap=new HashMap<String, String>();
+		paramMap.put("fData", financeData);
+		paramMap.put("reviewData", reviewData);
+		try {
+			String url = String.format("%s/notice/%s",PropertiesUtil.getInstance().getProperty("chatApiUrl"),"zxFinanceReviewNotice");//formatUrl("zxFinanceReviewNotice");
+			String str = HttpClientUtils.httpPostString(url, paramMap);
+			System.out.println(str);
+			if (StringUtils.isNotBlank(str)) {
+				JSONObject obj = JSON.parseObject(str);
+				return obj.getBoolean("isOK");
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+	}
 } 

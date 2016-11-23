@@ -83,6 +83,47 @@
 	<div id="zxData_datagrid_rowOperation" style="display: none;">
 		<input type="hidden" value="">
 		<a class="easyui-linkbutton edit" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="ZxData.edit(this)"><spring:message code="common.buttons.edit" /><!-- 修改 --></a>
+		<a class="easyui-linkbutton review" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="ZxData.review(this)">点评</a>
 	  	<a class="easyui-linkbutton delete" data-options="plain:true,iconCls:'ope-remove',disabled:false"  onclick="ZxData.del(this)"><spring:message code="common.buttons.delete" /><!-- 删除 --></a>
 	</div>
+
+	<!-- 点评数据 -->
+	<div id="zxDataView_win" class="easyui-dialog" closed="true">
+		<div data-options="region:'center'" id="zxDataView_panel">
+			<div>
+				<div data-options="region:'center',title:'点评列表',iconCls:'pag-list'">
+					<div id="zxDataReview_datagrid" style="display: none"></div>
+					<div id="zxDataReview_page" class="datagrid-pager pagination"></div>
+				</div>
+				<form id="zxDataReview_Form" class="yxForm" method="post">
+					<input type="hidden" name="dataId" value="" />
+					<input type="hidden" name="id" value="" />
+					<input type="hidden" name="userId" />
+					<input type="hidden" name="name" />
+					<input type="hidden" name="avatar" />
+					<table class="tableForm_L" border="0" cellspacing="1" cellpadding="0">
+						<tr>
+							<th>分析师</th>
+							<td><select id="authorAvatar" name="authorAvatar" style="width: 180px;"></select></td>
+						</tr>
+						<tr>
+							<th width="15%">点评内容</th>
+							<td>
+								<textarea name="comment" id="comment" style="width:500px;height:100px;"></textarea>
+								<input type="button" value="重置" onclick="ZxData.cancelEdit();" />
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- view_datagrid-操作按钮 -->
+	<div id="zxDataReview_datagrid_rowOperation" style="display: none;">
+		<input type="hidden" value="" />
+		<a class="easyui-linkbutton edit" data-options="plain:true,iconCls:'ope-edit',disabled:false" onclick="ZxData.editReview(this);">修改</a>
+		<a class="easyui-linkbutton delete" data-options="plain:true,iconCls:'ope-remove',disabled:false" onclick="ZxData.delReview(this);">删除</a>
+	</div>
+
 </div>

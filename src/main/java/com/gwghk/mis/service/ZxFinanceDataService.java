@@ -9,8 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.gwghk.mis.model.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -24,10 +26,6 @@ import com.gwghk.mis.common.model.DetachedCriteria;
 import com.gwghk.mis.common.model.Page;
 import com.gwghk.mis.dao.ZxFinanceDataDao;
 import com.gwghk.mis.enums.ResultCode;
-import com.gwghk.mis.model.ZxFinanceData;
-import com.gwghk.mis.model.ZxFinanceDataApi;
-import com.gwghk.mis.model.ZxFinanceDataCfg;
-import com.gwghk.mis.model.ZxFinanceDetailApi;
 import com.gwghk.mis.util.BeanUtils;
 import com.gwghk.mis.util.HttpClientUtils;
 import com.gwghk.mis.util.PropertiesUtil;
@@ -51,6 +49,9 @@ public class ZxFinanceDataService {
 
 	@Autowired
 	private ZxFinanceDataDao dataDao;
+
+	@Autowired
+	private ChatApiService chatApiService;
 	
 	/**
 	 * 列表查询（财经日历）
@@ -252,7 +253,7 @@ public class ZxFinanceDataService {
 	
 	/**
 	 * 更新保存（财经日历配置）
-	 * @param data
+	 * @param config
 	 * @return
 	 */
 	public ApiResult updateCfg(ZxFinanceDataCfg config) {
@@ -266,7 +267,7 @@ public class ZxFinanceDataService {
 	
 	/**
 	 * 删除（财经日历配置）
-	 * @param dataId
+	 * @param cfgId
 	 * @return
 	 */
 	public ApiResult deleteCfg(String cfgId) {
@@ -626,4 +627,39 @@ public class ZxFinanceDataService {
 		}
 		return StringUtils.join(destArr, ",");
 	}
+
+
+	/**
+	 * 更新保存点评（财经日历）
+	 * @param data
+	 * @return
+	 */
+	public ApiResult saveComments(ZxFinanceData data, ZxFinanceDataComment comment) {
+		ApiResult result=new ApiResult();
+		if(dataDao.saveComment(data, comment)){
+			ZxFinanceData zxData = dataDao.findById(ZxFinanceData.class, data.getDataId());
+			chatApiService.zxFinanceReviewNotice(JSON.toJSONString(zxData),JSON.toJSONString(comment));
+			result.setCode(ResultCode.OK);
+		}else{
+			result.setCode(ResultCode.FAIL);
+		}
+		return result;
+	}
+
+	/**
+	 * 删除点评(财经日历)
+	 * @param dataId
+	 * @param id
+	 * @return
+	 */
+	public ApiResult delReview(String dataId, String id){
+		ApiResult result=new ApiResult();
+		if(dataDao.delReview(dataId, id)){
+			result.setCode(ResultCode.OK);
+		}else{
+			result.setCode(ResultCode.FAIL);
+		}
+		return result;
+	}
+
 }
