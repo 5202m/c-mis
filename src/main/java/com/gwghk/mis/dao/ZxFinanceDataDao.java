@@ -89,6 +89,9 @@ public class ZxFinanceDataDao extends MongoDBBaseDao {
 		} else {
 			wr = this.mongoTemplate.updateMulti(new Query(Criteria.where("_id").is(data.getDataId()).and("comments._id").is(new ObjectId(comment.getId()))),new Update()
 							.set("comments.$.comment",comment.getComment())
+							.set("comments.$.avatar",comment.getAvatar())
+							.set("comments.$.userName",comment.getUserName())
+							.set("comments.$.userId",comment.getUserId())
 							.set("comments.$.updateDate", comment.getUpdateDate())
 							.set("comments.$.updateIp", comment.getUpdateIp())
 							.set("comments.$.updateUser", comment.getUpdateUser())
