@@ -676,7 +676,7 @@ var Syllabus = {
                 	 }
                 	 var currContent=$(this).find("textarea[name='context']").val();
                 	 currContent=isValid(currContent)?currContent.replace(/[\r\n]/g,""):'';
-                     return {title:$(this).find("input[name='title']").val(), 
+                     return {title:$(this).find("input[name='title']").val().replace(/["']+/g,""),
     	    	        	 status:parseInt($(this).find("select[name='status']").val()),
     	    	        	 courseType:parseInt($(this).find("select[name='courseType']").val()),
     	    	        	 lecturer:txt,lecturerId:lectDom.combotree("getValues").join(","),
