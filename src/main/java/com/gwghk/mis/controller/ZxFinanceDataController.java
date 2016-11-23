@@ -308,13 +308,13 @@ public class ZxFinanceDataController extends BaseController{
 			comments.setUpdateIp(data.getUpdateIp());
 			comments.setUpdateUser(userParam.getUserName());
 		}else{
-			comments.setAvatar(avatar);
-			comments.setUserId(userId);
-			comments.setUserName(userName);
 			comments.setCreateIp(data.getUpdateIp());
 			comments.setCreateDate(currDate);
 			comments.setCreateUser(userParam.getUserName());
 		}
+		comments.setAvatar(avatar);
+		comments.setUserId(userId);
+		comments.setUserName(userName);
 		comments.setValid(1);
 		comments.setComment(comment);
 
