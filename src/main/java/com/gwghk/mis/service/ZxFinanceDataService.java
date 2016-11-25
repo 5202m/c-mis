@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -660,6 +661,17 @@ public class ZxFinanceDataService {
 			result.setCode(ResultCode.FAIL);
 		}
 		return result;
+	}
+
+	/**
+	 * 根据指标编号返回财经数据列表
+	 * @param basicIndexId
+	 * @return
+	 */
+	public List<ZxFinanceData> financeRepData(String basicIndexId){
+		Query query = new Query(Criteria.where("basicIndexId").is(basicIndexId).and("valid").is(1)).with(new Sort(Sort.Direction.ASC, "date"));
+		List<ZxFinanceData> financeDataList = dataDao.findList(ZxFinanceData.class, query);
+		return financeDataList;
 	}
 
 }

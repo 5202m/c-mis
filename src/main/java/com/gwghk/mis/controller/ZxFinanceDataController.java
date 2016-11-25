@@ -335,7 +335,7 @@ public class ZxFinanceDataController extends BaseController{
 	}
 
 	/**
-	 * 删除（财经日历）
+	 * 删除点评（财经日历）
 	 * @param request
 	 * @return
 	 */
@@ -362,4 +362,27 @@ public class ZxFinanceDataController extends BaseController{
 		return j;
 	}
 
+	/**
+	 * 财经日历走势图初始页
+	 * @param map
+	 * @return
+	 */
+	@RequestMapping(value = "/zxDataController/report", method = RequestMethod.GET)
+	public String report(HttpServletRequest request, ModelMap map){//public String report(ModelMap map, @Param("type")String type){
+		return "infoManage/zxDataRep";
+	}
+
+	/**
+	 * 财经日历走势图
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/zxDataController/repDatagrid", method = RequestMethod.GET)
+	@ResponseBody
+	public String datagridRep(HttpServletRequest request, ModelMap map){
+		String basicIndexId = request.getParameter("basicIndexId");
+		List<ZxFinanceData> list = dataService.financeRepData(basicIndexId);
+		map.put("data",list);
+		return JSONArray.toJSONString(map);
+	}
 }
