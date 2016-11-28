@@ -9,6 +9,7 @@
 <div style="padding:5px;overflow:hidden;">
   <form id="userGagForm" class="yxForm" method="post">
     <input type="hidden" name="memberId" value="${memberId}"/>
+    <input type="hidden" name="mobilePhone" value="${mobilePhone}"/>
     <input type="hidden" name="groupId" value="${groupId}"/>
     <input type="hidden" name="groupType" value="${groupType}"/>
     <table class="tableForm_L" border="0" cellspacing="1" cellpadding="0">

@@ -229,6 +229,7 @@ public class ChatUserController extends BaseController{
  			}
  		 }
  		 map.put("memberId", memberId);
+ 		 map.put("mobilePhone", member.getMobilePhone());
     	 map.put("groupId", groupId);
     	 map.put("groupType", groupType);
     	 return "chat/userGag";
@@ -244,6 +245,7 @@ public class ChatUserController extends BaseController{
 		AjaxJson j = new AjaxJson();
 		String groupType = request.getParameter("groupType");
 		String memberId = request.getParameter("memberId");
+		String mobilePhone = request.getParameter("mobilePhone");
 		String groupId = request.getParameter("groupId");
 		String gagDate = request.getParameter("gagDate");
 		String gagTips = request.getParameter("gagTips");
@@ -251,15 +253,15 @@ public class ChatUserController extends BaseController{
 		ApiResult apiResult = memberService.saveUserGag(groupType,memberId,groupId,gagDate,gagTips,remark);
 		if(apiResult.isOk()){
 			j.setSuccess(true);
-    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户禁言成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
+    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户[" + groupType + ","  + groupId + "," + mobilePhone + "," + gagDate + "]禁言成功";
+    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_GAG
     						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
     		logger.info("<<method:setUserGag()|"+message);
 		}else{
 			j.setSuccess(false);
 			j.setMsg(ResourceBundleUtil.getByMessage(apiResult.getCode()));
-    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户禁言失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
+    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户[" + groupType + ","  + groupId + "," + mobilePhone + "," + gagDate + "]禁言失败";
+    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_GAG
     						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
     		logger.error("<<method:setUserGag()|"+message+",ErrorMsg:"+apiResult.toString());
 		}

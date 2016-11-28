@@ -22,6 +22,7 @@
             <option value="7">审批</option>
             <option value="8">取消审批</option>
             <option value="9">导出记录</option>
+            <option value="A">禁言</option>
           </select>
           </td>
         </tr>
