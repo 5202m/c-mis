@@ -13,16 +13,18 @@
           <th width="10%"><spring:message code="syslog.operatetype" /><!-- 操作类型 --></th>
           <td width="23%">
           <select name="operateType" id="operateType" style="width:160px">
-            <option value="1">登陆</option>
-            <option value="2">退出</option>
-            <option value="3">新增</option>
-            <option value="4">删除</option>
-            <option value="5">更新</option>
-            <option value="6">其他</option>
-            <option value="7">审批</option>
-            <option value="8">取消审批</option>
-            <option value="9">导出记录</option>
-            <option value="A">禁言</option>
+              <c:if test="${loginRoleId == 'admin_super'}">
+                  <option value="1">登陆</option>
+                  <option value="2">退出</option>
+                  <option value="3">新增</option>
+                  <option value="4">删除</option>
+                  <option value="5">更新</option>
+                  <option value="6">其他</option>
+                  <option value="7">审批</option>
+                  <option value="8">取消审批</option>
+                  <option value="9">导出记录</option>
+              </c:if>
+              <option value="A">禁言</option>
           </select>
           </td>
         </tr>
