@@ -105,7 +105,6 @@ public class ChatMessageController extends BaseController{
 	/**
 	 * 设置通用查询
 	 * @param request
-	 * @param dataGrid
 	 * @param chatMessage
 	 */
 	private void setComSearch(HttpServletRequest request,ChatMessage chatMessage){
@@ -151,7 +150,7 @@ public class ChatMessageController extends BaseController{
 			dataGrid.setRows(0);
 			dataGrid.setSort("publishTime");
 			dataGrid.setOrder("desc");
-			chatMessage.getContent().setMsgType("text");  //默认只导出文本类型
+//			chatMessage.getContent().setMsgType("text");  //默认只导出文本类型
 			Page<ChatMessage> page = chatMessageService.getChatMessagePage(this.createDetachedCriteria(dataGrid, chatMessage));
 			List<ChatGroup> groupList=chatGroupService.getChatGroupList("id","name","groupType");
 			List<ChatMessage>  chatMessageList = page.getCollection();
@@ -164,6 +163,7 @@ public class ChatMessageController extends BaseController{
 			}
 			if(chatMessageList != null && chatMessageList.size() > 0){
 				DataRowSet dataSet = new DataRowSet();
+				boolean isText = false;
 				for(ChatMessage cm : chatMessageList){
 					IRow row = dataSet.append();
 					//row.set("userId", cm.getGroupType().contains("studio")?cm.getUserId():(StringUtils.isBlank(cm.getAccountNo())?cm.getUserId():cm.getAccountNo()));
@@ -195,8 +195,9 @@ public class ChatMessageController extends BaseController{
 						}
 					}
 					row.set("fromPlatform", cm.getFromPlatform());
-					row.set("msgType", "文本");
-					row.set("content", cm.getContent().getValue());
+					isText = "text".equals(cm.getContent().getMsgType());
+					row.set("msgType", isText ? "文本" : "图片");
+					row.set("content", isText ? cm.getContent().getValue() : "【图片】");
 					row.set("publishTime",DateUtil.longMsTimeConvertToDateTime(Long.valueOf(cm.getPublishTime().split("_")[0])));
 					row.set("approvalUserNo", cm.getApprovalUserNo());
 					row.set("status", cm.getStatus()==1?"通过":(cm.getStatus()==2?"拒绝":"等待审批"));//0、等待审批，1、通过 ；2、拒绝
