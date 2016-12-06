@@ -183,8 +183,9 @@
 	      	<th>房间类别</th>
 	      	<td>
 	      		<select name="roomType" id="roomType">
-	      			<option value="normal"<c:if test="${chatGroup.roomType=='normal'}"> selected="selected"</c:if>>普通</option>
-	      			<option value="vip"<c:if test="${chatGroup.roomType=='vip'}"> selected="selected"</c:if>>VIP</option>
+	      			<option value="simple"<c:if test="${chatGroup.roomType=='simple'}"> selected="selected"</c:if>>新手场</option>
+	      			<option value="normal"<c:if test="${chatGroup.roomType=='normal'}"> selected="selected"</c:if>>普通场</option>
+	      			<option value="vip"<c:if test="${chatGroup.roomType=='vip'}"> selected="selected"</c:if>>VIP场</option>
 	      			<option value="train"<c:if test="${chatGroup.roomType=='train'}"> selected="selected"</c:if>>培训班</option>
 	      		</select>
 	      	</td>
