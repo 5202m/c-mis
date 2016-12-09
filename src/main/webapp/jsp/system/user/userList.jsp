@@ -68,6 +68,7 @@
 	  <a class="easyui-linkbutton edit" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="systemUser.edit(this.id)"><spring:message code="common.buttons.edit" /><!-- 修改 --></a>
 	  <a class="easyui-linkbutton view" data-options="plain:true,iconCls:'ope-view',disabled:false" onclick="systemUser.view(this.id)"><spring:message code="common.buttons.view" /><!-- 查看 --></a>
 	  <a class="easyui-linkbutton resetPwd" data-options="plain:true,iconCls:'ope-redo',disabled:false" onclick="systemUser.resetPwd(this.id)"><spring:message code="user.resetpwd" /><!-- 重设密码 --></a>
+      <a class="easyui-linkbutton setLiveLinks" data-options="plain:true,iconCls:'ope-edit',disabled:false" onclick="systemUser.saveLiveLinks(this.id)">直播地址</a>
 	  <a class="easyui-linkbutton delete" data-options="plain:true,iconCls:'ope-remove',disabled:false"  onclick="systemUser.del(this.id)"><spring:message code="common.buttons.delete" /><!-- 删除 --></a>
   </div>
   
