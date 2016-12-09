@@ -125,6 +125,47 @@ public class ChatGroupService{
 	}
 
 	/**
+	 * 清空用户列表
+	 * @param groupId
+	 * @param isAll
+	 * @return
+	 */
+	public ApiResult clearClient(String groupId, boolean isAll) {
+		ApiResult result=new ApiResult();
+		if(StringUtils.isBlank(groupId)){
+			result.setCode(ResultCode.FAIL);
+			result.setErrorMsg("房间编号为空！");
+			return result;
+		}
+		ChatGroup chatGroup = this.getChatGroupById(groupId);
+		if(chatGroup == null){
+			result.setCode(ResultCode.FAIL);
+			result.setErrorMsg("房间信息不存在！");
+			return result;
+		}
+		if(isAll){
+			chatGroup.setTraninClient(new ArrayList<>());
+		}else{
+			List<TraninClient> traninClients = chatGroup.getTraninClient();
+			TraninClient traninClient = null;
+			Integer authFlag = new Integer(1);
+			if(traninClients == null){
+				return result.setCode(ResultCode.OK);
+			}else{
+				for(int i = traninClients.size() - 1; i >= 0; i--){
+					traninClient = traninClients.get(i);
+					if(traninClient == null || authFlag.equals(traninClient.getIsAuth()) == false){
+						traninClients.remove(i);
+					}
+				}
+			}
+		}
+		chatGroupDao.update(chatGroup);
+
+    	return result.setCode(ResultCode.OK);
+	}
+
+	/**
 	 * 设置规则
 	 * @param group
 	 */

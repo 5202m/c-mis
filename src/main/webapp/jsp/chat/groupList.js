@@ -101,10 +101,8 @@ var chatGroup = {
 			onLoadSuccess:function(data){
 				$("#"+chatGroup.gridId).datagrid("clearSelections"); 
 				for(var i in data.rows){
-					if(data.rows[i].roomType!='train'){
+					if(data.rows[i].roomType!='train' && data.rows[i].roomType!='vip'){
 						$("#chatGroup_datagrid_toolbar").next().find(".datagrid-view2 .datagrid-btable tr:eq("+i+")").find(".bookingUser").hide();
-					}
-					if(data.rows[i].roomType!='vip'){
 						$("#chatGroup_datagrid_toolbar").next().find(".datagrid-view2 .datagrid-btable tr:eq("+i+")").find(".importClient").hide();
 					}
 				}
@@ -377,10 +375,27 @@ var chatGroup = {
 					text:'导出',
 					iconCls:"ope-export right_export_btn",
 					left:"100",
-					cls:"hhhh",
 					handler:function(){
 						var chatGroupId = $("#chatGroupId").val();
 						window.location.href = formatUrl(basePath+"/chatGroupController/"+chatGroupId+"/exportUnAuthClient.do")
+					}
+				},
+				{
+					text:'清空未授权客户',
+					iconCls:"ope-remove right_export_btn",
+					left:"100",
+					handler:function(){
+						var chatGroupId = $("#chatGroupId").val();
+						chatGroup.clearClient(chatGroupId, false);
+					}
+				},
+				{
+					text:'清空所有客户',
+					iconCls:"ope-remove right_export_btn",
+					left:"100",
+					handler:function(){
+						var chatGroupId = $("#chatGroupId").val();
+						chatGroup.clearClient(chatGroupId, true);
 					}
 				},
 				{
@@ -394,11 +409,10 @@ var chatGroup = {
 						$select.each(function(i, n) {
 							if($(n).hasClass('unAuthTraninClientSelect')) {
 								unAuthTraninClientJson = yxui.findSelectMultipleValueStrong("clientId","nickname",n.options);
-
-							};
+							}
 							if($(n).hasClass('authTraninClientSelect')) {
 								authTraninClientJosn = yxui.findSelectMultipleValueStrong("clientId","nickname",n.options);
-							};
+							}
 						});
 						goldOfficeUtils.ajax({
 							url : submitUrl,
@@ -424,6 +438,32 @@ var chatGroup = {
 						$(this).parents(".easyui-dialog:first").dialog("close");
 				}
 			}]
+		});
+	},
+	/**
+	 * 清空客户
+	 * @param groupId
+	 * @param isAll
+	 */
+	clearClient : function(groupId, isAll){
+		$.messager.confirm("操作提示", "该操作将从房间移除报名的客户，不可恢复。", function(r) {
+			if (r) {
+				goldOfficeUtils.ajax({
+					url : formatUrl(basePath + '/chatGroupController/clearClient.do'),
+					data : {
+						groupId : groupId,
+						isAll : isAll
+					},
+					success: function(data) {
+						if(data.success) {
+							$.messager.alert("操作提示","客户清空成功!",'info');
+							$("#myWindow").dialog("close");
+						}else{
+							$.messager.alert($.i18n.prop("common.operate.tips"),'客户清空失败，原因：'+data.msg,'error');
+						}
+					}
+				});
+			}
 		});
 	},
 	/**
