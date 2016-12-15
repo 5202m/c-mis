@@ -101,7 +101,7 @@ var chatGroup = {
 			onLoadSuccess:function(data){
 				$("#"+chatGroup.gridId).datagrid("clearSelections"); 
 				for(var i in data.rows){
-					if(data.rows[i].roomType!='train' && data.rows[i].roomType!='vip'){
+					if(data.rows[i].status != 2){//if(data.rows[i].roomType!='train' && data.rows[i].roomType!='vip'){
 						$("#chatGroup_datagrid_toolbar").next().find(".datagrid-view2 .datagrid-btable tr:eq("+i+")").find(".bookingUser").hide();
 						$("#chatGroup_datagrid_toolbar").next().find(".datagrid-view2 .datagrid-btable tr:eq("+i+")").find(".importClient").hide();
 					}
