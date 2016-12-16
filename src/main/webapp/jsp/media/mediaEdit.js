@@ -343,7 +343,7 @@ var mediaEdit = {
 				$.messager.progress('close');
 				if(data.success){
 					alert("更新成功 !");
-					jumpRequestPage(basePath + '/mediaController/index.do');
+					//jumpRequestPage(basePath + '/mediaController/index.do');
 				}else{
 					alert("更新失败，错误信息："+data.msg);
 				}
@@ -354,7 +354,7 @@ var mediaEdit = {
 	 * 功能：返回到主列表页面
 	 */
 	back : function(){
-		jumpRequestPage(basePath + '/mediaController/index.do');
+		//jumpRequestPage(basePath + '/mediaController/index.do');
 	}
 };
 		

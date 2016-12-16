@@ -1,12 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/jsp/common/common.jsp" %>
 <script type="text/javascript" src="<%=request.getContextPath()%>/jsp/media/mediaEdit.js" charset="UTF-8"></script>
+<div style="padding:5px;overflow:hidden;">
 <!-- 媒体基本信息 -->
 <div>
    <form id="mediaBaseInfoForm" class="yxForm" method="post">
     <input type="hidden" name="id" value="${media.id}"/>
     <table class="tableForm_L" border="0" cellspacing="1" cellpadding="0">
-     <tr>
+     <tr style="display:none;">
         <th width="100%" colspan="6">
         	<div>
     			<a href="#" class="easyui-linkbutton" style="float:right;" onclick="mediaEdit.back()" data-options="iconCls:'ope-previous'" >返回</a>
@@ -135,9 +136,9 @@
 }
 </style>
 <!-- 媒体详细信息 -->
-<div id="media_tab" class="easyui-tabs" data-options="fit:true" style="height:700px;width:100%;">
+<div id="media_tab" class="easyui-tabs" data-options="fit:true" style="width:100%;">
 <c:forEach var="mediaDetail" items="${media.detailList}">
-	<div id="media_detail_${mediaDetail.lang}" title="${langMap[mediaDetail.lang]}" style="padding:0px;overflow-x:auto;height:700px;width:100%;">
+	<div id="media_detail_${mediaDetail.lang}" title="${langMap[mediaDetail.lang]}" style="padding:0px;overflow-x:auto;width:100%;">
 	  <form name="mediaDetailForm" class="yxForm">
 	    <input type="hidden" name="lang" value="${mediaDetail.lang}"/>
 	    <table class="tableForm_L" border="0" cellspacing="1" cellpadding="0">
@@ -182,5 +183,6 @@
 	  </form>
 	</div>
 </c:forEach>
+</div>
 </div>
 <%@ include file="detailTemplate.jsp"%>

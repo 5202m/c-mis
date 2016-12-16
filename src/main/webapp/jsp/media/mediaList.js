@@ -144,19 +144,123 @@ var media = {
 	 * @param recordId   dataGrid行Id
 	 */
 	view : function(recordId){
-		jumpRequestPage(formatUrl(basePath + '/mediaController/'+recordId+'/view.do'));
+		//jumpRequestPage(formatUrl(basePath + '/mediaController/'+recordId+'/view.do'));
+		var url = formatUrl(basePath + '/mediaController/'+recordId+'/view.do');
+		goldOfficeUtils.openSimpleDialog({
+			title : $.i18n.prop("common.operatetitle.view"),       /**查看记录*/
+			width : 1000,
+			height : 515 ,
+			href : url ,
+			iconCls : 'pag-view'
+		});
 	},
 	/**
 	 * 功能：增加
 	 */
 	add : function(){
-		jumpRequestPage(formatUrl(basePath + '/mediaController/add.do'));
+		//jumpRequestPage(formatUrl(basePath + '/mediaController/add.do'));
+		var url = formatUrl(basePath + '/mediaController/add.do');
+		var submitUrl =  formatUrl(basePath + '/mediaController/create.do');
+		goldOfficeUtils.openEditorDialog({
+			title : $.i18n.prop("common.operatetitle.add"),			/**添加记录*/
+			width : 1000,
+			height : 700,
+			href : url,
+			iconCls : 'pag-add',
+			handler : function(){   //提交时处理
+				if(media.checkForm() && $("#mediaDetailForm").form('validate') && $("#media_tab form[name=mediaDetailForm]").form('validate')){
+					media.checkClearAuthor();//清除无效的作者值
+					var serializeFormData = $("#mediaBaseInfoForm").serialize();
+					var detaiInfo=formFieldsToJson($("#media_tab form[name=mediaDetailForm]"));
+					var detaiInfoObj = eval("("+detaiInfo+")");
+					if($.isArray(detaiInfoObj)){
+						$.each(detaiInfoObj, function(key, value){
+							var authorInfo = {};
+							authorInfo.userId = value.userId;
+							authorInfo.avatar = value.avatar;
+							authorInfo.position = value.position;
+							authorInfo.name = value.name;
+							detaiInfoObj[key].authorInfo = authorInfo;
+						});
+					}
+					else{
+						var authorInfo = {};
+						authorInfo.userId = detaiInfoObj.userId;
+						authorInfo.avatar = detaiInfoObj.avatar;
+						authorInfo.position = detaiInfoObj.position;
+						authorInfo.name = detaiInfoObj.name;
+						detaiInfoObj.authorInfo = authorInfo;
+					}
+					detaiInfo = JSON.stringify(detaiInfoObj);
+					$.messager.progress();//提交时，加入进度框
+					var submitInfo = serializeFormData+"&detaiInfo="+encodeURIComponent(detaiInfo);
+					getJson(submitUrl,submitInfo,function(data){
+						$.messager.progress('close');
+						if(data.success){
+							$("#myWindow").dialog("close");
+							media.refresh();
+							$.messager.alert($.i18n.prop("common.operate.tips"),"新增成功 !",'info');
+						}else{
+							$.messager.alert($.i18n.prop("common.operate.tips"),"新增失败，错误信息："+data.msg,'error');
+						}
+					},true);
+				}
+			}
+		});
 	},
 	/**
 	 * 功能：修改
 	 */
 	edit : function(recordId){
-		jumpRequestPage(formatUrl(basePath + '/mediaController/'+recordId+'/edit.do'));
+		//jumpRequestPage(formatUrl(basePath + '/mediaController/'+recordId+'/edit.do'));
+		var url = formatUrl(basePath + '/mediaController/'+recordId+'/edit.do');
+		var submitUrl =  formatUrl(basePath + '/mediaController/update.do');
+		goldOfficeUtils.openEditorDialog({
+			title : $.i18n.prop("common.operatetitle.edit"),   /**修改记录*/
+			width : 1000,
+			height : 500,
+			href : url,
+			iconCls : 'pag-edit',
+			handler : function(){    //提交时处理
+				if(media.checkForm() && $("#mediaBaseInfoForm").form('validate') && $("#media_tab form[name=mediaDetailForm]").form('validate')){
+					media.checkClearAuthor();//清除无效的作者值
+					var serializeFormData = $("#mediaBaseInfoForm").serialize();
+					var detaiInfo=formFieldsToJson($("#media_tab form[name=mediaDetailForm]"));
+					var detaiInfoObj = eval("("+detaiInfo+")");
+					if($.isArray(detaiInfoObj)){
+						$.each(detaiInfoObj, function(key, value){
+							var authorInfo = {};
+							authorInfo.userId = value.userId;
+							authorInfo.avatar = value.avatar;
+							authorInfo.position = value.position;
+							authorInfo.name = value.name;
+							detaiInfoObj[key].authorInfo = authorInfo;
+						});
+					}
+					else{
+						var authorInfo = {};
+						authorInfo.userId = detaiInfoObj.userId;
+						authorInfo.avatar = detaiInfoObj.avatar;
+						authorInfo.position = detaiInfoObj.position;
+						authorInfo.name = detaiInfoObj.name;
+						detaiInfoObj.authorInfo = authorInfo;
+					}
+					detaiInfo = JSON.stringify(detaiInfoObj);
+					$.messager.progress();//提交时，加入进度框
+					var submitInfo = serializeFormData+"&detaiInfo="+encodeURIComponent(detaiInfo);
+					getJson(submitUrl, submitInfo, function(data){
+						$.messager.progress('close');
+						if(data.success){
+							$("#myWindow").dialog("close");
+							media.refresh();
+							$.messager.alert($.i18n.prop("common.operate.tips"),$.i18n.prop("common.editsuccess"),'info');/**操作提示  修改成功!*/
+						}else{
+							$.messager.alert($.i18n.prop("common.operate.tips"),'修改失败，原因：'+d.msg,'error');  /**操作提示  修改失败!*/
+						}
+					},true);
+				}
+			}
+		});
 	},
 	/**
 	 * 功能：刷新
@@ -179,6 +283,61 @@ var media = {
 		$("#media_datagrid").datagrid('unselectAll');
 		var url = formatUrl(basePath + '/mediaController/del.do');
 		goldOfficeUtils.deleteOne('media_datagrid',recordId,url);
+	},
+	/**
+	 * 清除无效的作者值
+	 */
+	checkClearAuthor:function(){
+		$("input[type=hidden][name^=media_authorList_]").each(function(){
+			var lang=this.name.replace("media_authorList_","");
+			var authorDom=$('#media_detail_'+lang+' form[name=mediaDetailForm] input[name=author]');
+			if(isBlank(this.value)){
+				authorDom.val('');
+			}else{
+				if(isBlank(authorDom.val())){
+					authorDom.val(this.value);
+				}else{
+					if(this.value!=authorDom.val().split(";")[0]){
+						authorDom.val(this.value);
+					}
+				}
+			}
+		});
+	},
+	/**
+	 * 检查表单输入框
+	 */
+	checkForm:function(){
+		var isPass=true;
+		$("#mediaBaseInfoForm input,#mediaBaseInfoForm select").each(function(){
+			if(isBlank($(this).val())){
+				if($(this).attr("name")=="categoryId"){
+					alert("栏目不能为空！");
+					isPass=false;
+					return false;
+				}
+				if($(this).attr("name")=="publishStartDateStr"||$(this).attr("name")=="publishEndDateStr"){
+					alert("发布时间不能为空！");
+					isPass=false;
+					return false;
+				}
+				if($(this).attr("name")=="platformStr"){
+					alert("应用位置不能为空！");
+					isPass=false;
+					return false;
+				}
+				if($(this).attr("name")=="mediaUrl"){
+					alert("媒体路径不能为空！");
+					isPass=false;
+					return false;
+				}
+			}
+		});
+		if(isPass && $("#mediaBaseInfoForm input[type=checkbox]:checked").length==0){
+			alert("请选择语言！");
+			isPass=false;
+		}
+		return isPass;
 	}
 };
 		
