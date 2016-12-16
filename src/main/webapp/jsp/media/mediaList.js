@@ -218,7 +218,7 @@ var media = {
 		goldOfficeUtils.openEditorDialog({
 			title : $.i18n.prop("common.operatetitle.edit"),   /**修改记录*/
 			width : 1000,
-			height : 500,
+			height : 700,
 			href : url,
 			iconCls : 'pag-edit',
 			handler : function(){    //提交时处理
