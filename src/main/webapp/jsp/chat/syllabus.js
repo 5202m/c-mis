@@ -16,25 +16,25 @@ var Syllabus = {
     	obsLabel:{
 			main_sz:{name:'大陆{0},房间:{1}',url:['sz.hhkcdn.com/live']},
 			main_hk:{name:'海外{0},房间:{1}',url:['hk.hhkcdn.com/live']},
-            other_sz:{name:'大陆(备用{0}),房间:{1}',url:['sz.vpcdn.com/live','sz6.phgse.cn/live','ct1.phgsa.cn:1935/live']},
-			other_hk:{name:'海外(备用{0}),房间:{1}',url:['hk.vpcdn.com/live','h6.phgse.cn/live','ct.phgsa.cn:1935/live']}
+            other_sz:{name:'大陆(备用{0}),房间:{1}',url:['sz.vpcdn.com/live','sz6.yocdn.com/live','ct1.phgsa.cn:1935/live']},
+			other_hk:{name:'海外(备用{0}),房间:{1}',url:['hk.vpcdn.com/live','h6.yocdn.com/live','ct.phgsa.cn:1935/live']}
         },
     	studio:{
-    		obsCode:["01","02","05"],
+    		obsCode:["01","02","03","04","05","06"],
     	    yyLink:[
     	    	{name:'yy:92628431/92628431',url:'http://yy.com/s/92628431/92628431/yyscene.swf'},
         		{name:'yy:92628431/2439533296',url:'http://yy.com/s/92628431/2439533296/yyscene.swf'}
     	    ]
     	},
     	fxstudio:{
-    		obsCode:["03","04"],
+    		obsCode:["20","21","22","23","24","25"],
     	    yyLink:[
     	    	{name:'yy:92628431/2537339360',url:'http://yy.com/s/92628431/2537339360/yyscene.swf'},
         		{name:'yy:92628431/2559592756',url:'http://yy.com/s/92628431/2559592756/yyscene.swf'}
     	    ]
     	},
     	hxstudio:{
-    		obsCode:["10","11","12"],
+    		obsCode:["10","11","12","13","14","15"],
     	    yyLink:[
     	    	{name:'yy:46327234/46327234',url:'http://yy.com/s/46327234/46327234/yyscene.swf'},
     	    	{name:'yy:82992602/82992602',url:'http://yy.com/s/82992602/82992602/yyscene.swf'}
