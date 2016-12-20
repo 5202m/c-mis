@@ -284,13 +284,44 @@ public class ChatGroupController extends BaseController{
 			j.setSuccess(false);
 			j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
 			String message = "用户：" + chatGroup.getUpdateUser() + " " + DateUtil.getDateSecondFormat(new Date()) + " 修改聊天室授权用户失败";
-			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT, BrowserUtils.checkBrowse(request), IPUtil.getClientIP(request));
+			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE, BrowserUtils.checkBrowse(request), IPUtil.getClientIP(request));
 			logger.error("<--method:authUser()|" + message + ",ErrorMsg:" + result.toString());
 		}
 		return j;
 	}
-    
-	  /**
+
+	/**
+	 * 功能：聊天室房间管理-保存更新
+	 *
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/chatGroupController/clearClient", method = RequestMethod.POST)
+	@ResponseBody
+	@ActionVerification(key = "assignUser")
+	public AjaxJson clearClient(HttpServletRequest request, HttpServletResponse response) {
+		String groupId = request.getParameter("groupId");
+		boolean isAll = "true".equals(request.getParameter("isAll"));
+		AjaxJson j = new AjaxJson();
+		ApiResult result = chatGroupService.clearClient(groupId, isAll);
+		if (result.isOk()) {
+			j.setSuccess(true);
+			String message = "用户：" + userParam.getUserNo() + " " + DateUtil.getDateSecondFormat(new Date()) + " 清空聊天室授权用户成功";
+			logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE, BrowserUtils.checkBrowse(request), IPUtil.getClientIP(request));
+			logger.info("<--method:authUser()|" + message);
+		}
+		else {
+			j.setSuccess(false);
+			j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
+			String message = "用户：" + userParam.getUserNo() + " " + DateUtil.getDateSecondFormat(new Date()) + " 清空聊天室授权用户失败";
+			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE, BrowserUtils.checkBrowse(request), IPUtil.getClientIP(request));
+			logger.error("<--method:authUser()|" + message + ",ErrorMsg:" + result.toString());
+		}
+		return j;
+	}
+
+	/**
    	 * 功能：聊天室房间管理-保存新增
    	 */
     @RequestMapping(value="/chatGroupController/create",method=RequestMethod.POST)

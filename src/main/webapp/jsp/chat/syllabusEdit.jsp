@@ -56,8 +56,8 @@ Syllabus.studioLink=${studioLinkStr};
 				   	<select id="studioLinkSelect" style="width:103px">
 					   	<option value="1" selected="selected">视频直播(pc)</option>
 					   	<option value="3">视频直播(mb)</option>
-					   	<option value="2">oneTV直播</option>
 					   	<option value="4">音频直播(mb)</option>
+					   	<option value="2">oneTV直播</option>
 				   	</select>
 				   	<select id="studiolinkAddr" style="display:none;width:180px;"></select>
 				    <input  id="studioLink_1" style="width:450px;" t="1" value=""/>
