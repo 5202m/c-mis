@@ -179,6 +179,7 @@ public class ChatGroupController extends BaseController{
     	List<BoUser> analystList = userService.getUserListByRole("analyst");
     	//分析师列表
     	map.addAttribute("analystList", analystList);
+    	map.addAttribute("serviceList",userService.getUserListByRole("cs"));
     	return "chat/groupSubmit";
     }
     
@@ -214,6 +215,7 @@ public class ChatGroupController extends BaseController{
     	}
     	map.addAttribute("analystList", loc_users);
     	map.addAttribute("chatGroup",chatGroup);
+		map.addAttribute("serviceList",userService.getUserListByRole("cs"));
 		return "chat/groupSubmit";
     }
 
@@ -534,7 +536,6 @@ public class ChatGroupController extends BaseController{
 
     /**
      * 跳转到客户导入页面
-     * @param chatGroupId
      * @param map
      * @return
      * @throws Exception

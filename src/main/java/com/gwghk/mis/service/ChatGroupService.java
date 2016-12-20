@@ -32,6 +32,8 @@ import com.gwghk.mis.util.BeanUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.StringUtil;
 
+import javax.swing.*;
+
 /**
  * 聊天室组别管理服务类
  * @author Alan.wu
@@ -77,6 +79,19 @@ public class ChatGroupService{
 	public ApiResult saveChatGroup(ChatGroup chatGroupParam, boolean isUpdate, boolean isUpdateDefaultAnalyst) {
 		ApiResult result=new ApiResult();
 		chatGroupParam.setValid(1);
+		//默认客服
+		BoUser defaultService = null;
+		if(chatGroupParam.getDefaultService() != null && chatGroupParam.getDefaultService().getUserId() != null){
+			BoUser user = userService.getUserById(chatGroupParam.getDefaultService().getUserId());
+			if(user != null){
+				defaultService = new BoUser();
+				defaultService.setUserId(user.getUserId());
+				defaultService.setUserNo(user.getUserNo());
+				defaultService.setUserName(user.getUserName());
+				defaultService.setPosition(user.getPosition());
+				defaultService.setAvatar(user.getAvatar());
+			}
+		}
     	if(isUpdate){
     		if(StringUtils.isBlank(chatGroupParam.getId())){
     			return result.setCode(ResultCode.Error103);
@@ -109,6 +124,7 @@ public class ChatGroupService{
         			}
         		}
     			group.setDefaultAnalyst(analyst);
+        		group.setDefaultService(defaultService);
     			setGroupRule(group);
     		}
     		roleDao.updateRoleChatGroup(group);
@@ -119,6 +135,7 @@ public class ChatGroupService{
     		}
     		setGroupRule(chatGroupParam);
     		chatGroupParam.setId(chatGroupParam.getGroupType()+"_"+chatGroupDao.getIncSeq(IdSeq.ChatGroup));
+			chatGroupParam.setDefaultService(defaultService);
     		chatGroupDao.add(chatGroupParam);	
     	}
     	return result.setCode(ResultCode.OK);

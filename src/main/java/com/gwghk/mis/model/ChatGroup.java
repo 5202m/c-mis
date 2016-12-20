@@ -91,6 +91,9 @@ public class ChatGroup extends BaseModel{
 	
 	/** 默认分析师（用户信息） */
 	private BoUser defaultAnalyst;
+
+	/** 默认客服（用户信息） */
+	private BoUser defaultService;
 	
 	/**
 	 * 客户组（对应的客户组,多个逗号分隔）
@@ -329,4 +332,12 @@ public class ChatGroup extends BaseModel{
     public void setLabel(String label) {
         this.label = label;
     }
+
+	public BoUser getDefaultService() {
+		return defaultService;
+	}
+
+	public void setDefaultService(BoUser defaultService) {
+		this.defaultService = defaultService;
+	}
 }
