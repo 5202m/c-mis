@@ -167,11 +167,10 @@
 	      		</select>
 	      		<select name="style" id="style">
 	      			<option value="">请选择</option>
-	      			<option value="light">HX-清新蓝</option>
-	      			<option value="dark">HX-炫酷黑</option>
-	      			<option value="orange">HX-橘子橙</option>
-	      			<option value="darkblue">HX-星空蓝</option>
-	      			<option value="gold">HX-雅金</option>
+	      			<option value="hx_day">HX-日间版</option>
+	      			<option value="hx_night">HX-夜间版</option>
+	      			<option value="hx_gold">HX-雅金</option>
+	      			<option value="hx_year">HX-新春版</option>
 	      			<option value="pm_def">PM-简约白</option>
 	      			<option value="pm_darkblue">PM-暗金蓝</option>
 	      			<%-- <c:forEach var="v" begin="0" end="5">
