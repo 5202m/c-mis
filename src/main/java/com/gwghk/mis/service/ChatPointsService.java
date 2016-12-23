@@ -258,6 +258,7 @@ public class ChatPointsService {
 			List<ChatPointsJournal> journalsNew = new ArrayList<ChatPointsJournal>();
 			journalsNew.add(journal);
 			points.setJournal(journalsNew);
+			points.setPointsId(null);
 			chatPointsDao.save(points);
 		}else{
 			//追加流水
