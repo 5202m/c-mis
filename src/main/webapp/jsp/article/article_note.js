@@ -26,17 +26,17 @@ var ArticleTemplate = {
 			$detailForm.find("#authorList_zh").html("<option>" + (detail.authorInfo ? detail.authorInfo.name : "") + "</option>");
 			$detailForm.find("select[name='tag']").val(detail.tag);
 			$detailForm.find("input[name='remark']").val(detail.remark);
-			var $tagTab = $('#'+detail.tag);
+			var $tagTab = $('.tag_tab');
 			var remarkArr = eval('('+detail.remark+')');
 			if(remarkArr.length>0){
 				$.each(remarkArr, function(i, row){
-					$tagTab.find('tr:first td:last .ope-add').click();
+					$tagTab.find('tbody:first tr:first td:last .ope-add').click();
 					$.each(row, function(key, val){
-						$tagTab.find('tr:eq('+i+') td select[name="'+key+'"]').val(val);
-						$tagTab.find('tr:eq('+i+') td input[name="'+key+'"]').val(val);
+						$tagTab.find('tbody:eq('+i+') tr td select[name="'+key+'"]').val(val);
+						$tagTab.find('tbody:eq('+i+') tr td input[name="'+key+'"]').val(val);
 					});
 				});
-				$tagTab.find('tr:last td:last .ope-remove').click();
+				$tagTab.find('tbody:last tr:first td:last .ope-remove').click();
 			}
 			$detailForm.find("select[name='tag']").trigger('change', "R");
 		}
