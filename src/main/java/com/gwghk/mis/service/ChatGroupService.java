@@ -80,16 +80,16 @@ public class ChatGroupService{
 		ApiResult result=new ApiResult();
 		chatGroupParam.setValid(1);
 		//默认客服
-		BoUser defaultService = null;
-		if(chatGroupParam.getDefaultService() != null && chatGroupParam.getDefaultService().getUserId() != null){
-			BoUser user = userService.getUserById(chatGroupParam.getDefaultService().getUserId());
+		BoUser defaultCS = null;
+		if(chatGroupParam.getDefaultCS() != null && chatGroupParam.getDefaultCS().getUserId() != null){
+			BoUser user = userService.getUserById(chatGroupParam.getDefaultCS().getUserId());
 			if(user != null){
-				defaultService = new BoUser();
-				defaultService.setUserId(user.getUserId());
-				defaultService.setUserNo(user.getUserNo());
-				defaultService.setUserName(user.getUserName());
-				defaultService.setPosition(user.getPosition());
-				defaultService.setAvatar(user.getAvatar());
+				defaultCS = new BoUser();
+				defaultCS.setUserId(user.getUserId());
+				defaultCS.setUserNo(user.getUserNo());
+				defaultCS.setUserName(user.getUserName());
+				defaultCS.setPosition(user.getPosition());
+				defaultCS.setAvatar(user.getAvatar());
 			}
 		}
     	if(isUpdate){
@@ -124,7 +124,7 @@ public class ChatGroupService{
         			}
         		}
     			group.setDefaultAnalyst(analyst);
-        		group.setDefaultService(defaultService);
+        		group.setDefaultCS(defaultCS);
     			setGroupRule(group);
     		}
     		roleDao.updateRoleChatGroup(group);
@@ -135,7 +135,7 @@ public class ChatGroupService{
     		}
     		setGroupRule(chatGroupParam);
     		chatGroupParam.setId(chatGroupParam.getGroupType()+"_"+chatGroupDao.getIncSeq(IdSeq.ChatGroup));
-			chatGroupParam.setDefaultService(defaultService);
+			chatGroupParam.setDefaultCS(defaultCS);
     		chatGroupDao.add(chatGroupParam);	
     	}
     	return result.setCode(ResultCode.OK);

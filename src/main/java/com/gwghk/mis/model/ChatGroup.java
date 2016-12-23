@@ -93,7 +93,7 @@ public class ChatGroup extends BaseModel{
 	private BoUser defaultAnalyst;
 
 	/** 默认客服（用户信息） */
-	private BoUser defaultService;
+	private BoUser defaultCS;
 	
 	/**
 	 * 客户组（对应的客户组,多个逗号分隔）
@@ -333,11 +333,11 @@ public class ChatGroup extends BaseModel{
         this.label = label;
     }
 
-	public BoUser getDefaultService() {
-		return defaultService;
+	public BoUser getDefaultCS() {
+		return defaultCS;
 	}
 
-	public void setDefaultService(BoUser defaultService) {
-		this.defaultService = defaultService;
+	public void setDefaultCS(BoUser defaultCS) {
+		this.defaultCS = defaultCS;
 	}
 }

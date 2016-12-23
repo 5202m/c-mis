@@ -194,10 +194,10 @@
 	      	<td ><input type="text" name="point" id="point" value="${chatGroup.point}" /></td>
 			  <th>默认客服</th>
 			  <td>
-				  <select name="defaultService.userId" id="groupSubmit_serviceList" style="width:170px;">
+				  <select name="defaultCS.userId" id="groupSubmit_serviceList" style="width:170px;">
 					  <option value="">--请选择--</option>
 					  <c:forEach var="row" items="${serviceList}">
-						  <option value="${row.userId}" <c:if test="${chatGroup.defaultService != null && row.userId == chatGroup.defaultService.userId}">selected="selected"</c:if>>${row.userName}【${row.role.roleName}】</option>
+						  <option value="${row.userId}" <c:if test="${chatGroup.defaultCS != null && row.userId == chatGroup.defaultCS.userId}">selected="selected"</c:if>>${row.userName}【${row.role.roleName}】</option>
 					  </c:forEach>
 				  </select>
 			  </td>
