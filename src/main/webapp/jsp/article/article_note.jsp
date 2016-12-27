@@ -97,8 +97,8 @@
 				<th>品种</th>
 				<th>方向</th>
 				<th>建仓价</th>
-				<th>止损</th>
 				<th>止盈</th>
+				<th>止损</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -158,10 +158,10 @@
 					<input type="text" name="open" />
 				</td>
 				<td>
-					<input type="text" name="loss" />
+					<input type="text" name="profit" />
 				</td>
 				<td>
-					<input type="text" name="profit" />
+					<input type="text" name="loss" />
 				</td>
 				<td rowspan="2" style="vertical-align: middle;"><a href="javascript:void(0)" class="ope-add"></a><a href="javascript:void(0)" class="ope-remove" style="display:none;"></a></td>
 			</tr>
