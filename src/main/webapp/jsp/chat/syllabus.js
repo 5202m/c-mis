@@ -33,8 +33,8 @@ var Syllabus = {
         		{name:'yy:92628431/2559592756',url:'http://yy.com/s/92628431/2559592756/yyscene.swf'}
     	    ],
     	    smcbLink:[
-  	    	    {name:'烧麦财播:200',url:'http://113.28.105.97:9081/webui_gts2_fx_chat-sit/client.action?roomId=200'},
-  	    	    {name:'烧麦财播:201',url:'http://113.28.105.97:9081/webui_gts2_fx_chat-sit/client.action?roomId=201'}
+  	    	    {name:'烧麦财播:200',url:(window.location.href.indexOf('gwfx')<0?'http://113.28.105.97:9081/webui_gts2_fx_chat-sit':'https://ui.gwfx.com')+'/client.action?roomId=200'},
+  	    	    {name:'烧麦财播:201',url:(window.location.href.indexOf('gwfx')<0?'http://113.28.105.97:9081/webui_gts2_fx_chat-sit':'https://ui.gwfx.com')+'/client.action?roomId=201'}
           	]
     	},
     	hxstudio:{
