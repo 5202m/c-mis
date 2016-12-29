@@ -31,7 +31,11 @@ var Syllabus = {
     	    yyLink:[
     	    	{name:'yy:92628431/2537339360',url:'http://yy.com/s/92628431/2537339360/yyscene.swf'},
         		{name:'yy:92628431/2559592756',url:'http://yy.com/s/92628431/2559592756/yyscene.swf'}
-    	    ]
+    	    ],
+    	    smcbLink:[
+  	    	    {name:'烧麦财播:20',url:'http://113.28.105.97:9081/webui_gts2_fx_chat-sit/client.action?roomId=20'},
+  	    	    {name:'烧麦财播:21',url:'http://113.28.105.97:9081/webui_gts2_fx_chat-sit/client.action?roomId=21'}
+          	]
     	},
     	hxstudio:{
     		obsCode:["10","11","12","13","14","15"],
@@ -77,10 +81,19 @@ var Syllabus = {
 				}
 			}
 		}
-		if(type==1){
-			lst=devLinks.yyLink.concat(lst);
+		var tmpLinkArr=null;
+		if(devLinks.smcbLink && devLinks.smcbLink.length>0){
+			tmpLinkArr=devLinks.smcbLink;
 		}
-		return lst;
+		if(type==1){
+			if(!tmpLinkArr){
+				tmpLinkArr=[];
+			}
+			if(devLinks.yyLink && devLinks.yyLink.length>0){
+				tmpLinkArr=tmpLinkArr.concat(devLinks.yyLink);
+			}
+		}
+		return tmpLinkArr.concat(lst);
 	},
 	/**
 	 * 功能：dataGrid初始化
