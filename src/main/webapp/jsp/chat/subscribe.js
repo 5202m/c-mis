@@ -74,7 +74,7 @@ var chatSubscribe = {
 					queryParams[$(this).attr("name")] = $(this).val();
 				});
 				var analystArr = $("#analystsSelectId").combo("getValues");
-				queryParams["analyst"] = analystArr && analystArr.length > 0 ? analystArr.join(",") : ""
+				queryParams["analyst"] = analystArr && analystArr.length > 0 ? analystArr.join(",") : "";
 
 				$('#'+chatSubscribe.gridId).datagrid({
 					url : basePath+'/chatSubscribeController/datagrid.do',

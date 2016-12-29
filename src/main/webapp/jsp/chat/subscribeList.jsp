@@ -10,7 +10,7 @@
       <table class="tableForm_L" style="margin-top:3px" width="99%" heigth="auto"  border="0" cellpadding="0" cellspacing="1">
         <tr>
         	<th>手机号码</th>
-        	<td><input type="text" name="userName" id="userName" /></td>
+        	<td><input type="text" name="userId"/></td>
         	<th>订阅服务类型</th>
         	<td>
 	        	<select id="type" name="type">
