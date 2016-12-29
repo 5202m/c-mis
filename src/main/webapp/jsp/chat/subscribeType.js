@@ -1,8 +1,6 @@
 var chatSubscribeType = {
 		gridId : 'subscribeType_datagrid',
-		opType : '',
 		init: function(){
-			this.opType = $("#userOpType").val();
 			this.initGrid();
 			this.setEvent();
 			this.setUserList();
@@ -14,7 +12,7 @@ var chatSubscribeType = {
 				sortName : 'startDate',
 				sort:'desc',
 				singleSelect : false,
-				url : basePath+'/chatSubscribeTypeController/datagrid.do?opType=' + chatSubscribeType.opType,
+				url : basePath+'/chatSubscribeTypeController/datagrid.do',
 				columns : [[
 				            {title : 'id',field : 'id',checkbox : true},
 				            {title : $.i18n.prop("common.operate"),field : 'todo',formatter : function(value, rowData, rowIndex) {		/**操作*/
@@ -86,7 +84,7 @@ var chatSubscribeType = {
 				queryParams['status'] = status;
 				queryParams['name'] = name;
 				$('#'+chatSubscribeType.gridId).datagrid({
-					url : basePath+'/chatSubscribeTypeController/datagrid.do?opType=' + chatSubscribeType.opType,
+					url : basePath+'/chatSubscribeTypeController/datagrid.do',
 					pageNumber : 1
 				});
 			});
@@ -132,7 +130,7 @@ var chatSubscribeType = {
 		 * 功能：增加
 		 */
 		add : function(){
-			var url = formatUrl(basePath + '/chatSubscribeTypeController/add.do?opType=' + chatSubscribeType.opType);
+			var url = formatUrl(basePath + '/chatSubscribeTypeController/add.do');
 			var submitUrl =  formatUrl(basePath + '/chatSubscribeTypeController/create.do');
 			goldOfficeUtils.openEditorDialog({
 				dialogId : "editWindow",
@@ -171,7 +169,7 @@ var chatSubscribeType = {
 		 */
 		edit : function(recordId){
 			$("#subscribeType_datagrid").datagrid('unselectAll');
-			var url = formatUrl(basePath + '/chatSubscribeTypeController/'+recordId+'/edit.do?opType=' + chatSubscribeType.opType);
+			var url = formatUrl(basePath + '/chatSubscribeTypeController/'+recordId+'/edit.do');
 			var submitUrl =  formatUrl(basePath + '/chatSubscribeTypeController/update.do');
 			goldOfficeUtils.openEditorDialog({
 				dialogId : "editWindow",

@@ -40,7 +40,7 @@
           	<!--input type="hidden" name="analyst" id="chatSubscribeSearchAnalystInput">
             <select id="chatSubscribeSearchAnalyst" style="width:280px;"></select>
             <input type="hidden" id="subscribeListImgView"-->
-            <select class="easyui-combotree" name="analysts" id="analystsSelectId" style="width:250px;" data-options="cascadeCheck:false" multiple>
+            <select class="easyui-combotree" id="analystsSelectId" style="width:250px;" data-options="cascadeCheck:false" multiple>
 	        </select>
           </td>
         </tr>

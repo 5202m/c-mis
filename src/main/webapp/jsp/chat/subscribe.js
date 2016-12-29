@@ -1,8 +1,6 @@
 var chatSubscribe = {
 		gridId : 'subscribe_datagrid',
-		opType : '',
 		init: function(){
-			this.opType = $("#userOpType").val();
 			this.initGrid();
 			this.setEvent();
 			this.setUserList();
@@ -14,7 +12,7 @@ var chatSubscribe = {
 				sortName : 'startDate',
 				sort:'desc',
 				singleSelect : false,
-				url : basePath+'/chatSubscribeController/datagrid.do?opType=' + chatSubscribe.opType,
+				url : basePath+'/chatSubscribeController/datagrid.do',
 				columns : [[
 				            {title : 'id',field : 'id',checkbox : true},
 				            {title : $.i18n.prop("common.operate"),field : 'todo',formatter : function(value, rowData, rowIndex) {		/**操作*/
@@ -71,22 +69,15 @@ var chatSubscribe = {
 		setEvent:function(){
 			// 列表查询
 			$("#subscribe_queryForm_search").on("click",function(){
-				var userNo = $("#chatSubscribeSearchAnalystInput").val(); 
-				if(userNo == '请选择'){
-					userNo = '';
-				}
-				var groupType = $("#subscribe_queryForm #subscribe_groupType_select").val();  
-				var status = $('#subscribe_queryForm #subscribe_status_select').val();
 				var queryParams = $('#'+chatSubscribe.gridId).datagrid('options').queryParams;
-				var userId = $('#subscribe_queryForm #userName').val();
-				var type = $('#subscribe_queryForm #type').val();
-				queryParams['analyst'] = userNo;
-				queryParams['groupType'] = groupType;
-				queryParams['status'] = status;
-				queryParams['type'] = type;
-				queryParams['userId'] = userId;
+				$('#subscribe_queryForm select[name],#subscribe_queryForm input[name]').each(function(){
+					queryParams[$(this).attr("name")] = $(this).val();
+				});
+				var analystArr = $("#analystsSelectId").combo("getValues");
+				queryParams["analyst"] = analystArr && analystArr.length > 0 ? analystArr.join(",") : ""
+
 				$('#'+chatSubscribe.gridId).datagrid({
-					url : basePath+'/chatSubscribeController/datagrid.do?opType=' + chatSubscribe.opType,
+					url : basePath+'/chatSubscribeController/datagrid.do',
 					pageNumber : 1
 				});
 			});
@@ -132,7 +123,7 @@ var chatSubscribe = {
 		 */
 		add : function(){
 			
-			var url = formatUrl(basePath + '/chatSubscribeController/add.do?opType=' + chatSubscribe.opType);
+			var url = formatUrl(basePath + '/chatSubscribeController/add.do');
 			var submitUrl =  formatUrl(basePath + '/chatSubscribeController/create.do');
 			goldOfficeUtils.openEditorDialog({
 				dialogId : "editWindow",
@@ -170,7 +161,7 @@ var chatSubscribe = {
 		 */
 		edit : function(recordId){
 			$("#subscribe_datagrid").datagrid('unselectAll');
-			var url = formatUrl(basePath + '/chatSubscribeController/'+recordId+'/edit.do?opType=' + chatSubscribe.opType);
+			var url = formatUrl(basePath + '/chatSubscribeController/'+recordId+'/edit.do');
 			var submitUrl =  formatUrl(basePath + '/chatSubscribeController/update.do');
 			goldOfficeUtils.openEditorDialog({
 				dialogId : "editWindow",

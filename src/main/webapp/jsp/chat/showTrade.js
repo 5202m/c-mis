@@ -5,9 +5,7 @@
  */
 var chatShowTrade = {
 	gridId : 'show_trade_datagrid',
-	opType : '',
 	init : function(){
-		this.opType = $("#userOpType").val();
 		this.initGrid();
 		this.setEvent();
 		this.setUserList();
@@ -22,7 +20,7 @@ var chatShowTrade = {
 			sortName : 'showDate',
 			sort:'desc',
 			singleSelect : false,
-			url : basePath+'/chatShowTradeController/datagrid.do?opType=' + chatShowTrade.opType,
+			url : basePath+'/chatShowTradeController/datagrid.do',
 			columns : [[
 			            {title : 'id',field : 'id',checkbox : true},
 			            {title : $.i18n.prop("common.operate"),field : 'todo',formatter : function(value, rowData, rowIndex) {		/**操作*/
@@ -105,7 +103,7 @@ var chatShowTrade = {
 			queryParams['tradeType'] = tradeType;
 			queryParams['userName'] = userName;
 			$('#'+chatShowTrade.gridId).datagrid({
-				url : basePath+'/chatShowTradeController/datagrid.do?opType=' + chatShowTrade.opType,
+				url : basePath+'/chatShowTradeController/datagrid.do',
 				pageNumber : 1
 			});
 		});
@@ -175,7 +173,7 @@ var chatShowTrade = {
 	 */
 	add : function(){
 		
-		var url = formatUrl(basePath + '/chatShowTradeController/add.do?opType=' + chatShowTrade.opType);
+		var url = formatUrl(basePath + '/chatShowTradeController/add.do');
 		var submitUrl =  formatUrl(basePath + '/chatShowTradeController/create.do');
 		goldOfficeUtils.openEditorDialog({
 			dialogId : "editWindow",
@@ -216,7 +214,7 @@ var chatShowTrade = {
 	 */
 	edit : function(recordId){
 		$("#show_trade_datagrid").datagrid('unselectAll');
-		var url = formatUrl(basePath + '/chatShowTradeController/'+recordId+'/edit.do?opType=' + chatShowTrade.opType);
+		var url = formatUrl(basePath + '/chatShowTradeController/'+recordId+'/edit.do');
 		var submitUrl =  formatUrl(basePath + '/chatShowTradeController/update.do');
 		goldOfficeUtils.openEditorDialog({
 			dialogId : "editWindow",
