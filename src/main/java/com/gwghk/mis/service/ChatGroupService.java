@@ -32,8 +32,6 @@ import com.gwghk.mis.util.BeanUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.StringUtil;
 
-import javax.swing.*;
-
 /**
  * 聊天室组别管理服务类
  * @author Alan.wu
@@ -79,19 +77,6 @@ public class ChatGroupService{
 	public ApiResult saveChatGroup(ChatGroup chatGroupParam, boolean isUpdate, boolean isUpdateDefaultAnalyst) {
 		ApiResult result=new ApiResult();
 		chatGroupParam.setValid(1);
-		//默认客服
-		BoUser defaultCS = null;
-		if(chatGroupParam.getDefaultCS() != null && chatGroupParam.getDefaultCS().getUserId() != null){
-			BoUser user = userService.getUserById(chatGroupParam.getDefaultCS().getUserId());
-			if(user != null){
-				defaultCS = new BoUser();
-				defaultCS.setUserId(user.getUserId());
-				defaultCS.setUserNo(user.getUserNo());
-				defaultCS.setUserName(user.getUserName());
-				defaultCS.setPosition(user.getPosition());
-				defaultCS.setAvatar(user.getAvatar());
-			}
-		}
     	if(isUpdate){
     		if(StringUtils.isBlank(chatGroupParam.getId())){
     			return result.setCode(ResultCode.Error103);
@@ -124,7 +109,6 @@ public class ChatGroupService{
         			}
         		}
     			group.setDefaultAnalyst(analyst);
-        		group.setDefaultCS(defaultCS);
     			setGroupRule(group);
     		}
     		roleDao.updateRoleChatGroup(group);
@@ -135,50 +119,8 @@ public class ChatGroupService{
     		}
     		setGroupRule(chatGroupParam);
     		chatGroupParam.setId(chatGroupParam.getGroupType()+"_"+chatGroupDao.getIncSeq(IdSeq.ChatGroup));
-			chatGroupParam.setDefaultCS(defaultCS);
     		chatGroupDao.add(chatGroupParam);	
     	}
-    	return result.setCode(ResultCode.OK);
-	}
-
-	/**
-	 * 清空用户列表
-	 * @param groupId
-	 * @param isAll
-	 * @return
-	 */
-	public ApiResult clearClient(String groupId, boolean isAll) {
-		ApiResult result=new ApiResult();
-		if(StringUtils.isBlank(groupId)){
-			result.setCode(ResultCode.FAIL);
-			result.setErrorMsg("房间编号为空！");
-			return result;
-		}
-		ChatGroup chatGroup = this.getChatGroupById(groupId);
-		if(chatGroup == null){
-			result.setCode(ResultCode.FAIL);
-			result.setErrorMsg("房间信息不存在！");
-			return result;
-		}
-		if(isAll){
-			chatGroup.setTraninClient(new ArrayList<>());
-		}else{
-			List<TraninClient> traninClients = chatGroup.getTraninClient();
-			TraninClient traninClient = null;
-			Integer authFlag = new Integer(1);
-			if(traninClients == null){
-				return result.setCode(ResultCode.OK);
-			}else{
-				for(int i = traninClients.size() - 1; i >= 0; i--){
-					traninClient = traninClients.get(i);
-					if(traninClient == null || authFlag.equals(traninClient.getIsAuth()) == false){
-						traninClients.remove(i);
-					}
-				}
-			}
-		}
-		chatGroupDao.update(chatGroup);
-
     	return result.setCode(ResultCode.OK);
 	}
 
@@ -236,6 +178,7 @@ public class ChatGroupService{
 		criter.and("valid").is(1);
 		ChatGroup model=dCriteria.getSearchModel();
 		if(model!=null){
+			criter.and("systemCategory").is(model.getSystemCategory());
 			if(StringUtils.isNotBlank(model.getGroupType())){
 				criter.and("groupType").is(model.getGroupType());
 			}
@@ -261,8 +204,8 @@ public class ChatGroupService{
 	/**
 	 * 提供没有关联角色的聊天室组列表
 	 */
-	public List<ChatGroup> getUnRelationRoleChatGroup(List<ChatGroup> relationRoleChatGroupList){
-		List<ChatGroup> allChatGroupList = chatGroupDao.findGroupList();
+	public List<ChatGroup> getUnRelationRoleChatGroup(String systemCategory,List<ChatGroup> relationRoleChatGroupList){
+		List<ChatGroup> allChatGroupList = chatGroupDao.findGroupList(systemCategory);
 		List<String> allChatGroupIdList = new ArrayList<String>();
 		if(allChatGroupList != null && allChatGroupList.size() > 0){
 			for(ChatGroup ac : allChatGroupList){
@@ -289,16 +232,16 @@ public class ChatGroupService{
 	/**
 	 * 功能： 根据groupType --> 查询组列表
 	 */
-	public List<ChatGroup> findByGroupType(String groupType){
-		 return chatGroupDao.findByGroupType(groupType);
+	public List<ChatGroup> findByGroupType(String systemCategory,String groupType){
+		 return chatGroupDao.findByGroupType(systemCategory,groupType);
 	}
 	
 	/**
 	 * 提取列表数据
 	 * @return
 	 */
-	public List<ChatGroup> getChatGroupList(String...selectField) {
-		Query query = Query.query(Criteria.where("valid").is(1).and("status").in(1, 2));
+	public List<ChatGroup> getChatGroupList(String systemCategory,String...selectField) {
+		Query query = Query.query(Criteria.where("valid").is(1).and("status").in(1, 2).and("systemCategory").is(systemCategory));
 		query.with(new Sort(new Order(Direction.ASC, "groupType"), new Order(Direction.ASC, "level")));
 		if(selectField!=null){
 			return chatGroupDao.findListInclude(ChatGroup.class, query,selectField);
@@ -309,8 +252,8 @@ public class ChatGroupService{
 	 * 提取列表数据
 	 * @return
 	 */
-	public List<ChatGroup> getChatGroupByTypeList(String groupType,String...selectField) {
-		Criteria cri=Criteria.where("valid").is(1).and("status").in(1, 2);
+	public List<ChatGroup> getChatGroupByTypeList(String systemCategory,String groupType,String...selectField) {
+		Criteria cri=Criteria.where("valid").is(1).and("status").in(1, 2).and("systemCategory").is(systemCategory);
 		if(StringUtils.isNotBlank(groupType)){
 			cri.and("groupType").is(groupType);
 		}
@@ -325,8 +268,8 @@ public class ChatGroupService{
 	 * 提取列表数据
 	 * @return
 	 */
-	public List<ChatGroup> getChatGroupAllList(String...selectField) {
-		Query query = Query.query(Criteria.where("valid").is(1));
+	public List<ChatGroup> getChatGroupAllList(String systemCategory,String...selectField) {
+		Query query = Query.query(Criteria.where("valid").is(1).and("systemCategory").is(systemCategory));
 		query.with(new Sort(new Order(Direction.ASC, "groupType"), new Order(Direction.ASC, "level")));
 		if(selectField!=null){
 			return chatGroupDao.findListInclude(ChatGroup.class, query,selectField);
@@ -340,8 +283,8 @@ public class ChatGroupService{
 	 * @param selectField
 	 * @return
 	 */
-	public List<ChatGroup> getChatGroupListByAuthUser(String userId, String...selectField){
-		Criteria criteria = Criteria.where("valid").is(1).and("status").in(1, 2);
+	public List<ChatGroup> getChatGroupListByAuthUser(String systemCategory,String userId, String...selectField){
+		Criteria criteria = Criteria.where("valid").is(1).and("status").in(1, 2).and("systemCategory").is(systemCategory);
 		if(StringUtils.isNotBlank(userId)){
 			criteria.and("authUsers").is(userId);
 		}
@@ -370,14 +313,14 @@ public class ChatGroupService{
 	 * @param mobiles
 	 * @return
 	 */
-	public ApiResult importClient(String groupId, String mobiles) {
+	public ApiResult importClient(String systemCategory,String groupId, String mobiles) {
 		ChatGroup chatGroup = this.getChatGroupById(groupId);
 		String[] mobilephones = mobiles.split(",");
 
 		ApiResult result=new ApiResult();
 		if(chatGroup != null && mobilephones != null && mobilephones.length > 0){
 			//查询导入的手机号对应对直播间注册信息
-			List<Member> members = memberService.getMemberListByMobiles(mobilephones, chatGroup.getGroupType());
+			List<Member> members = memberService.getMemberListByMobiles(systemCategory,mobilephones, chatGroup.getGroupType());
 			Set<String> importUserIds = new HashSet<String>();
 			Set<String> importMobiles = new HashSet<String>();
 			List<TraninClient> newTcs = new ArrayList<TraninClient>();

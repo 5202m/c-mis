@@ -130,6 +130,7 @@ public class ChatPushInfoService{
 		criter.and("valid").is(1);
 		ChatPushInfo model=dCriteria.getSearchModel();
 		if(model!=null){
+			criter.and("systemCategory").is(model.getSystemCategory());
 			if(StringUtils.isNotBlank(model.getGroupType())){
 				criter.and("groupType").is(model.getGroupType());
 			}

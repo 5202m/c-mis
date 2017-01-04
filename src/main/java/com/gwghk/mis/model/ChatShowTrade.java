@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date 2016年06月20日
  */
 @Document
-public class ChatShowTrade extends BaseModel
+public class ChatShowTrade extends BaseModelExt
 {
 	@Id
 	private String id;//ObjectId

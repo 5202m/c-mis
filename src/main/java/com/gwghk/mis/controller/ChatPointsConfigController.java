@@ -30,7 +30,6 @@ import com.gwghk.mis.model.ChatPointsConfig;
 import com.gwghk.mis.model.SmsInfo;
 import com.gwghk.mis.service.ChatGroupService;
 import com.gwghk.mis.service.ChatPointsConfigService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
@@ -59,10 +58,10 @@ public class ChatPointsConfigController extends BaseController{
 	@RequestMapping(value = "/chatPointsConfig/index", method = RequestMethod.GET)
 	public String index(HttpServletRequest request, ModelMap map) {
 		DictConstant dict=DictConstant.getInstance();
-		map.put("type", ResourceUtil.getSubDictListByParentCode(dict.DICT_POINTS_TYPE));
-		map.put("item", ResourceUtil.getSubDictListByParentCode(dict.DICT_POINTS_ITEM));
-		map.put("status", ResourceUtil.getSubDictListByParentCode(dict.DICT_USE_STATUS));
-		map.put("groupList", ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE));
+		map.put("type", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_POINTS_TYPE));
+		map.put("item", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_POINTS_ITEM));
+		map.put("status", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_USE_STATUS));
+		map.put("groupList", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE));
 		logger.debug("-->start into ChatPointsConfigController.index() and url is /ChatPointsConfigController/index.do");
 		return "points/chatPointsConfigList";
 	}
@@ -80,6 +79,7 @@ public class ChatPointsConfigController extends BaseController{
 	@RequestMapping(value = "/chatPointsConfig/datagrid", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> datagrid(HttpServletRequest request, DataGrid dataGrid, ChatPointsConfig chatPointsConfig) {
+		setSystemFlag(chatPointsConfig);
 		Page<ChatPointsConfig> page = chatPointsConfigService.getChatPointsConfigs(this.createDetachedCriteria(dataGrid, chatPointsConfig));
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("total", null == page ? 0 : page.getTotalSize());
@@ -149,13 +149,13 @@ public class ChatPointsConfigController extends BaseController{
     	if(result.isOk()){
 	    	j.setSuccess(true);
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 保存积分配置成功：[" + chatPointsConfig.getType() + "-" + chatPointsConfig.getItem() + "]!";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<save()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 保存积分配置失败：[" + chatPointsConfig.getType() + "-" + chatPointsConfig.getItem() + "]!";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<save()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;
@@ -177,13 +177,13 @@ public class ChatPointsConfigController extends BaseController{
 		if(result.isOk()){
 			j.setSuccess(true);
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除积分配置成功：" + pointsCfgId + "!";
-			logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
 			logger.info("<<delete()|"+message);
 		}else{
 			j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除积分配置失败：" + pointsCfgId + "!";
-			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
 			logger.error("<<delete()|"+message+",ErrorMsg:"+result.toString());
 		}
 		return j;

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -126,9 +127,18 @@ public class ResourceUtil {
 	 * 功能：获取当前登录用户对象
 	 */
 	public static BoUser getSessionUser() {
-		Object userNoSession = ContextHolderUtils.getSession().getAttribute(ContextHolderUtils.getSessionId());
+		HttpSession session=ContextHolderUtils.getSession();
+		Object userNoSession = session.getAttribute(ContextHolderUtils.getSessionId());
 		UserService userService = (UserService)SpringContextUtil.getBean("userService");
-		return userService.getUserByNo(userNoSession != null ? userNoSession.toString() : null);
+		if(userNoSession==null){
+			return new BoUser();
+		}
+		Object superFlag = session.getAttribute(WebConstant.SESSION_SUPER_FLAG);
+		boolean isSuper=false;
+		if(superFlag!=null){
+			isSuper=(boolean)superFlag;
+		}
+		return isSuper?BeanUtils.clone(userService.getBaseUserByNo(userNoSession.toString(), isSuper),BoUser.class):userService.getUserByNo(userNoSession.toString());
 	}
 	
 	/**
@@ -176,13 +186,13 @@ public class ResourceUtil {
 	 * @param code   数据字典code
 	 * @return  数据字典
 	 */
-	public static BoDict getDictByCode(String code,String parentCode){
+	public static BoDict getDictByCode(String systemCategory,String code,String parentCode){
 		List<BoDict> dictParamList = getDictList();
 		if(dictParamList != null){
 			List<BoDict> childrenList =null;
 			for(BoDict dict : dictParamList){
 				if(parentCode.equals(dict.getCode())&&(childrenList=dict.getChildren())!=null){
-					return childrenList.stream().filter(e->e.getCode().equals(code)).findFirst().get();
+					return childrenList.stream().filter(e->e.getCode().equals(code)&&e.getSystemCategory().equals(systemCategory)).findFirst().get();
 				}
 			}
 		}
@@ -194,11 +204,11 @@ public class ResourceUtil {
 	 * @param code   数据字典code
 	 * @return  字典值
 	 */
-	public static String getDictValueByCode(String code,String parentCode){
+	public static String getDictValueByCode(String systemCategory,String code,String parentCode){
 		if(null == code || null == parentCode){
 			return "";
 		}
-		BoDict BoDict = getDictByCode(code,parentCode);
+		BoDict BoDict = getDictByCode(systemCategory,code,parentCode);
 		if(null == BoDict){
 			return "";
 		}
@@ -212,12 +222,12 @@ public class ResourceUtil {
 	 * @param parentCode 父数据code的数组
 	 * @return
 	 */
-	public static List<BoDict> getSubDictListByParentCode(String parentCode){
+	public static List<BoDict> getSubDictListByParentCode(String systemCategory,String parentCode){
 		List<BoDict> dictList = getDictList();
 		List<BoDict> subDictList=null;
 		for(BoDict row:dictList){
 			if(row.getCode().equals(parentCode)){
-				subDictList=row.getChildren();
+				subDictList=row.getChildren().stream().filter(e->StringUtil.containKeyword(e.getSystemCategory(),systemCategory,false)).collect(Collectors.toList());
 				return subDictList;
 			}
 		}
@@ -229,17 +239,17 @@ public class ResourceUtil {
 	 * @param parentCodeArr 父数据code的数组
 	 * @return
 	 */
-	public static Map<String, List<BoDict>> getDictListByLocale(String ...parentCodeArr){
+	public static Map<String, List<BoDict>> getDictListByLocale(String systemCategory,String ...parentCodeArr){
 		Map<String, List<BoDict>> dictMap=new HashMap<String, List<BoDict>>();
 		List<BoDict> dictList = getDictList();
 		String locale = getSessionLocale();
 		List<BoDict> subDictList=null;
-		String str=","+StringUtils.join(parentCodeArr, ",")+",";
+		String str=StringUtils.join(parentCodeArr, ",");
 		List<BoDict> newDictList=null;
 		if (dictList != null) {
-			newDictList=dictList.stream().filter(e->str.contains(",".concat(e.getCode()).concat(","))).collect(Collectors.toList());
+			newDictList=dictList.stream().filter(e->StringUtil.containKeyword(str,e.getCode(),false)).collect(Collectors.toList());
 			for(BoDict row:newDictList){
-				subDictList=row.getChildren();
+				subDictList=row.getChildren().stream().filter(e->StringUtil.containKeyword(e.getSystemCategory(),systemCategory,false)).collect(Collectors.toList());
 				if(subDictList!=null){
 					subDictList.forEach(e ->getDictName(e,locale));
 				}

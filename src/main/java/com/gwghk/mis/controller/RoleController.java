@@ -3,6 +3,7 @@ package com.gwghk.mis.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,11 +28,11 @@ import com.gwghk.mis.common.model.DetachedCriteria;
 import com.gwghk.mis.common.model.Page;
 import com.gwghk.mis.constant.DictConstant;
 import com.gwghk.mis.constant.WebConstant;
+import com.gwghk.mis.model.BoDict;
 import com.gwghk.mis.model.BoRole;
 import com.gwghk.mis.model.BoUser;
 import com.gwghk.mis.service.RoleService;
 import com.gwghk.mis.service.UserService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
@@ -86,6 +87,8 @@ public class RoleController extends BaseController{
     @RequestMapping(value="/roleController/add", method = RequestMethod.GET)  
     @ActionVerification(key="add")
     public String add(ModelMap map) throws Exception {
+    	DictConstant dict=DictConstant.getInstance();
+		map.put("roleTypeList", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_ROLE_TYPE));
     	return "system/role/roleAdd";
     }
     
@@ -118,17 +121,28 @@ public class RoleController extends BaseController{
     	role.setCreateUser(userParam.getUserNo());
     	role.setCreateIp(IPUtil.getClientIP(request));
     	AjaxJson j = new AjaxJson();
+    	String roleType=request.getParameter("roleType");
+    	if(StringUtils.isBlank(roleType)){
+    		j.setSuccess(false);
+    		j.setMsg("请选择角色类别！");
+    		return j;
+    	}
+    	List<BoDict> dict=ResourceUtil.getSubDictListByParentCode(getSystemFlag(),DictConstant.getInstance().DICT_ROLE_TYPE);
+    	if(dict==null||dict.stream().noneMatch(e->e.getCode().equals(roleType))){
+    		j.setSuccess(false);
+    		j.setMsg("角色类别有误，请联系系统管理员！");
+    		return j;
+    	}
+    	role.setRoleNo(roleType+"_"+role.getRoleNo());
     	ApiResult result =  roleService.saveRole(role, false);
     	if(result != null && result.isOk()){
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功新增角色："+role.getRoleName();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT
- 				   			 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<method:create()|"+message);
     		j.setSuccess(true);
     	}else{
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增角色："+role.getRoleName()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
- 				   			 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<method:create()|"+message+",ErrorMsg:"+result.toString());
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
@@ -147,14 +161,12 @@ public class RoleController extends BaseController{
     	ApiResult result = roleService.saveRole(role, true);
     	if(result.isOk()){
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改角色："+role.getRoleName();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
- 				   			 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
     		logger.info("<<method:update()|"+message);
     		j.setSuccess(true);
     	}else{
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改角色："+role.getRoleName()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE);
     		logger.error("<<method:update()|"+message+",ErrorMsg:"+result.toString());
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
@@ -175,14 +187,12 @@ public class RoleController extends BaseController{
     	ApiResult result = roleService.deleteRole(ids);
     	if(result.isOk()){
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量删除角色成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:batchDel()|"+message);
     		j.setSuccess(true);
     	}else{
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量删除角色失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
@@ -197,69 +207,23 @@ public class RoleController extends BaseController{
     @ResponseBody
     @ActionVerification(key="delete")
     public AjaxJson oneDel(HttpServletRequest request){
-    	BoUser userParam = ResourceUtil.getSessionUser();
     	String delId = request.getParameter("id");
     	AjaxJson j = new AjaxJson();
     	ApiResult result = roleService.deleteRole(new String[]{delId});
     	if(result.isOk()){
          	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除角色成功";
-         	logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-         					 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+         	addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:oneDel()|"+message);
     		j.setSuccess(true);
     	}else{
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除角色失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
- 		 		   			 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:oneDel()|"+message+",ErrorMsg:"+result.toString());
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     	}
   		return j;
     }
-    
-    /**
-  	 * 功能：角色管理-分配聊天室
-  	 */
-    @RequestMapping(value="/roleController/assignChatGroup", method = RequestMethod.GET)  
-    @ActionVerification(key="assignChatGroup")
-    public String assignChatGroup(HttpServletRequest request,ModelMap map) throws Exception {
-    	DictConstant dict=DictConstant.getInstance();
-    	String roleId = request.getParameter("roleId");
-      	Map<String,Object> dataMap = roleService.getRoleChatGroupRelation(roleId);
-      	map.addAttribute("relationChatGroupList",dataMap.get("relationChatGroupList"));
-      	map.addAttribute("unRelationChatGroupList",dataMap.get("unRelationChatGroupList"));
-		map.put("groupTypeList", ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE));
-      	map.addAttribute("roleId",roleId);
-      	return "system/role/selectChatGroupList";
-    } 
-    
-    /**
-   	* 功能：角色管理-保存更新分配聊天室
-   	*/
-    @RequestMapping(value="/roleController/updateAssignChatGroup",method=RequestMethod.POST)
-   	@ResponseBody
-   	@ActionVerification(key="assignChatGroup")
-    public AjaxJson updateAssignChatGroup(HttpServletRequest request){
-    	String roleId = request.getParameter("roleId");
-    	String selectGroupIds = request.getParameter("groupIds");
-    	AjaxJson j = new AjaxJson();
-    	String[] selectGroupIdArr = null;
-    	if(StringUtils.isNotBlank(selectGroupIds)){
-    		selectGroupIdArr = selectGroupIds.split(",");
-    	}
-    	ApiResult result = roleService.saveRoleChatGroup(selectGroupIdArr, roleId);
-    	if(result.isOk()){
-    		logger.info("<<method:updateAssignChatGroup()|update assign chatGroup success!");
-    		j.setSuccess(true);
-    	}else{
-    		logger.error("<<method:updateAssignChatGroup()|update assign chatGroup fail,ErrorMsg:"+result.toString());
-    		j.setSuccess(false);
-    		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
-    	}
-   		return j;
-     }
-    
     
     /**
 	 * 功能：角色管理-分配人员
@@ -287,7 +251,7 @@ public class RoleController extends BaseController{
     	user.setUserNoOrName(userNoOrName);
     	DetachedCriteria<BoUser> dCriteria = new DetachedCriteria<BoUser>();
     	dCriteria.setSearchModel(user);
-    	userMap.put("userList", userService.getUserList(dCriteria));
+    	userMap.put("userList", userService.getUserList(getSystemFlag(),dCriteria));
     	AjaxJson j = new AjaxJson();
     	j.setSuccess(true);
     	j.setAttributes(userMap);

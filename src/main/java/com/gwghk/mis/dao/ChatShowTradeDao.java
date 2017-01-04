@@ -66,7 +66,7 @@ public class ChatShowTradeDao extends MongoDBBaseDao{
 	 * @return
 	 */
 	public boolean updateTradeByBoUser(BoUser boUser){
-	    WriteResult wr=this.mongoTemplate.updateMulti(new Query(Criteria.where("boUser.userNo").is(boUser.getUserNo())), new Update()
+	    WriteResult wr=this.mongoTemplate.updateMulti(new Query(Criteria.where("boUser.userNo").is(boUser.getUserNo()).and("systemCategory").is(boUser.getSystemCategory())), new Update()
 	    		.set("boUser.avatar", boUser.getAvatar())
 	    		.set("boUser.userNo", boUser.getUserNo())
 	    		.set("boUser.userName", boUser.getUserName())

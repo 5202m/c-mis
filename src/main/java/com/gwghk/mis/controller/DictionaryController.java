@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONArray;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ import com.gwghk.mis.model.BoDict;
 import com.gwghk.mis.model.TreeVo;
 import com.gwghk.mis.service.DictService;
 import com.gwghk.mis.util.BeanUtils;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceUtil;
@@ -111,7 +111,9 @@ public class DictionaryController extends BaseController{
 					typeDic.setNameCN(type.getNameCN());
 					typeDic.setNameTW(type.getNameTW());
 					typeDic.setNameEN(type.getNameEN());
+					typeDic.setFlag(type.getSystemCategory());
 					typeDic.setState("colse");
+					typeDic.setValue(type.getValue());
 					typeDic.setType("2");
 					typeDic.setSort(type.getSort());
 					typeDic.setStatus(type.getStatus());
@@ -146,6 +148,10 @@ public class DictionaryController extends BaseController{
         BeanUtils.copyExceptNull(dict, dictionaryJsonParam);
         dict.setCreateUser(userParam.getUserNo());
         dict.setCreateIp(IPUtil.getClientIP(request));
+        String[] categoryArr=request.getParameterValues("systemCategoryStr");
+        if(categoryArr!=null && categoryArr.length>0){
+        	dict.setSystemCategory(StringUtils.join(categoryArr, ","));
+        }
         AjaxJson j = new AjaxJson();
         ApiResult result = "1".equals(dictionaryJsonParam.getType())?dictService.saveParentDict(dict, false)
         		:dictService.saveChildrenDict(dictionaryJsonParam.getParentCode(),dict, false);
@@ -153,11 +159,11 @@ public class DictionaryController extends BaseController{
 	    	j.setSuccess(true);
 	    	j.setObj(result.getReturnObj()[0]);
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功新增数据字典："+dict.getNameCN();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<create()|"+message);
     	}else{
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增数据字典："+dict.getNameCN()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<create()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;
@@ -186,6 +192,7 @@ public class DictionaryController extends BaseController{
     	dictionaryJsonParam.setId(dictParam.getId());
     	dictionaryJsonParam.setType(request.getParameter("type"));
     	map.addAttribute("dictionaryJsonParam",dictionaryJsonParam);
+    	map.addAttribute("systemCategory",dictParam.getSystemCategory());
 		return "system/dictionary/dictionaryEdit";
     }
     
@@ -198,6 +205,10 @@ public class DictionaryController extends BaseController{
     	dictParam.setUpdateUser(userParam.getUserNo());
     	dictParam.setUpdateIp(IPUtil.getClientIP(request));
     	String type=request.getParameter("type");
+    	 String[] categoryArr=request.getParameterValues("systemCategoryStr");
+         if(categoryArr!=null && categoryArr.length>0){
+        	 dictParam.setSystemCategory(StringUtils.join(categoryArr, ","));
+         }
     	AjaxJson j = new AjaxJson();
         ApiResult result = "1".equals(type)?dictService.saveParentDict(dictParam, true)
            		:dictService.saveChildrenDict(request.getParameter("parentCode"),dictParam, true);
@@ -205,11 +216,11 @@ public class DictionaryController extends BaseController{
 	    	j.setObj(result.getReturnObj()[0]);
 	    	j.setSuccess(true);
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改数据字典："+dictParam.getNameCN();
-	    	logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+	    	addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
     		logger.info("<<method:update()|"+message);
     	}else{
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改数据字典："+dictParam.getNameCN()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<method:update()|"+message+",ErrorMsg:"+result.toString());
     	}
    		return j;
@@ -229,12 +240,12 @@ public class DictionaryController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除数据字典成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:oneDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除数据字典失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:oneDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;

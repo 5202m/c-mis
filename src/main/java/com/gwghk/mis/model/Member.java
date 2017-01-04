@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date   2015年3月16日
  */
 @Document
-public class Member extends BaseModel{
+public class Member extends BaseModelExt{
 	
 	/**
 	 * 会员Id

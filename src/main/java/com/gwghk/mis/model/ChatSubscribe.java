@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
  * 2016.08.25
  *
  */
-public class ChatSubscribe extends BaseModel {
+public class ChatSubscribe extends BaseModelExt {
 
 	/**
 	 * ID

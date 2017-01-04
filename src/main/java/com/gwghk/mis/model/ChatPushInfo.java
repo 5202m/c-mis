@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date   2015年7月10日
  */
 @Document
-public class ChatPushInfo extends BaseModel {
+public class ChatPushInfo extends BaseModelExt {
 	/**
 	 * 信息id
 	 */

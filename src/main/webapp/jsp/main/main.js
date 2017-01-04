@@ -9,7 +9,7 @@ var main={
 		var day = nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate.getDate();
 		$('#yxui_main_today').html(year + '-' + month + '-' + day);
 		$('#yxui_main_fullyear').html(year);
-		var westUrl = basePath+'/menuController/getMenuRoleTree.do';
+		var westUrl = basePath+'/menuController/getMenuRoleTree.do?systemCategory='+$('#yxui_main_sysfag_select').val();
 		var $west = $('#yxui_main_accordion');
 		var $center = $('#yxui_main_tabs');
 		var $centerMenu = $('#yxui_main_tabs_menu');
@@ -27,11 +27,6 @@ var main={
 								}).data('tabTitle', title);
 					},
 					onClose:function(title){
-						if(title=="聊天室"){
-							if(adminChat!=null && adminChat.intervalId!=null){
-								 clearInterval(adminChat.intervalId);
-							}
-						}
 					}
 				});
 		/*
@@ -110,6 +105,16 @@ var main={
 		 * 树单击事件
 		 */
 		westTreeClick = function(node) {
+			var code=node.attributes.code;
+			if(isBlank($('#yxui_main_sysfag_select').val())){
+				if(code!='system_category' && code!='dict_manage' && code!='menu_adjust'){
+					 $.messager.alert($.i18n.prop("common.operate.tips"),"请切换到有效的系统类别再操作！",'warning');
+					 return;
+				}
+			}
+			if(code=='analyst_manage'){
+				node.attributes.url='analystController/index.do';
+			}
 			// 先判断session是否过期,如果过期,则跳转到登录页面
 			$.ajax({
 				url : basePath+'/sessionValid.do',
@@ -168,6 +173,7 @@ var main={
 						}else{
 							url += "&menuId=" + node.id;
 						}
+						url += "&systemCategory="+$('#yxui_main_sysfag_select').val();
 						$center.tabs('add', {
 							title : node.text,
 							id:node.id,

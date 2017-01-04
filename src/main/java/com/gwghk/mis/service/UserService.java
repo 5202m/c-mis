@@ -21,6 +21,7 @@ import com.gwghk.mis.constant.WebConstant;
 import com.gwghk.mis.dao.RoleDao;
 import com.gwghk.mis.dao.UserDao;
 import com.gwghk.mis.enums.ResultCode;
+import com.gwghk.mis.model.BaseUser;
 import com.gwghk.mis.model.BoRole;
 import com.gwghk.mis.model.BoUser;
 import com.gwghk.mis.util.BeanUtils;
@@ -45,28 +46,28 @@ public class UserService{
 	 * 功能：登录验证
 	 */
 	@SystemServiceLog(description = "登录验证")
-	public ApiResult login(BoUser userParam){
+	public ApiResult login(BaseUser userParam,boolean isSuper){
 		ApiResult result = new ApiResult();
 		Criteria criatira=Criteria.where("status").is(0);
 		criatira.and("valid").is(1);
 		criatira.and("userNo").is(userParam.getUserNo());
 		criatira.and("password").is(MD5.getMd5(WebConstant.MD5_KEY+userParam.getPassword()));
-		List<BoUser> userList = userDao.getUserList(new Query(criatira));
-		if(userList == null || userList.size() == 0){      //先是否通过用户名和密码的验证
+		BaseUser bu = userDao.getBaseUserRow(new Query(criatira),isSuper);
+		if(bu == null){      //先是否通过用户名和密码的验证
 			result.setMsg(ResultCode.Error1006);
 		}else{
-			BoUser bu = userList.get(0);
 			//更新LoginDate、LoginIp、LoginTimes等字段
 			bu.setLoginDate(new Date());
 			bu.setLoginIp(userParam.getLoginIp());
 			bu.setLoginTimes(bu.getLoginTimes() == null ? 1 : (bu.getLoginTimes()+1));
 			bu.setUpdateIp(userParam.getUpdateIp());
 			bu.setUpdateUser(userParam.getUpdateUser());
-			userDao.update(bu);
+			userDao.modifyLoginInfo(bu,isSuper);
 			result.setReturnObj(new Object[]{bu});
 		}
 		return result;
 	}
+
 	
 	/**
 	 * 功能：分页查询用户数据
@@ -92,6 +93,9 @@ public class UserService{
 					criteria.and("role.roleId").in((Object[])roleIds);
 				}
 			}
+			if(StringUtils.isNotBlank(boUser.getSystemCategory())){
+				criteria.and("systemCategory").is(boUser.getSystemCategory());
+			}
 		}
 		query.addCriteria(criteria);
 		return userDao.getUserPage(query,dCriteria);
@@ -100,9 +104,9 @@ public class UserService{
 	/**
 	 * 功能：分页查询用户数据
 	 */
-	public List<BoUser> getUserList(DetachedCriteria<BoUser> dCriteria){
+	public List<BoUser> getUserList(String systemCategory,DetachedCriteria<BoUser> dCriteria){
 		Query query=new Query();
-		Criteria criteria = Criteria.where("valid").is(1).and("status").is(0);
+		Criteria criteria = Criteria.where("valid").is(1).and("status").is(0).and("systemCategory").is(systemCategory);
 		BoUser boUser=dCriteria == null ? null : dCriteria.getSearchModel();
 		if(boUser!=null){
 			if(StringUtils.isNotBlank(boUser.getUserNoOrName())){
@@ -136,14 +140,13 @@ public class UserService{
 	 * @param roleNo
 	 * @return
 	 */
-	public List<BoUser> getUserListByRole(String roleNo){
+	public List<BoUser> getUserListByRole(String systemCategory,String roleNo){
 		Query query=new Query();
-		Criteria criteria = Criteria.where("valid").is(1);
+		Criteria criteria = Criteria.where("valid").is(1).and("systemCategory").is(systemCategory);
 		if(StringUtils.isNotBlank(roleNo)){
 			criteria.and("role.roleNo").regex(StringUtil.toFuzzyMatch(roleNo));
 		}
 		query.addCriteria(criteria);
-		
 		return userDao.getUserList(query);
 	}
 	
@@ -176,6 +179,11 @@ public class UserService{
     		BoUser user=userDao.getByUserId(userParam.getUserId());
     		if(user==null){
     			return result.setCode(ResultCode.Error104);
+    		}
+    		if(userParam.getUpdateUser().equals(userParam.getUserNo())){
+    			if(roleId!=null && !roleId.equals(user.getRole().getRoleId())){
+    				return result.setCode(ResultCode.Error105);
+    			}
     		}
     		if(userDao.isExsitUserNo(userParam.getUserId(),userParam.getUserNo()) 
     			  || userDao.isExsitPhone(userParam.getUserId(),userParam.getTelephone())){
@@ -246,7 +254,19 @@ public class UserService{
 	public BoUser getUserById(String userId) {
 		return userDao.getByUserId(userId);
 	}
-	
+
+	/*****
+	 * 通过userId查用户信息
+	 * @param userId
+	 * @param systemCategory 当前登录系统，返回对应系统权限
+	 * @return
+	 */
+	public BoUser getUserById(String userId,String systemCategory) {
+		BoUser user = userDao.getByUserId(userId);
+		return user;
+	}
+
+
 	/**
 	 * 通过userNo查用户信息
 	 */
@@ -255,9 +275,15 @@ public class UserService{
 	}
 	
 	/**
+	 * 通过userNo查用户信息
+	 */
+	public BaseUser getBaseUserByNo(String userNo,boolean isSuper) {
+		return userDao.getBaseUserRow(Query.query(Criteria.where("userNo").is(userNo)),isSuper);
+	}
+	/**
 	 * 功能：重置密码
 	 * @param userId 用户ID
-	 * @param pwd 新密码
+	 * @param newPwd 新密码
 	 */
     public ApiResult saveResetPwd(String userId,String newPwd){
     	ApiResult result = new ApiResult();
@@ -308,5 +334,22 @@ public class UserService{
 			nextPhone = Long.toString((Long.valueOf(boUser.getTelephone()) + 1));
 		}
 		return nextPhone;
+	}
+
+	/**
+	 * 功能：重置密码
+	 * @param userId 用户ID
+	 * @param liveLink 直播地址
+	 */
+	public ApiResult saveLiveLinks(String userId, String liveLink){
+		ApiResult result = new ApiResult();
+		BoUser user = userDao.getByUserId(userId);
+		if(user != null){
+			user.setLiveLinks(liveLink);
+			userDao.update(user);
+			return result.setCode(ResultCode.OK);
+		}else{
+			return result.setCode(ResultCode.Error1010);
+		}
 	}
 }

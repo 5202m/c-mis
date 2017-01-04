@@ -50,6 +50,7 @@ public class ChatSyllabusService
 		Query query = new Query();
 		Criteria criteria = Criteria.where("isDeleted").is(0);
 		if (syllabus != null) {
+			criteria.and("systemCategory").is(syllabus.getSystemCategory());
 			if (StringUtils.isNotBlank(syllabus.getGroupType())) {
 				criteria.and("groupType").is(syllabus.getGroupType());
 			}
@@ -78,7 +79,7 @@ public class ChatSyllabusService
 	 * @param chatGroupId
 	 * @return
 	 */
-	public List<BoUser> getAuthUsers(String chatGroupType, String chatGroupId)
+	public List<BoUser> getAuthUsers(String systemCategory,String chatGroupType, String chatGroupId)
 	{
 		Set<String> loc_userNos = null;
 		String[] loc_userIdArr = null;
@@ -96,7 +97,7 @@ public class ChatSyllabusService
 		}
 		else
 		{
-			List<ChatGroup> chatGroups = chatGroupService.findByGroupType(chatGroupType);
+			List<ChatGroup> chatGroups = chatGroupService.findByGroupType(systemCategory,chatGroupType);
 			loc_userNos = new HashSet<String>();
 			for(int i = 0, lenI = (chatGroups == null) ? 0 : chatGroups.size(); i < lenI; i++)
 			{

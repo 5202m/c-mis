@@ -51,6 +51,7 @@ public class ChatPointsService {
 		Query query = new Query();
 		Criteria criteria = Criteria.where("isDeleted").is(0);
 		if (chatPoints != null) {
+			criteria.and("systemCategory").is(chatPoints.getSystemCategory());
 			if (StringUtils.isNotBlank(chatPoints.getGroupType())) {
 				criteria.and("groupType").is(chatPoints.getGroupType());
 			}
@@ -122,8 +123,8 @@ public class ChatPointsService {
 	 * @param userId
 	 * @return
 	 */
-	public ChatPoints findByUserId(String groupType, String userId){
-		Query query = new Query(Criteria.where("isDeleted").is(0).and("groupType").is(groupType).and("userId").is(userId));
+	public ChatPoints findByUserId(String systemCategory,String groupType, String userId){
+		Query query = new Query(Criteria.where("isDeleted").is(0).and("systemCategory").is(systemCategory).and("groupType").is(groupType).and("userId").is(userId));
 		return chatPointsDao.findOne(ChatPoints.class, query);
 	}
 	
@@ -162,7 +163,7 @@ public class ChatPointsService {
 			result.setErrorMsg("信息不完整！");
 			return result;
 		}else{
-			pointsDb = this.findByUserId(chatPoints.getGroupType(), chatPoints.getUserId());
+			pointsDb = this.findByUserId(chatPoints.getSystemCategory(),chatPoints.getGroupType(), chatPoints.getUserId());
 		}
 
 		if(pointsDb == null){
@@ -258,7 +259,6 @@ public class ChatPointsService {
 			List<ChatPointsJournal> journalsNew = new ArrayList<ChatPointsJournal>();
 			journalsNew.add(journal);
 			points.setJournal(journalsNew);
-			points.setPointsId(null);
 			chatPointsDao.save(points);
 		}else{
 			//追加流水

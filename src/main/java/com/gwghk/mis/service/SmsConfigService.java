@@ -42,6 +42,7 @@ public class SmsConfigService {
 		Query query = new Query();
 		Criteria criteria = Criteria.where("isDeleted").is(1);
 		if (smsConfig != null) {
+			criteria.and("systemCategory").is(smsConfig.getSystemCategory());
 			if (StringUtils.isNotBlank(smsConfig.getType())) {
 				criteria.and("type").is(smsConfig.getType());
 			}
@@ -71,8 +72,8 @@ public class SmsConfigService {
 	 * @param useType
 	 * @return
 	 */
-	public SmsConfig findByType(String type, String useType){
-		return smsConfigDao.findSmsCfg(type, useType);
+	public SmsConfig findByType(String systemCategory,String type, String useType){
+		return smsConfigDao.findSmsCfg(systemCategory,type, useType);
 	}
 	
 	/**
@@ -82,7 +83,7 @@ public class SmsConfigService {
 	 */
 	public ApiResult add(SmsConfig smsConfig) {
 		ApiResult result=new ApiResult();
-		if(this.findByType(smsConfig.getType(), smsConfig.getUseType())!=null){
+		if(this.findByType(smsConfig.getSystemCategory(),smsConfig.getType(), smsConfig.getUseType())!=null){
 			return result.setCode(ResultCode.Error102);
 		}
 		smsConfig.setIsDeleted(1);

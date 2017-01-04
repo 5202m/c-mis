@@ -549,6 +549,10 @@ function formatUrl(url,params){
 	if(isValid(selectTab)&&selectTab.length>0){
 		url+=(url.indexOf("?")!=-1?"&":"?")+"menuId="+selectTab.panel('options').id;
 	}
+	var sysFlag = $('#yxui_main_sysfag_select').val(); 
+	if(isValid(sysFlag)){
+		url+=(url.indexOf("?")!=-1?"&":"?")+"systemCategory="+sysFlag;
+	}
 	if(validObj(params)){
 		url+="&"+getParams(params);
 	}

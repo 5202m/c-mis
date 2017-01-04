@@ -193,6 +193,10 @@ var goldOfficeUtils = {
 			toolbar : null
         },config);
 		if(config.gridId){
+			var sysFlag = $('#yxui_main_sysfag_select').val(); 
+			if(isValid(sysFlag)){
+				config.queryParams["systemCategory"]=sysFlag;
+			}
 			var cgId="#"+config.gridId;
 			$(cgId).datagrid({
 				url : config.url,

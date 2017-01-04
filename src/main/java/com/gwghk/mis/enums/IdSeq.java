@@ -31,6 +31,7 @@ public enum IdSeq {
     Media("",10000000),
     PushMessage("PM",10000000),
     AppVersion("AV",10000000),
+    SystemCategory("SCY",10000000),
     ChatGroup("",1);
 	public static final char[] charArray = new char[] { 'A', 'B', 'C', 'D',
 		'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S',

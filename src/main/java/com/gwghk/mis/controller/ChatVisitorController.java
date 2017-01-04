@@ -35,15 +35,12 @@ import com.gwghk.mis.constant.WebConstant;
 import com.gwghk.mis.enums.ChatClientGroup;
 import com.gwghk.mis.enums.ChatOnlineDuration;
 import com.gwghk.mis.model.BoDict;
-import com.gwghk.mis.model.BoUser;
 import com.gwghk.mis.model.ChatGroup;
 import com.gwghk.mis.model.ChatVisitor;
 import com.gwghk.mis.service.ChatGroupService;
 import com.gwghk.mis.service.ChatVisitorService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.ExcelUtil;
-import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
 import com.gwghk.mis.util.ResourceUtil;
 import com.gwghk.mis.util.StringUtil;
@@ -79,7 +76,7 @@ public class ChatVisitorController extends BaseController
 	private List<ChatGroup> formatTreeList(List<BoDict> dictList)
 	{
 		List<ChatGroup> nodeList = new ArrayList<ChatGroup>();
-		List<ChatGroup> groupList = chatGroupService.getChatGroupList("id", "name", "groupType");
+		List<ChatGroup> groupList = chatGroupService.getChatGroupList(getSystemFlag(),"id", "name", "groupType");
 		ChatGroup tbean = null;
 		for (BoDict dict : dictList)
 		{
@@ -106,7 +103,7 @@ public class ChatVisitorController extends BaseController
 	@RequestMapping(value = "/chatVisitorController/index", method = RequestMethod.GET)
 	public String index()
 	{
-		return "chat/visitorTab";
+		return "chat/visitor/visitorTab";
 	}
 
 	/**
@@ -119,9 +116,9 @@ public class ChatVisitorController extends BaseController
 	public String visitor(HttpServletRequest request, ModelMap map)
 	{
 		DictConstant dict = DictConstant.getInstance();
-		map.put("chatGroupList", this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
+		map.put("chatGroupList", this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
 		logger.debug(">>start into chatVisitorController.visitor() and url is /chatVisitorController/visitor.do");
-		return "chat/visitorList";
+		return "chat/visitor/visitorList";
 	}
 
 	/**
@@ -255,7 +252,7 @@ public class ChatVisitorController extends BaseController
 			builder.parse();
 			ExcelUtil.wrapExcelExportResponse("访客记录", request, response);
 			builder.write(response.getOutputStream());
-			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出访客记录操作成功", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出访客记录操作成功", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT);
 		}
 		catch (Exception e)
 		{
@@ -296,22 +293,21 @@ public class ChatVisitorController extends BaseController
 	//@ActionVerification(key = "delete")
 	public AjaxJson del(HttpServletRequest request, HttpServletResponse response, @Param("ids")String ids)
 	{
-		BoUser boUser = ResourceUtil.getSessionUser();
 		AjaxJson j = new AjaxJson();
 		ApiResult result = chatVisitorService.delete(ids.split(","));
 		if (result.isOk())
 		{
 			j.setSuccess(true);
-			String message = "用户：" + boUser.getUserNo() + " " + DateUtil.getDateSecondFormat(new Date()) + "删除访客记录成功";
-			logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL, BrowserUtils.checkBrowse(request), IPUtil.getClientIP(request));
+			String message = "用户：" + userParam.getUserNo() + " " + DateUtil.getDateSecondFormat(new Date()) + "删除访客记录成功";
+			addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
 			logger.info("<<method:batchDel()|" + message);
 		}
 		else
 		{
 			j.setSuccess(false);
 			j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
-			String message = "用户：" + boUser.getUserNo() + " " + DateUtil.getDateSecondFormat(new Date()) + " 删除访客记录失败";
-			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL, BrowserUtils.checkBrowse(request), IPUtil.getClientIP(request));
+			String message = "用户：" + userParam.getUserNo() + " " + DateUtil.getDateSecondFormat(new Date()) + " 删除访客记录失败";
+			addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
 			logger.error("<<method:batchDel()|" + message + ",ErrorMsg:" + result.toString());
 		}
 		return j;
@@ -327,7 +323,7 @@ public class ChatVisitorController extends BaseController
 	public String report(ModelMap map, @Param("type")String type)
 	{
 		DictConstant dict = DictConstant.getInstance();
-		map.put("chatGroupList", this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
+		map.put("chatGroupList", this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
 		Calendar calendar = Calendar.getInstance();
 		map.put("today", DateUtil.formatDate(calendar.getTime(), "yyyy-MM-dd"));
 		calendar.add(Calendar.DATE, -1);
@@ -340,10 +336,10 @@ public class ChatVisitorController extends BaseController
 		if("duration".equals(type)){//在线时长人数
 			return "chat/visitorRepD";
 		}else if("online".equals(type)){//各类在线人数
-			return "chat/visitorRepO";
+			return "chat/visitor/visitorRepO";
 		}else{//整点在线人数
 			// if("timePoint".equals(type))
-			return "chat/visitorRepT";
+			return "chat/visitor/visitorRepT";
 		}
 	}
 	

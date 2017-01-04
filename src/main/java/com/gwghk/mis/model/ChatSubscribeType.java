@@ -22,7 +22,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
  * @version 1.0.0  
  *    
  */
-public class ChatSubscribeType extends BaseModel {
+public class ChatSubscribeType extends BaseModelExt {
 
 	@Id
 	private String id;//objectid

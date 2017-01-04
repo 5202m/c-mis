@@ -91,86 +91,7 @@
 		</table>
 		<input type="hidden" name="remark" id="remark" />
 	</form>
-	<table class="tableForm_L tag_tab" border="0" cellspacing="1" cellpadding="0" style="display:none;">
-		<thead>
-			<tr>
-				<th>品种</th>
-				<th>方向</th>
-				<th>建仓价</th>
-				<th>止盈</th>
-				<th>止损</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>
-					<select name="symbol">
-						<option value="" >--请选择--</option>
-						<option value="AUDUSD" >澳元美元</option>
-						<option value="USDJPY" >美元日元</option>
-						<option value="EURUSD" >欧元美元</option>
-						<option value="GBPUSD" >英镑美元</option>
-						<option value="NZDUSD" >纽元美元</option>
-						<option value="USDCAD" >美元加元</option>
-						<option value="USDCHF" >美元瑞郎</option>
-						<option value="USDCNH" >美元人民币</option>
-						<option value="AUDJPY" >澳元日元</option>
-						<option value="AUDNZD" >澳元纽元</option>
-						<option value="CADJPY" >加元日元</option>
-						<option value="EURAUD" >欧元澳元</option>
-						<option value="EURCHF" >欧元瑞郎</option>
-						<option value="EURGBP" >欧元英镑</option>
-						<option value="EURJPY" >欧元日元</option>
-						<option value="GBPAUD" >英镑澳元</option>
-						<option value="GBPCHF" >英镑瑞郎</option>
-						<option value="GBPJPY" >英镑日元</option>
-						<option value="NZDJPY" >纽元日元</option>
-						<option value="HKDCNH" >港币人民币</option>
-						<option value="XAG/USD" >白银美元</option>
-						<option value="XAU/USD" >黄金美元</option>
-						<option value="AUD" >澳元</option>
-						<option value="USD" >美元指数</option>
-						<option value="JPY" >日元</option>
-						<option value="EUR" >欧元</option>
-						<option value="GBP" >英镑</option>
-						<option value="NZD" >纽元</option>
-						<option value="CAD" >加元</option>
-						<option value="CHF" >瑞郎</option>
-						<option value="CNH" >人民币</option>
-						<option value="HKD" >港币</option>
-						<option value="XAU" >黄金</option>
-						<option value="XAG" >白银</option>
-						<option value="UKOil" >英国原油</option>
-						<option value="USOil" >美国原油</option>
-						<option value="CNHGOLD" >人民币黄金</option>
-						<option value="CNHSILVER" >人民币白银</option>
-					</select>
-				</td>
-				<td>
-					<select name="upordown">
-						<option value="" >--请选择--</option>
-						<option value="up">看涨</option>
-						<option value="down">看跌</option>
-					</select>
-				</td>
-				<td>
-					<input type="text" name="open" />
-				</td>
-				<td>
-					<input type="text" name="profit" />
-				</td>
-				<td>
-					<input type="text" name="loss" />
-				</td>
-				<td rowspan="2" style="vertical-align: middle;"><a href="javascript:void(0)" class="ope-add"></a><a href="javascript:void(0)" class="ope-remove" style="display:none;"></a></td>
-			</tr>
-			<tr>
-				<td colspan="5">说明：<input type="text" name="description" style="width:95%;" /></td>
-			</tr>
-		</tbody>
-	</table>
-	<!--table id="trading_strategy" class="tableForm_L tag_tab" border="0" cellspacing="1" cellpadding="0" style="display:none;">
+	<table id="trading_strategy" class="tableForm_L tag_tab" border="0" cellspacing="1" cellpadding="0" style="display:none;">
 		<tr>
 			<th>品种</th>
 			<td>
@@ -348,7 +269,7 @@
 		     <td><input type="text" name="loss" style="width:100px;" /></td>
 		     <td><a href="javascript:void(0)" class="ope-add"></a><a href="javascript:void(0)" class="ope-remove" style="display:none;"></a></td>
 		</tr>
-	</table-->
+	</table>
 </div>
 <script type="text/javascript">
 	ArticleTemplate.config = JSON.parse('${config}');

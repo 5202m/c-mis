@@ -146,13 +146,13 @@ public class CategoryController extends BaseController{
 	    	j.setSuccess(true);
 	    	j.setObj(result.getReturnObj()[0]);
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功新增栏目："+category.getName();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<create()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(result.getErrorMsg());
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增栏目："+category.getName()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<create()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;
@@ -174,13 +174,13 @@ public class CategoryController extends BaseController{
 	    	j.setObj(result.getReturnObj()[0]);
 	    	j.setSuccess(true);
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改栏目："+category.getName();
-	    	logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+	    	addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
     		logger.info("<<method:update()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改栏目："+category.getName()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<method:update()|"+message+",ErrorMsg:"+result.toString());
     	}
    		return j;
@@ -199,13 +199,13 @@ public class CategoryController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除栏目成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:oneDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除栏目失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:oneDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;

@@ -34,6 +34,7 @@ public class LogService {
 		BoLog boLog = dCriteria.getSearchModel();
 		if(boLog != null){
 			Criteria criteria = new Criteria();
+			criteria.and("systemCategory").is(boLog.getSystemCategory());
 			if(StringUtils.isNotBlank(boLog.getUserNo())){
 				criteria.and("userNo").regex(StringUtil.toFuzzyMatch(boLog.getUserNo()));
 			}
@@ -57,14 +58,16 @@ public class LogService {
 	
 	/**
 	 * 功能：添加日志
+	 * @param   systemCategory系统类别
 	 * @param   logcontent   日志内容
 	 * @param   loglevel     日志级别
 	 * @param   operatetype  操作类型
 	 * @param   browserType  浏览器类型
 	 * @param   ip           IP
 	 */
-	public void addLog(String logcontent,Integer loglevel, String operatetype,String browserType,String ip) {
+	public void addLog(String systemCategory,String logcontent,Integer loglevel, String operatetype,String browserType,String ip) {
 		BoLog log = new BoLog();
+		log.setSystemCategory(systemCategory);
 		log.setUserNo(ResourceUtil.getSessionUser().getUserNo());
 		log.setLogLevel(loglevel);
 		log.setOperateDate(new Date());

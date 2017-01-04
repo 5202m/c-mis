@@ -107,6 +107,7 @@ public class ChatMessgeService{
 		ChatMessage model=dCriteria.getSearchModel();
 		int year = DateUtil.getFullYear(null);	
 		if(model!=null){
+			criteria.and("systemCategory").is(model.getSystemCategory());
 			if(StringUtils.isNotBlank(model.getMobilePhone())){
 				criteria.and("mobilePhone").regex(StringUtil.toFuzzyMatch(model.getMobilePhone()));
 			}

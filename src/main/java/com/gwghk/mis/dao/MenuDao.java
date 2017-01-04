@@ -67,6 +67,7 @@ public class MenuDao extends MongoDBBaseDao{
 	 */
 	public List<BoMenu> getMenuList(){
 		Query query = new Query();
+		query.with(new Sort(Direction.ASC,"sort","id"));
 		query.addCriteria(Criteria.where("valid").is(1));
 		query.addCriteria(Criteria.where("type").is(0));
 		return this.findList(BoMenu.class, query);
@@ -101,7 +102,9 @@ public class MenuDao extends MongoDBBaseDao{
 		criteria.and("valid").is(1);
 		criteria.and("type").is(1);
 		criteria.and("parentMenuId").is(menuId);
-		criteria.and("roleList.roleId").is(roleId);
+		if(roleId!=null){
+		  criteria.and("roleList.roleId").is(roleId);
+		}
 		return this.findList(BoMenu.class, Query.query(criteria));
 	}
 	

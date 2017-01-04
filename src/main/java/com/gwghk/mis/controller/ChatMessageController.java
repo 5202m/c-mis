@@ -37,10 +37,8 @@ import com.gwghk.mis.model.ChatMsgToUser;
 import com.gwghk.mis.service.ChatClientGroupService;
 import com.gwghk.mis.service.ChatGroupService;
 import com.gwghk.mis.service.ChatMessgeService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.ExcelUtil;
-import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
 import com.gwghk.mis.util.ResourceUtil;
 import com.gwghk.mis.util.StringUtil;
@@ -72,7 +70,7 @@ public class ChatMessageController extends BaseController{
 	 */
 	private List<ChatGroup> formatTreeList(List<BoDict> dictList){
     	List<ChatGroup> nodeList = new ArrayList<ChatGroup>(); 
-    	List<ChatGroup> groupList=chatGroupService.getChatGroupList("id","name","groupType");
+    	List<ChatGroup> groupList=chatGroupService.getChatGroupList(getSystemFlag(),"id","name","groupType");
     	ChatGroup tbean=null;
     	for(BoDict dict:dictList){
     		tbean=new ChatGroup();
@@ -94,20 +92,22 @@ public class ChatMessageController extends BaseController{
 	@RequestMapping(value = "/chatMessageController/index", method = RequestMethod.GET)
 	public  String  index(HttpServletRequest request,ModelMap map){
 		DictConstant dict=DictConstant.getInstance();
-		List<BoDict> dictList=ResourceUtil.getSubDictListByParentCode(dict.DICT_USE_STATUS);
+		List<BoDict> dictList=ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_USE_STATUS);
     	map.put("statusList", dictList);
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
-    	map.put("clientGroupList", chatClientGroupService.getClientGroupList(null));
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
+    	map.put("clientGroupList", chatClientGroupService.getClientGroupList(null,getSystemFlag()));
 		logger.debug(">>start into chatMessageController.index() and url is /chatMessageController/index.do");
-		return "chat/messageList";
+		return "chat/message/messageList";
 	}
 	
 	/**
 	 * 设置通用查询
 	 * @param request
+	 * @param dataGrid
 	 * @param chatMessage
 	 */
 	private void setComSearch(HttpServletRequest request,ChatMessage chatMessage){
+		 setSystemFlag(chatMessage);
 		 chatMessage.setPublishStartDateStr(request.getParameter("publishStartDateStr"));
 		 chatMessage.setPublishEndDateStr(request.getParameter("publishEndDateStr"));
 		 String talkStyle=request.getParameter("talkStyle");
@@ -150,20 +150,19 @@ public class ChatMessageController extends BaseController{
 			dataGrid.setRows(0);
 			dataGrid.setSort("publishTime");
 			dataGrid.setOrder("desc");
-//			chatMessage.getContent().setMsgType("text");  //默认只导出文本类型
+			chatMessage.getContent().setMsgType("text");  //默认只导出文本类型
 			Page<ChatMessage> page = chatMessageService.getChatMessagePage(this.createDetachedCriteria(dataGrid, chatMessage));
-			List<ChatGroup> groupList=chatGroupService.getChatGroupList("id","name","groupType");
+			List<ChatGroup> groupList=chatGroupService.getChatGroupList(getSystemFlag(),"id","name","groupType");
 			List<ChatMessage>  chatMessageList = page.getCollection();
 			ChatMsgToUser toUser=null;
 			String toUserName="房间所有人";
-			List<ChatClientGroup> clientGroups = chatClientGroupService.getClientGroupList(chatMessage.getGroupId().replaceAll("[,_].*$", ""));
+			List<ChatClientGroup> clientGroups = chatClientGroupService.getClientGroupList(chatMessage.getGroupId().replaceAll("[,_].*$", ""),getSystemFlag());
 			Map<String, String> clientGroupMap = new HashMap<String, String>();
 			for(ChatClientGroup cg : clientGroups){
 				clientGroupMap.put(cg.getClientGroupId(), cg.getName());
 			}
 			if(chatMessageList != null && chatMessageList.size() > 0){
 				DataRowSet dataSet = new DataRowSet();
-				boolean isText = false;
 				for(ChatMessage cm : chatMessageList){
 					IRow row = dataSet.append();
 					//row.set("userId", cm.getGroupType().contains("studio")?cm.getUserId():(StringUtils.isBlank(cm.getAccountNo())?cm.getUserId():cm.getAccountNo()));
@@ -195,9 +194,8 @@ public class ChatMessageController extends BaseController{
 						}
 					}
 					row.set("fromPlatform", cm.getFromPlatform());
-					isText = "text".equals(cm.getContent().getMsgType());
-					row.set("msgType", isText ? "文本" : "图片");
-					row.set("content", isText ? cm.getContent().getValue() : "【图片】");
+					row.set("msgType", "文本");
+					row.set("content", cm.getContent().getValue());
 					row.set("publishTime",DateUtil.longMsTimeConvertToDateTime(Long.valueOf(cm.getPublishTime().split("_")[0])));
 					row.set("approvalUserNo", cm.getApprovalUserNo());
 					row.set("status", cm.getStatus()==1?"通过":(cm.getStatus()==2?"拒绝":"等待审批"));//0、等待审批，1、通过 ；2、拒绝
@@ -215,7 +213,7 @@ public class ChatMessageController extends BaseController{
 			builder.parse();
 			ExcelUtil.wrapExcelExportResponse("聊天记录", request, response);
 			builder.write(response.getOutputStream());
-			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出聊天记录操作成功！", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出聊天记录操作成功！", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT);
 		}catch(Exception e){
 			logger.error("<<method:exportRecord()|chat message export error!",e);
 		}
@@ -243,15 +241,13 @@ public class ChatMessageController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + boUser.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 审核聊天室信息成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:batchDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = "用户：" + boUser.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 审核聊天室信息失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;
@@ -280,15 +276,13 @@ public class ChatMessageController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + boUser.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除聊天信息成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:batchDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = "用户：" + boUser.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除聊天信息失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;

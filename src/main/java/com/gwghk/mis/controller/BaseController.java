@@ -13,12 +13,15 @@ import org.springframework.stereotype.Controller;
 
 import com.gwghk.mis.common.model.DataGrid;
 import com.gwghk.mis.common.model.DetachedCriteria;
+import com.gwghk.mis.constant.WebConstant;
 import com.gwghk.mis.enums.SortDirection;
 import com.gwghk.mis.model.BaseModel;
+import com.gwghk.mis.model.BaseModelExt;
 import com.gwghk.mis.model.BoMenu;
 import com.gwghk.mis.model.BoUser;
 import com.gwghk.mis.model.MenuResult;
 import com.gwghk.mis.service.LogService;
+import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceUtil;
 
@@ -35,6 +38,10 @@ public	class BaseController{
 	
 	@Autowired
 	protected LogService  logService;
+	
+	
+	@Autowired
+	protected HttpServletRequest request;
 	
 	/**
 	 * 功能：分页查询时构造公共的查询条件
@@ -87,6 +94,7 @@ public	class BaseController{
     		b.setUpdateUser(userNo);
     		b.setUpdateIp(IPUtil.getClientIP(request));
     	}
+		setSystemFlag(obj);
 	}
 	
 	/**
@@ -102,6 +110,49 @@ public	class BaseController{
 		}
 		List<BoMenu> menuParamList = funMap.get(menuId);
 		return menuParamList;
+	}
+	
+	/**
+	 * 返回系统标记
+	 * @param request
+	 * @return
+	 */
+	protected String getSystemFlag(){
+		Object superFlag = request.getSession().getAttribute(WebConstant.SESSION_SUPER_FLAG);
+		boolean isSuper=(superFlag!=null && (boolean)superFlag);
+		String systemCategory=request.getParameter("systemCategory");
+		if(isSuper){
+			return systemCategory;
+		}else{
+			if(StringUtils.isNotBlank(systemCategory) && !systemCategory.equals(userParam.getSystemCategory())){
+				System.out.println("has error==>systemCategory【"+systemCategory+"】 not eq the userParam.getSystemCategory()【"+userParam.getSystemCategory()+"】");
+			}
+			return userParam.getSystemCategory();
+		}
+	}
+	
+	/**
+	 * 设置系统标志
+	 * @param obj
+	 * @param request
+	 */
+	protected  void setSystemFlag(Object obj){
+		if(obj instanceof BaseModelExt){
+			BaseModelExt b =(BaseModelExt)obj;
+    	    b.setSystemCategory(getSystemFlag());
+    	}
+	}
+	
+	/**
+	 * 功能：添加日志
+	 * @param   logcontent   日志内容
+	 * @param   loglevel     日志级别
+	 * @param   operatetype  操作类型
+	 * @param   browserType  浏览器类型
+	 * @param   ip           IP
+	 */
+	protected void addLog(String logcontent,Integer loglevel, String operatetype) {
+		logService.addLog(getSystemFlag(),logcontent,loglevel,operatetype,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
 	}
 }
 

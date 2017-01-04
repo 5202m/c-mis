@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
  * @author Alan.wu
  * @date   2015年3月16日
  */
-public class ChatMessage{
+public class ChatMessage extends BaseModelExt{
 	
 	/**
 	 * 用户id
@@ -106,12 +106,6 @@ public class ChatMessage{
 	 */
 	protected String publishTime;
 	
-	protected String createUser;
-
-	protected String createIp;
-
-	protected Date createDate;
-
 	/**
 	 * 发布开始日期（用于查询）
 	 */
@@ -209,30 +203,6 @@ public class ChatMessage{
 
 	public void setPublishTime(String publishTime) {
 		this.publishTime = publishTime;
-	}
-
-	public String getCreateUser() {
-		return createUser;
-	}
-
-	public void setCreateUser(String createUser) {
-		this.createUser = createUser;
-	}
-
-	public String getCreateIp() {
-		return createIp;
-	}
-
-	public void setCreateIp(String createIp) {
-		this.createIp = createIp;
-	}
-
-	public Date getCreateDate() {
-		return createDate;
-	}
-
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
 	}
 
 	public ChatContent getContent() {

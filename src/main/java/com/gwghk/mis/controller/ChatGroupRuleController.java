@@ -33,9 +33,7 @@ import com.gwghk.mis.model.BoDict;
 import com.gwghk.mis.model.BoUser;
 import com.gwghk.mis.model.ChatGroupRule;
 import com.gwghk.mis.service.ChatGroupRuleService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
-import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.JsonUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
 import com.gwghk.mis.util.ResourceUtil;
@@ -59,7 +57,7 @@ public class ChatGroupRuleController extends BaseController{
 	 */
 	private void setDictGroupRule(ModelMap map){
 		DictConstant dict=DictConstant.getInstance();
-		List<BoDict> dictList=ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_RULE);
+		List<BoDict> dictList=ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_RULE);
     	map.put("dictConstant", dict);
     	map.put("dictList", dictList);
 	}
@@ -71,7 +69,7 @@ public class ChatGroupRuleController extends BaseController{
 	public  String  index(HttpServletRequest request,ModelMap map){
 		setDictGroupRule(map);
 		logger.debug(">>start into chatGroupRuleController.index() and url is /chatGroupRuleController/index.do");
-		return "chat/groupRuleList";
+		return "chat/rooms/groupRuleList";
 	}
 
 	/**
@@ -103,14 +101,14 @@ public class ChatGroupRuleController extends BaseController{
    	@ResponseBody
     public String getGroupRuleCombox(HttpServletRequest request,ModelMap map) throws Exception {
 		DictConstant dict=DictConstant.getInstance();
-		List<BoDict> dictList=ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_RULE);
+		List<BoDict> dictList=ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_RULE);
 		Map<String, BoDict> chatGroupRuleType = new HashMap<String, BoDict>();
 		for (BoDict boDict : dictList) {
 			chatGroupRuleType.put(boDict.getCode(), boDict);
 		}
        	List<TreeBean> treeList=new ArrayList<TreeBean>();
        	TreeBean tbean=null;
-       	List<ChatGroupRule> list=chatGroupRuleService.getChatGroupRuleList("id","name","type");
+       	List<ChatGroupRule> list=chatGroupRuleService.getChatGroupRuleList(getSystemFlag(),"id","name","type");
        	for(ChatGroupRule row:list){
        		 tbean=new TreeBean();
        		 tbean.setId(row.getId());
@@ -130,7 +128,7 @@ public class ChatGroupRuleController extends BaseController{
     public String add(ModelMap map) throws Exception {
     	setDictGroupRule(map);
     	map.addAttribute("chatGroupRule",new ChatGroupRule());
-    	return "chat/groupRuleSubmit";
+    	return "chat/rooms/groupRuleSubmit";
     }
     
 	/**
@@ -142,7 +140,7 @@ public class ChatGroupRuleController extends BaseController{
     	ChatGroupRule chatGroupRule=chatGroupRuleService.getChatGroupRuleById(chatGroupRuleId);
     	setDictGroupRule(map);
     	map.addAttribute("chatGroupRule",chatGroupRule);
-		return "chat/groupRuleSubmit";
+		return "chat/rooms/groupRuleSubmit";
     }
     
     /**
@@ -158,15 +156,13 @@ public class ChatGroupRuleController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + chatGroupRule.getCreateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功新增聊天室规则："+chatGroupRule.getName();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<method:create()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = "用户：" + chatGroupRule.getCreateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增聊天室规则："+chatGroupRule.getName()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<method:create()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;
@@ -185,15 +181,13 @@ public class ChatGroupRuleController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + chatGroupRule.getUpdateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改聊天室规则："+chatGroupRule.getId();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
     		logger.info("<--method:update()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = "用户：" + chatGroupRule.getUpdateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改聊天室规则："+chatGroupRule.getId()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
     	}
    		return j;
@@ -216,15 +210,13 @@ public class ChatGroupRuleController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + boUser.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除聊天室规则成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:batchDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = "用户：" + boUser.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除聊天室规则失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;

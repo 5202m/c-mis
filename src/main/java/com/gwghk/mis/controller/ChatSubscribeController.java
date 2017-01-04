@@ -29,14 +29,11 @@ import com.gwghk.mis.common.model.Page;
 import com.gwghk.mis.constant.DictConstant;
 import com.gwghk.mis.constant.WebConstant;
 import com.gwghk.mis.model.BoDict;
-import com.gwghk.mis.model.BoUser;
 import com.gwghk.mis.model.ChatGroup;
 import com.gwghk.mis.model.ChatSubscribe;
-import com.gwghk.mis.model.ChatSubscribeType;
 import com.gwghk.mis.service.ChatGroupService;
 import com.gwghk.mis.service.ChatSubscribeService;
 import com.gwghk.mis.service.ChatSubscribeTypeService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
@@ -69,9 +66,9 @@ public class ChatSubscribeController extends BaseController {
 	@RequestMapping(value = "/chatSubscribeController/index", method = RequestMethod.GET)
 	public String index(HttpServletRequest request,ModelMap map, String opType){
 		DictConstant dict=DictConstant.getInstance();
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
-    	map.put("chatSubscribeType", chatSubscribeTypeService.getSubscribeType());
-		return "chat/subscribeList";
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
+    	map.put("chatSubscribeType", chatSubscribeTypeService.getSubscribeType(getSystemFlag()));
+		return "chat/subscribe/subscribeList";
 	}
 	
 	/**
@@ -81,7 +78,7 @@ public class ChatSubscribeController extends BaseController {
 	 */
 	private List<ChatGroup> formatTreeList(List<BoDict> dictList){
     	List<ChatGroup> nodeList = new ArrayList<ChatGroup>(); 
-    	List<ChatGroup> groupList=chatGroupService.getChatGroupList("id","name","groupType");
+    	List<ChatGroup> groupList=chatGroupService.getChatGroupList(getSystemFlag(),"id","name","groupType");
     	ChatGroup tbean=null;
     	for(BoDict dict:dictList){
     		tbean=new ChatGroup();
@@ -127,9 +124,9 @@ public class ChatSubscribeController extends BaseController {
     @ActionVerification(key="add")
     public String add(ModelMap map, String opType) throws Exception {
     	DictConstant dict=DictConstant.getInstance();
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
-    	map.put("chatSubscribeTypeObj", JSONArray.toJSONString(chatSubscribeTypeService.getSubscribeType()));
-    	return "chat/subscribeAdd";
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
+    	map.put("chatSubscribeTypeObj", JSONArray.toJSONString(chatSubscribeTypeService.getSubscribeType(getSystemFlag())));
+    	return "chat/subscribe/subscribeAdd";
     }
 
     /**
@@ -144,9 +141,9 @@ public class ChatSubscribeController extends BaseController {
     	map.put("endDateStr",DateUtil.getDateSecondFormat(subscribe.getEndDate()));
     	
     	DictConstant dict=DictConstant.getInstance();
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
     	
-    	return "chat/subscribeView";
+    	return "chat/subscribe/subscribeView";
     }
 	
     /**
@@ -170,9 +167,9 @@ public class ChatSubscribeController extends BaseController {
     	map.put("endDateStr",DateUtil.getDateSecondFormat(subscribe.getEndDate()));
     	
     	DictConstant dict=DictConstant.getInstance();
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
-    	map.put("chatSubscribeTypeObj", JSONArray.toJSONString(chatSubscribeTypeService.getSubscribeType()));
-		return "chat/subscribeEdit";
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
+    	map.put("chatSubscribeTypeObj", JSONArray.toJSONString(chatSubscribeTypeService.getSubscribeType(getSystemFlag())));
+		return "chat/subscribe/subscribeEdit";
     }
     
 
@@ -202,15 +199,14 @@ public class ChatSubscribeController extends BaseController {
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功新增订阅："+userParam.getUserNo();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT
+    						 );
     		logger.info("<<method:create()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增订阅："+userParam.getUserNo()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<method:create()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;
@@ -226,20 +222,17 @@ public class ChatSubscribeController extends BaseController {
     	chatSubscribe.setUpdateUser(userParam.getUserNo());
     	chatSubscribe.setUpdateIp(IPUtil.getClientIP(request));
     	AjaxJson j = new AjaxJson();
-    	
     	ApiResult result =chatSubscribeService.saveSubscribe(chatSubscribe, true);
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改订阅："+userParam.getUserNo();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
     		logger.info("<--method:update()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改订阅："+userParam.getUserNo()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
     	}
    		return j;
@@ -252,23 +245,19 @@ public class ChatSubscribeController extends BaseController {
     @ResponseBody
     @ActionVerification(key="delete")
     public AjaxJson oneDel(HttpServletRequest request,HttpServletResponse response){
-    	
-  		BoUser userParam = ResourceUtil.getSessionUser();
     	String delId = request.getParameter("id");
     	AjaxJson j = new AjaxJson();
     	ApiResult result = chatSubscribeService.deleteSubscibe(new String[]{delId});
     	if(result.isOk()){
           	j.setSuccess(true);
           	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除订阅成功";
-          	logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-          					 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+          	addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:oneDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除订阅失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:oneDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;
@@ -281,28 +270,21 @@ public class ChatSubscribeController extends BaseController {
     @ResponseBody
     @ActionVerification(key="delete")
     public AjaxJson batchDel(HttpServletRequest request,HttpServletResponse response){
-    	
-  		BoUser userParam = ResourceUtil.getSessionUser();
     	String delIds = request.getParameter("ids");
     	AjaxJson j = new AjaxJson();
     	ApiResult result = chatSubscribeService.deleteSubscibe(delIds.contains(",")?delIds.split(","):new String[]{delIds});
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量删除订阅成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:batchDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量删除订阅失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;
-  		
     }
-    
-    
 }

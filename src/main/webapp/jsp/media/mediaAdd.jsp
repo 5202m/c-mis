@@ -5,7 +5,7 @@
 <div>
    <form id="mediaBaseInfoForm" class="yxForm" method="post">
     <table class="tableForm_L" border="0" cellspacing="1" cellpadding="0">
-     <tr style="display:none;">
+     <tr>
         <th width="100%" colspan="6">
         	<div>
     			<a href="#" class="easyui-linkbutton" style="float:right;" onclick="mediaAdd.back()" data-options="iconCls:'ope-previous'" >返回</a>

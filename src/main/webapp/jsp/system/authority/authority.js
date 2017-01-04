@@ -84,7 +84,8 @@ var systemAuthority = {
 				if(data.success) {
 					$.messager.alert($.i18n.prop("common.operate.tips"),$.i18n.prop("common.savesuccess"),'info');   /**操作提示 保存成功!*/
 				}else{
-					$.messager.alert($.i18n.prop("common.operate.tips"),$.i18n.prop("common.savefail"),'error');     /**操作提示 保存失败!*/
+					$.messager.alert($.i18n.prop("common.operate.tips"),data.msg,'error');     /**操作提示 保存失败!*/
+					systemAuthority.initMenuTree(selectRecords.roleId);
 				}
 			}
 		});

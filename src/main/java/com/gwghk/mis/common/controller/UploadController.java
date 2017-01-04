@@ -174,7 +174,7 @@ public class UploadController extends BaseController{
 			result.setMsg("upload success!");
 		}else{
 			result.setSuccess(false);
-			result.setMsg(ResultCode.Error1009.getMessage());
+			result.setMsg(ResourceBundleUtil.getByMessage(ResultCode.Error1009.getCode()));
 		}
 		return result;
 	}

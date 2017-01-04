@@ -29,7 +29,6 @@ import com.gwghk.mis.model.ChatPoints;
 import com.gwghk.mis.model.SmsInfo;
 import com.gwghk.mis.service.ChatGroupService;
 import com.gwghk.mis.service.ChatPointsService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
@@ -58,9 +57,9 @@ public class ChatPointsController extends BaseController{
 	@RequestMapping(value = "/chatPointsInfo/index", method = RequestMethod.GET)
 	public String index(HttpServletRequest request, ModelMap map) {
 		DictConstant dict=DictConstant.getInstance();
-		map.put("type", ResourceUtil.getSubDictListByParentCode(dict.DICT_POINTS_TYPE));
-		map.put("item", ResourceUtil.getSubDictListByParentCode(dict.DICT_POINTS_ITEM));
-		map.put("groupList", ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE));
+		map.put("type", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_POINTS_TYPE));
+		map.put("item", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_POINTS_ITEM));
+		map.put("groupList", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE));
 		logger.debug("-->start into ChatPointsController.index() and url is /ChatPointsController/index.do");
 		return "points/chatPointsInfoList";
 	}
@@ -78,6 +77,7 @@ public class ChatPointsController extends BaseController{
 	@RequestMapping(value = "/chatPointsInfo/datagrid", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> datagrid(HttpServletRequest request, DataGrid dataGrid, ChatPoints chatPoints) {
+		setSystemFlag(chatPoints);
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("type", request.getParameter("type"));
 		String param = request.getParameter("pointsStart");
@@ -131,13 +131,13 @@ public class ChatPointsController extends BaseController{
     	if(result.isOk()){
 	    	j.setSuccess(true);
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 保存积分成功：["+chatPoints.getGroupType()+"-"+chatPoints.getUserId()+"]!";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<save()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(StringUtils.isBlank(result.getErrorMsg()) ? ResourceBundleUtil.getByMessage(result.getCode()) : result.getErrorMsg());
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 保存积分失败：["+chatPoints.getGroupType()+"-"+chatPoints.getUserId()+"]!";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<save()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;
@@ -159,13 +159,13 @@ public class ChatPointsController extends BaseController{
 		if(result.isOk()){
 			j.setSuccess(true);
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除积分成功：" + pointsCfgId + "!";
-			logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
 			logger.info("<<delete()|"+message);
 		}else{
 			j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除积分失败：" + pointsCfgId + "!";
-			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
 			logger.error("<<delete()|"+message+",ErrorMsg:"+result.toString());
 		}
 		return j;
@@ -204,13 +204,13 @@ public class ChatPointsController extends BaseController{
     	if(apiResult.isOk()){
     		result.setSuccess(true);
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 积分冲正成功：["+pointsId+"-"+journalId+"]!";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<save()|"+message);
     	}else{
     		result.setSuccess(false);
     		result.setMsg(StringUtils.isBlank(apiResult.getErrorMsg()) ? ResourceBundleUtil.getByMessage(apiResult.getCode()) : apiResult.getErrorMsg());
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 积分冲正失败：["+pointsId+"-"+journalId+"]!";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<save()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return result;

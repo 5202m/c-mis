@@ -39,7 +39,9 @@ var systemDictionary = {
 			    {title : 'nameCN',field:'nameCN',hidden : true},
 			    {title : 'nameTW',field:'nameTW',hidden : true},
 			    {title : 'nameEN',field:'nameEN',hidden : true},
-			    {title : $.i18n.prop("dictionary.name"),field:'name',width:70},         			/**字典名称*/
+			    {title : $.i18n.prop("dictionary.name"),field:'name',width:70},  
+			    {title : "系统类别",field:'flag',width:70},
+			    {title : "参数值",field:'value',width:70},
 			    {title : '状态',field:'status',width:30,formatter:function(value, rowData, rowIndex) {
 			    	if (value == 1) {
 			    		return '启用';
@@ -104,7 +106,7 @@ var systemDictionary = {
 		var submitUrl =  basePath + '/dictionaryController/create.do';
 		goldOfficeUtils.openEditorDialog({
 			title : $.i18n.prop("common.operatetitle.add"),			/**添加记录*/
-			height : 200,
+			height : 235,
 			href : url,
 			iconCls : 'pag-add',
 			handler : function(){   //提交时处理
@@ -131,6 +133,8 @@ var systemDictionary = {
 												nameCN: d.obj.nameCN,
 												nameTW: d.obj.nameTW,
 												nameEN: d.obj.nameEN,
+												flag:d.obj.systemCategory,
+												value:d.obj.value,
 												type : 2
 											}]
 										});
@@ -158,7 +162,7 @@ var systemDictionary = {
 		var submitUrl =  basePath + '/dictionaryController/update.do';
 		goldOfficeUtils.openEditorDialog({
 			title : $.i18n.prop("common.operatetitle.edit"),	 /**修改记录*/
-			height : 200,
+			height : 235,
 			href : encodeURI(url),
 			iconCls : 'pag-edit',
 			handler : function(){   //提交时处理
@@ -176,7 +180,9 @@ var systemDictionary = {
 										status: d.obj.status,
 										nameCN: d.obj.nameCN,
 										nameTW: d.obj.nameTW,
-										nameEN: d.obj.nameEN
+										nameEN: d.obj.nameEN,
+										value:d.obj.value,
+										flag:d.obj.systemCategory
 									}
 								});
 								$("#myWindow").dialog("close");

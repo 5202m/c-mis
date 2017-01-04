@@ -27,15 +27,12 @@ import com.gwghk.mis.common.model.DataGrid;
 import com.gwghk.mis.common.model.Page;
 import com.gwghk.mis.constant.DictConstant;
 import com.gwghk.mis.constant.WebConstant;
-import com.gwghk.mis.model.BoUser;
 import com.gwghk.mis.model.ChatGroup;
 import com.gwghk.mis.model.ChatPushInfo;
 import com.gwghk.mis.service.ChatClientGroupService;
 import com.gwghk.mis.service.ChatGroupService;
 import com.gwghk.mis.service.ChatPushInfoService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
-import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
 import com.gwghk.mis.util.ResourceUtil;
 
@@ -66,8 +63,8 @@ public class ChatPushInfoController extends BaseController{
 	 */
 	private void setCommonShow(ModelMap map){
 		DictConstant dict=DictConstant.getInstance();
-		map.put("groupTypeList", ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE));
-    	map.put("statusList", ResourceUtil.getSubDictListByParentCode(dict.DICT_USE_STATUS));
+		map.put("groupTypeList", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE));
+    	map.put("statusList", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_USE_STATUS));
 	}
 	
 	/**
@@ -90,6 +87,7 @@ public class ChatPushInfoController extends BaseController{
 	@RequestMapping(value = "/chatPushInfoController/datagrid", method = RequestMethod.GET)
 	@ResponseBody
 	public  Map<String,Object>  datagrid(HttpServletRequest request, DataGrid dataGrid,ChatPushInfo pushInfo){
+		 setSystemFlag(pushInfo);
 		 Page<ChatPushInfo> page = chatPushInfoService.getPage(this.createDetachedCriteria(dataGrid, pushInfo));
 		 Map<String, Object> result = new HashMap<String, Object>();
 		 result.put("total",null == page ? 0  : page.getTotalSize());
@@ -136,15 +134,13 @@ public class ChatPushInfoController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + chatPushInfo.getCreateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增推送信息成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<method:create()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = "用户：" + chatPushInfo.getCreateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增推送信息失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<method:create()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;
@@ -163,15 +159,13 @@ public class ChatPushInfoController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + chatPushInfo.getUpdateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改推送信息："+chatPushInfo.getId();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
     		logger.info("<--method:update()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = "用户：" + chatPushInfo.getUpdateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改推送信息失败："+chatPushInfo.getId();
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
     	}
    		return j;
@@ -184,7 +178,6 @@ public class ChatPushInfoController extends BaseController{
     @ResponseBody
     @ActionVerification(key="delete")
     public AjaxJson del(HttpServletRequest request,HttpServletResponse response){
-    	BoUser boUser = ResourceUtil.getSessionUser();
     	String delIds = request.getParameter("ids");
     	if(StringUtils.isBlank(delIds)){
     		delIds = request.getParameter("id");
@@ -193,16 +186,14 @@ public class ChatPushInfoController extends BaseController{
     	ApiResult result =chatPushInfoService.delete(delIds.split(","));
     	if(result.isOk()){
     		j.setSuccess(true);
-    		String message = "用户：" + boUser.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除推送信息成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除推送信息成功";
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:batchDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
-    		String message = "用户：" + boUser.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除推送信息失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除推送信息失败";
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;

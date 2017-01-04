@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -43,6 +45,9 @@ public class RoleService{
 	@Autowired
 	private ChatGroupService chatGroupService;
 	
+	@Autowired
+	private  HttpServletRequest request;
+	
 	/**
 	 * 角色分页查询
 	 * @param dCriteria
@@ -57,6 +62,7 @@ public class RoleService{
 			if(StringUtils.isNotBlank(role.getRoleNo())){
 				criteria.and("roleNo").is(role.getRoleNo());
 			}
+			criteria.and("systemCategory").is(role.getSystemCategory());
 			if(StringUtils.isNotBlank(role.getRoleName())){
 				criteria.and("roleName").is(role.getRoleName());
 			}
@@ -91,7 +97,7 @@ public class RoleService{
     		BeanUtils.copyExceptNull(role, roleParam);
     		roleDao.update(role);
     	}else{
-    		if(roleDao.getByRoleNo(roleParam.getRoleNo())!=null){
+    		if(roleDao.getByRoleNo(roleParam.getSystemCategory(),roleParam.getRoleNo())!=null){
     			return result.setCode(ResultCode.Error102);
     		}
     		roleDao.addRole(roleParam);	
@@ -120,11 +126,11 @@ public class RoleService{
 	/**
      * 获取角色对应的聊天室
      */
-    public Map<String,Object> getRoleChatGroupRelation(String roleId){
+    public Map<String,Object> getRoleChatGroupRelation(String systemCategory,String roleId){
     	Map<String,Object> map = new HashMap<String, Object>();
     	List<ChatGroup> relationChatGroupList = roleDao.getByRoleId(roleId).getChatGroupList();   //关联的聊天室
 		map.put("relationChatGroupList", relationChatGroupList);
-		map.put("unRelationChatGroupList",chatGroupService.getUnRelationRoleChatGroup(relationChatGroupList)); //非关联的聊天室
+		map.put("unRelationChatGroupList",chatGroupService.getUnRelationRoleChatGroup(systemCategory,relationChatGroupList)); //非关联的聊天室
 		return map;
     }
     
@@ -161,16 +167,19 @@ public class RoleService{
 	 * 提取所有角色信息
 	 * @return
 	 */
-	public List<BoRole> getRoleList() {
-		return roleDao.getRoleList(Query.query(Criteria.where("valid").is(1)));
+	public List<BoRole> getRoleList(String systemCategory) {
+		Criteria criteria = new Criteria();
+		criteria.and("valid").is(1)
+				.and("systemCategory").is(systemCategory);
+		return roleDao.getRoleList(Query.query(criteria));
 	}
 	
 	/**
 	 * 提取所有分析师角色信息
 	 * @return
 	 */
-	public List<BoRole> getAnalystRoleList() {
-		return roleDao.getRoleList(Query.query(Criteria.where("valid").is(1).and("roleNo").regex("analyst")));
+	public List<BoRole> getAnalystRoleList(String systemCategory) {
+		return roleDao.getRoleList(Query.query(Criteria.where("valid").is(1).and("roleNo").regex("analyst").and("systemCategory").is(systemCategory)));
 	}
 	
 	/**

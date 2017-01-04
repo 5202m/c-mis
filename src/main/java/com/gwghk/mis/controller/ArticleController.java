@@ -78,7 +78,7 @@ public class ArticleController extends BaseController{
 	@RequestMapping(value = "/articleController/index", method = RequestMethod.GET)
 	public  String  index(HttpServletRequest request,ModelMap map){
 		DictConstant dict=DictConstant.getInstance();
-		Map<String, List<BoDict>> dictMap=ResourceUtil.getDictListByLocale(new String[]{dict.DICT_USE_STATUS,dict.DICT_PLATFORM});
+		Map<String, List<BoDict>> dictMap=ResourceUtil.getDictListByLocale(getSystemFlag(),new String[]{dict.DICT_USE_STATUS,dict.DICT_PLATFORM});
     	map.put("dictConstant", dict);
     	map.put("dictMap", dictMap);
     	map.put("articlePlatformJson",JSONArray.toJSONString(dictMap.get(dict.DICT_PLATFORM)));
@@ -133,7 +133,7 @@ public class ArticleController extends BaseController{
     	map.put("langMap", langMap);
     	DictConstant dict=DictConstant.getInstance();
     	map.put("dictConstant", dict);
-    	map.put("dictMap", ResourceUtil.getDictListByLocale(new String[]{dict.DICT_USE_STATUS}));
+    	map.put("dictMap", ResourceUtil.getDictListByLocale(getSystemFlag(),new String[]{dict.DICT_USE_STATUS}));
     	map.put("filePath",PropertiesUtil.getInstance().getProperty("pmfilesDomain"));
     }
 	
@@ -192,15 +192,13 @@ public class ArticleController extends BaseController{
         	if(result.isOk()){
         		j.setSuccess(true);
         		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功新增文章："+article.getId();
-        		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT
-        						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+        		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
         		logger.info("<<method:create()|"+message);
         	}else{
         		j.setSuccess(false);
         		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
         		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增文章："+article.getId()+" 失败";
-        		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-        						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+        		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
         		logger.error("<<method:create()|"+message+",ErrorMsg:"+result.toString());
         	}
 	    }catch(Exception e){
@@ -249,15 +247,13 @@ public class ArticleController extends BaseController{
 	    	if(result.isOk()){
 	    		j.setSuccess(true);
 	    		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改文章："+article.getId();
-	    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
-	    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+	    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
 	    		logger.info("<--method:update()|"+message);
 	    	}else{
 	    		j.setSuccess(false);
 	    		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
 	    		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改文章："+article.getId()+" 失败";
-	    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-	    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+	    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
 	    		logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
 	    	}
         }catch(Exception e){
@@ -285,15 +281,13 @@ public class ArticleController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除文章成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:deleteArticle|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除文章失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:deleteArticle|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;
@@ -313,15 +307,13 @@ public class ArticleController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置文章状态成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:setArticleStatus|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置文章状态失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:setArticleStatu|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;
@@ -360,15 +352,13 @@ public class ArticleController extends BaseController{
 		if(apiResult.isOk()){
 			j.setSuccess(true);
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 提取交易策略成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:tradeStrateGet()|"+message);
 		}else{
 			j.setSuccess(false);
 			j.setMsg(apiResult.getErrorMsg());
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 提取交易策略失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:tradeStrateGet()|"+message+",ErrorMsg:"+apiResult.toString());
 		}
   		return j;
@@ -416,7 +406,7 @@ public class ArticleController extends BaseController{
     	if("R".equals(opType)){//预览
     		article.setCategoryId(getCategoryTxt(article.getCategoryId()));
         	//平台类型转成中文显示
-        	List<BoDict> subList=ResourceUtil.getSubDictListByParentCode(DictConstant.getInstance().DICT_PLATFORM);
+        	List<BoDict> subList=ResourceUtil.getSubDictListByParentCode(getSystemFlag(),DictConstant.getInstance().DICT_PLATFORM);
         	String platform=article.getPlatform(),articlePlatform="";
         	int size=0;
         	if(StringUtils.isNotBlank(platform) && subList!=null && (size=subList.size())>0){
@@ -448,12 +438,12 @@ public class ArticleController extends BaseController{
     	}
     	config.put("langMap", langMap);
     	config.put("dictConstant", dict);
-    	config.put("dictMap", ResourceUtil.getDictListByLocale(new String[]{dict.DICT_USE_STATUS}));
+    	config.put("dictMap", ResourceUtil.getDictListByLocale(getSystemFlag(),new String[]{dict.DICT_USE_STATUS}));
     	config.put("filePath",PropertiesUtil.getInstance().getProperty("pmfilesDomain"));
     	
     	String view = null;
     	if("note".equals(template)){
-    		config.put("chatGroupList", this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
+    		config.put("chatGroupList", this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
     		config.put("pmApiCourseUrl", PropertiesUtil.getInstance().getProperty("pmApiUrl")+"/common/getCourse");
     		view = "article_note";
     	}else if("live".equals(template)){

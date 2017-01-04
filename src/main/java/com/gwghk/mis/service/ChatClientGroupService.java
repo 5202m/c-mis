@@ -32,8 +32,8 @@ public class ChatClientGroupService{
 	 * 查询列表
 	 * @return
 	 */
-	public List<ChatClientGroup> getClientGroupList(String groupType) {
-		return chatClientGroupDao.getList(groupType);
+	public List<ChatClientGroup> getClientGroupList(String groupType,String sysFlag) {
+		return chatClientGroupDao.getList(groupType,sysFlag);
 	}
 	
 	/**
@@ -93,6 +93,7 @@ public class ChatClientGroupService{
 		criter.and("valid").is(1);
 		ChatClientGroup model=dCriteria.getSearchModel();
 		if(model!=null){
+			criter.and("systemCategory").is(model.getSystemCategory());
 			criter.and("groupType").is(model.getGroupType());
 			if(StringUtils.isNotBlank(model.getId())){
 				criter.and("id").regex(StringUtil.toFuzzyMatch(model.getId()));

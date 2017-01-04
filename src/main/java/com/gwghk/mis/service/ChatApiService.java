@@ -223,7 +223,7 @@ public class ChatApiService{
 		paramMap.put("fData", financeData);
 		paramMap.put("reviewData", reviewData);
 		try {
-			String url = String.format("%s/notice/%s",PropertiesUtil.getInstance().getProperty("pmApiUrl"),"zxFinanceReviewNotice");//formatUrl("zxFinanceReviewNotice");
+			String url = String.format("%s/notice/%s",PropertiesUtil.getInstance().getProperty("chatApiUrl"),"zxFinanceReviewNotice");//formatUrl("zxFinanceReviewNotice");
 			String str = HttpClientUtils.httpPostString(url, paramMap);
 			System.out.println(str);
 			if (StringUtils.isNotBlank(str)) {

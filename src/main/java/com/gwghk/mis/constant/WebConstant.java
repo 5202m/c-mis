@@ -50,7 +50,6 @@ public class WebConstant {
 	 public final static String LOG_TYPE_APPROVE = "7"; //审批
 	 public final static String LOG_TYPE_CANCEL_APPROVE = "8"; //取消审批
 	 public final static String LOG_TYPE_EXPORT = "9"; //导出记录
-	public final static String Log_Type_GAG = "A"; //禁言
 	 
 	 /**登录用户的session key*/
 	 public final static String SESSION_LOGIN_FLAG_KEY = "SESSION_LOGIN_FLAG_KEY";
@@ -99,4 +98,13 @@ public class WebConstant {
 	 public final static String CHAT_VISITOR_REP_T_TEMPLATE_PATH ="/template/chat_visitor_repT_data.xls";
 	/**房间未授权用户列表**/
 	public final static String ROOM_UN_AUTH_CLINET_DATA = "/template/room_un_auth_client_data.xls";
+
+	/****
+	 * 分析师角色 编号前缀
+	 */
+	public final static String ROLE_NO_ANALYST_PRE = "analyst";
+	/**超级用户标记**/
+	public final static String SESSION_SUPER_FLAG = "SESSION_SUPER_FLAG";
+	/**登录用户session**/
+	public final static String SESSION_LOGIN_USER = "SESSION_LOGIN_USER";
 }

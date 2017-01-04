@@ -21,6 +21,7 @@ public class TreeBean{
 	private List<TreeBean> child;
 	private List<TreeBean> children;
 	private int sort;
+	private String code;
 	public String getId() {
 		return id;
 	}
@@ -93,5 +94,10 @@ public class TreeBean{
 	public void setIconImg(String iconImg) {
 		this.iconImg = iconImg;
 	}
-	
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
 }

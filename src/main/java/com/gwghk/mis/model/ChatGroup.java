@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date   2015年4月1日
  */
 @Document
-public class ChatGroup extends BaseModel{
+public class ChatGroup extends BaseModelExt{
 	
 	/**
 	 * 组别编码
@@ -91,9 +91,6 @@ public class ChatGroup extends BaseModel{
 	
 	/** 默认分析师（用户信息） */
 	private BoUser defaultAnalyst;
-
-	/** 默认客服（用户信息） */
-	private BoUser defaultCS;
 	
 	/**
 	 * 客户组（对应的客户组,多个逗号分隔）
@@ -332,12 +329,4 @@ public class ChatGroup extends BaseModel{
     public void setLabel(String label) {
         this.label = label;
     }
-
-	public BoUser getDefaultCS() {
-		return defaultCS;
-	}
-
-	public void setDefaultCS(BoUser defaultCS) {
-		this.defaultCS = defaultCS;
-	}
 }

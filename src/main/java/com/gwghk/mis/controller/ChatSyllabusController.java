@@ -35,7 +35,6 @@ import com.gwghk.mis.model.ChatGroup;
 import com.gwghk.mis.model.ChatSyllabus;
 import com.gwghk.mis.service.ChatGroupService;
 import com.gwghk.mis.service.ChatSyllabusService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.JsonUtil;
@@ -68,7 +67,7 @@ public class ChatSyllabusController extends BaseController
 	 */
 	private List<ChatGroup> formatTreeList(List<BoDict> dictList){
     	List<ChatGroup> nodeList = new ArrayList<ChatGroup>(); 
-    	List<ChatGroup> groupList=chatGroupService.getChatGroupAllList("id","name","groupType");
+    	List<ChatGroup> groupList=chatGroupService.getChatGroupAllList(getSystemFlag(),"id","name","groupType");
     	ChatGroup tbean=null;
     	for(BoDict dict:dictList){
     		tbean=new ChatGroup();
@@ -91,10 +90,10 @@ public class ChatSyllabusController extends BaseController
 	public String index(HttpServletRequest request, ModelMap map)
 	{
 		DictConstant dict=DictConstant.getInstance();
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
     	
 		logger.debug(">>start into chatSyllabusController.index() and url is /chatSyllabusController/index.do");
-		return "chat/syllabus";
+		return "chat/syllabus/syllabus";
 	}
 
 	/**
@@ -144,7 +143,7 @@ public class ChatSyllabusController extends BaseController
 		List<BoUser> loc_authUsers = null;
 		if(StringUtils.isNotBlank(id)){
 			loc_syllabus = syllabusService.getChatSyllabus(id);
-			loc_authUsers = syllabusService.getAuthUsers(loc_syllabus.getGroupType(), loc_syllabus.getGroupId());
+			loc_authUsers = syllabusService.getAuthUsers(this.getSystemFlag(),loc_syllabus.getGroupType(), loc_syllabus.getGroupId());
 		}
 		else 
 		{
@@ -153,7 +152,7 @@ public class ChatSyllabusController extends BaseController
 		}
 		
 		DictConstant dict=DictConstant.getInstance();
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
 		map.addAttribute("syllabus", loc_syllabus);
 		JSONObject obj=new JSONObject();
 		obj.put("data", loc_syllabus.getStudioLink());
@@ -163,7 +162,7 @@ public class ChatSyllabusController extends BaseController
 		map.addAttribute("days", new String[]{"星期一","星期二","星期三","星期四","星期五","星期六","星期天"});
 		map.addAttribute("authUsers", loc_authUsers);
 		
-		return "chat/syllabusEdit";
+		return "chat/syllabus/syllabusEdit";
 	}
 
 	/**
@@ -211,13 +210,13 @@ public class ChatSyllabusController extends BaseController
 		if(result.isOk()){
 			j.setSuccess(true);
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除课程安排成功：" + id + "!";
-			logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
 			logger.info("<<delete()|"+message);
 		}else{
 			j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除课程安排失败：" + id + "!";
-			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
 			logger.error("<<delete()|"+message+",ErrorMsg:"+result.toString());
 		}
 		return j;
@@ -232,7 +231,7 @@ public class ChatSyllabusController extends BaseController
     	String groupType=request.getParameter("groupType"),groupId=request.getParameter("groupId"),authors=request.getParameter("authors");
        	List<TreeBean> treeList=new ArrayList<TreeBean>();
        	TreeBean tbean=null;
-       	List<BoUser> loc_authUsers = syllabusService.getAuthUsers(groupType,groupId);
+       	List<BoUser> loc_authUsers = syllabusService.getAuthUsers(getSystemFlag(),groupType,groupId);
        	authors=StringUtils.isBlank(authors)?"":(",".concat(authors).concat(","));
         if(loc_authUsers!=null && loc_authUsers.size()>0){
         	

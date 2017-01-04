@@ -42,9 +42,7 @@ import com.gwghk.mis.model.BoUser;
 import com.gwghk.mis.model.Category;
 import com.gwghk.mis.service.ArticleService;
 import com.gwghk.mis.service.CategoryService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
-import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.JSONHelper;
 import com.gwghk.mis.util.JsonUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
@@ -72,7 +70,7 @@ public class MediaController extends BaseController{
 	@RequestMapping(value = "/mediaController/index", method = RequestMethod.GET)
 	public  String  index(HttpServletRequest request,ModelMap map){
 		DictConstant dict=DictConstant.getInstance();
-		Map<String, List<BoDict>> dictMap=ResourceUtil.getDictListByLocale(new String[]{dict.DICT_USE_STATUS,dict.DICT_PLATFORM});
+		Map<String, List<BoDict>> dictMap=ResourceUtil.getDictListByLocale(getSystemFlag(),new String[]{dict.DICT_USE_STATUS,dict.DICT_PLATFORM});
     	map.put("dictConstant", dict);
     	map.put("dictMap", dictMap);
     	map.put("mediaPlatformJson",JSONArray.toJSONString(dictMap.get(dict.DICT_PLATFORM)));
@@ -137,7 +135,7 @@ public class MediaController extends BaseController{
     	map.put("langMap", langMap);
     	DictConstant dict=DictConstant.getInstance();
     	map.put("dictConstant", dict);
-    	map.put("dictMap", ResourceUtil.getDictListByLocale(new String[]{dict.DICT_USE_STATUS}));
+    	map.put("dictMap", ResourceUtil.getDictListByLocale(getSystemFlag(),new String[]{dict.DICT_USE_STATUS}));
     }
     
     /**
@@ -150,7 +148,7 @@ public class MediaController extends BaseController{
     	Article media=articleService.getArticleById(mediaId);
     	setCategoryTxt(media.getCategoryId(),map);
     	//平台类型转成中文显示
-    	List<BoDict> subList=ResourceUtil.getSubDictListByParentCode(DictConstant.getInstance().DICT_PLATFORM);
+    	List<BoDict> subList=ResourceUtil.getSubDictListByParentCode(getSystemFlag(),DictConstant.getInstance().DICT_PLATFORM);
     	String platform=media.getPlatform(),MediaPlatform="";
     	int size=0;
     	if(StringUtils.isNotBlank(platform) && subList!=null && (size=subList.size())>0){
@@ -234,15 +232,14 @@ public class MediaController extends BaseController{
         	if(result.isOk()){
         		j.setSuccess(true);
         		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功新增媒体："+media.getId();
-        		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT
-        						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+        		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
         		logger.info("<<method:create()|"+message);
         	}else{
         		j.setSuccess(false);
         		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
         		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增媒体："+media.getId()+" 失败";
-        		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-        						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+        		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
+        						 );
         		logger.error("<<method:create()|"+message+",ErrorMsg:"+result.toString());
         	}
 	    }catch(Exception e){
@@ -291,15 +288,13 @@ public class MediaController extends BaseController{
 	    	if(result.isOk()){
 	    		j.setSuccess(true);
 	    		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改媒体："+media.getId();
-	    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
-	    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+	    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
 	    		logger.info("<--method:update()|"+message);
 	    	}else{
 	    		j.setSuccess(false);
 	    		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
 	    		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改媒体："+media.getId()+" 失败";
-	    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-	    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+	    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
 	    		logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
 	    	}
         }catch(Exception e){
@@ -317,7 +312,6 @@ public class MediaController extends BaseController{
     @ResponseBody
     @ActionVerification(key="delete")
     public AjaxJson batchDel(HttpServletRequest request,HttpServletResponse response){
-    	BoUser userParam = ResourceUtil.getSessionUser();
     	AjaxJson j = new AjaxJson();
     	String delIds = request.getParameter("ids");
     	if(StringUtils.isBlank(delIds)){
@@ -327,15 +321,13 @@ public class MediaController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除媒体成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:deleteMedia|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除媒体失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:deleteMedia|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;

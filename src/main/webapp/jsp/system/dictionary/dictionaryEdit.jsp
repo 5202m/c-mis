@@ -30,6 +30,21 @@
 	      	  <td width="35%" colspan="3"><input type="text" name="sort" id="sort" value="${dictionaryJsonParam.sort}" class="easyui-validatebox" 
 		          	    data-options="required:true,missingMessage:'<spring:message code="menu.valid.order" />'"/>&nbsp;&nbsp;<span class="red">(相对于同一个父节点下的顺序)</span></td>
 	      </tr>
+          <c:if test="${dictionaryJsonParam.type!=1}">
+            <tr>
+	          <th>系统类别</th>
+	          <td colspan="3">
+	             <select class="easyui-combotree" name="systemCategoryStr" data-options="cascadeCheck:false,url:'<%=request.getContextPath()%>/systemCategoryController/getCategoryTreeList.do?categoryId=${systemCategory}'" multiple>
+	             </select>
+	          </td>
+	        </tr>
+	        <tr>
+	          <th>参数值</th>
+	          <td colspan="3">
+	             <input type="text" name="value" value="${dictionaryJsonParam.value}" style="width:450px;"/>
+	          </td>
+	        </tr>
+          </c:if>
 	      <tr>
 	          <th>状态： </th>
 	      	  <td colspan="3">

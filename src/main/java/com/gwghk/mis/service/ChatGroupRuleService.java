@@ -70,7 +70,7 @@ public class ChatGroupRuleService{
     	}
     	//目前暂时登录弹框需要推送
     	if("login_time_set".equals(type) || "online_mem_set".equals(type)){
-    		List<String> strList=chatGroupDao.getRoomIdByRuleId(chatGroupRuleParam.getId());
+    		List<String> strList=chatGroupDao.getRoomIdByRuleId(chatGroupRuleParam.getSystemCategory(),chatGroupRuleParam.getId());
     		if(strList!=null && strList.size()>0){
     			JSONObject jsonObj=new JSONObject();
         		jsonObj.put("type", type);
@@ -109,6 +109,7 @@ public class ChatGroupRuleService{
 		criter.and("valid").is(1);
 		ChatGroupRule model=dCriteria.getSearchModel();
 		if(model!=null){
+			criter.and("systemCategory").is(model.getSystemCategory());
 			if(StringUtils.isNotBlank(model.getType())){
 				criter.and("type").is(model.getType());
 			}
@@ -123,9 +124,9 @@ public class ChatGroupRuleService{
 	 * 查询规则
 	 * @return
 	 */
-	public List<ChatGroupRule> getChatGroupRuleList(String...selectField) {
+	public List<ChatGroupRule> getChatGroupRuleList(String systemCategory,String...selectField) {
 		if(selectField!=null){
-			return chatGroupRuleDao.findListInclude(ChatGroupRule.class, Query.query(Criteria.where("valid").is(1)),selectField);
+			return chatGroupRuleDao.findListInclude(ChatGroupRule.class, Query.query(Criteria.where("valid").is(1).and("systemCategory").is(systemCategory)),selectField);
 		}
 		return chatGroupRuleDao.findList(ChatGroupRule.class, Query.query(Criteria.where("valid").is(1)));
 	}

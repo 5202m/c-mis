@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +25,8 @@ import com.gwghk.mis.common.model.AjaxJson;
 import com.gwghk.mis.common.model.ApiResult;
 import com.gwghk.mis.constant.WebConstant;
 import com.gwghk.mis.model.BoMenu;
-import com.gwghk.mis.model.BoUser;
 import com.gwghk.mis.model.MenuResult;
 import com.gwghk.mis.service.MenuService;
-import com.gwghk.mis.util.BrowserUtils;
-import com.gwghk.mis.util.ContextHolderUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
@@ -71,15 +69,18 @@ public class MenuController extends BaseController{
 	 */
 	@RequestMapping(value = "/menuController/getMenuRoleTree", method = RequestMethod.POST,produces = "plain/text; charset=UTF-8")
 	@ResponseBody
-	public String getMenuRoleTree(){
-		BoUser user = ResourceUtil.getSessionUser();
-		Object obj = ContextHolderUtils.getSession().getAttribute(WebConstant.SESSION_MENU_KEY);
+	public String getMenuRoleTree(HttpServletRequest request){
+		HttpSession session=request.getSession();
+		Object obj = session.getAttribute(WebConstant.SESSION_MENU_KEY);
+		Object superFlag = session.getAttribute(WebConstant.SESSION_SUPER_FLAG);
 		MenuResult menuResult=null;
 		if(obj != null){
 			menuResult = (MenuResult)obj;
 		}else{
-			menuResult = menuService.getMenuRoleTreeJson(user.getRole().getRoleId(), false,ResourceUtil.getSessionLocale());
-			ContextHolderUtils.getSession().setAttribute(WebConstant.SESSION_MENU_KEY , menuResult);
+			boolean isSuper=(superFlag!=null && (boolean)superFlag);
+			String roleId=isSuper?null:userParam.getRole().getRoleId();
+			menuResult = menuService.getMenuRoleTreeJson(roleId,roleId, false,ResourceUtil.getSessionLocale(),isSuper);
+			session.setAttribute(WebConstant.SESSION_MENU_KEY , menuResult);
 		}
 		return menuResult.getMenuJson();
 	}
@@ -108,15 +109,13 @@ public class MenuController extends BaseController{
     	ApiResult result = menuService.saveMenu(menu, false);
     	if(result != null && result.isOk()){
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功新增菜单："+menu.getNameCN();
-	    	logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT
-	    					 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+	    	addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<method:create()|"+message);
     		j.setObj(result.getReturnObj()[0]);
     		j.setSuccess(true);
     	}else{
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增菜单："+menu.getNameCN()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-				   ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<method:create()|"+message+",ErrorMsg:"+result.toString());
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
@@ -136,15 +135,13 @@ public class MenuController extends BaseController{
     	ApiResult result = menuService.saveMenu(menu, true);
     	if(result != null && result.isOk()){
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改菜单："+menu.getNameCN();
-	    	logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
-	    					 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+	    	addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
     		logger.info("<<method:update()|"+message);
     		j.setObj(result.getReturnObj()[0]);
     		j.setSuccess(true);
     	}else{
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改菜单："+menu.getNameCN()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE);
     		logger.error("<<method:update()|"+message+",ErrorMsg:"+result.toString());
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
@@ -193,14 +190,12 @@ public class MenuController extends BaseController{
     	ApiResult result = menuService.moveMenu(menu.getParentMenuId(),menu.getMenuId());
     	if(result != null && result.isOk()){
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功移动菜单";
-	    	logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
-			 	   			 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+	    	addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
     		logger.info("<<method:saveMove()|"+message);
     		j.setSuccess(true);
     	}else{
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 移动菜单失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE);
     		logger.error("<<method:saveMove()|"+message+",ErrorMsg:"+result.toString());
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
@@ -220,14 +215,12 @@ public class MenuController extends BaseController{
     	ApiResult result = menuService.deleteMenu(menuIds);
     	if(result != null && result.isOk()){
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除菜单成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-			 	   			 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:del()|"+message);
     		j.setSuccess(true);
     	}else{
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除菜单失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-			 	   			 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:del()|"+message+",ErrorMsg:"+result.toString());
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));

@@ -54,6 +54,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 		} else {
 			if (ContextHolderUtils.getSession().getAttribute(ContextHolderUtils.getSessionId()) != null
 			           || (requestPath.contains("uploadController/upload.do") && ContextHolderUtils.getSessionId() != null)) {
+				//System.out.println("request:"+request.getRequestURI()+";systemCategory:"+request.getParameter("systemCategory"));
 				return actionAuth(request,response,handler);
 			} else {
 				//response.sendRedirect(request.getContextPath()+"/jsp/login/timeout.jsp");

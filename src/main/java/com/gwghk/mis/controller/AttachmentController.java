@@ -110,15 +110,13 @@ public class AttachmentController extends BaseController{
     	if(result.isOk()){
           	j.setSuccess(true);
           	String message = " 附件: " + paths + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除附件成功";
-          	logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-          					 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+          	addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:oneDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 附件: " + paths+ " "+DateUtil.getDateSecondFormat(new Date()) + " 删除附件失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:oneDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;

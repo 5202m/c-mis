@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +35,10 @@ import com.gwghk.mis.model.BoUser;
 import com.gwghk.mis.service.ChatShowTradeService;
 import com.gwghk.mis.service.RoleService;
 import com.gwghk.mis.service.UserService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.PropertiesUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
-import com.gwghk.mis.util.ResourceUtil;
 
 /**
  * 摘要：用户管理
@@ -67,7 +66,7 @@ public class UserController extends BaseController{
 	@RequestMapping(value = "/userController/index", method = RequestMethod.GET)
 	public  String  index(HttpServletRequest request,ModelMap map, String opType){
 		logger.debug(">>start into UserController.index() and url is /userController/index.do");
-		map.addAttribute("roleList",this.getAcceptRoles(opType));
+		map.addAttribute("roleList",this.getAcceptRoles(opType,getSystemFlag()));
 		map.addAttribute("opType", opType);
 		return "system/user/userList";
 	}
@@ -87,7 +86,7 @@ public class UserController extends BaseController{
 		 if(StringUtils.isNotEmpty(roleId)){
 			 roleIds = new String[]{roleId};
 		 }else if("analyst".equals(opType)){
-			 List<BoRole> analystRoles = this.getAcceptRoles(opType);
+			 List<BoRole> analystRoles = this.getAcceptRoles(opType,getSystemFlag());
 			 if(analystRoles != null){
 				 int len = analystRoles.size();
 				 roleIds = new String[len];
@@ -109,8 +108,8 @@ public class UserController extends BaseController{
 	 */
     @RequestMapping(value="/userController/add", method = RequestMethod.GET)
     @ActionVerification(key="add")
-    public String add(ModelMap map, String opType) throws Exception {
-    	map.addAttribute("roleList",this.getAcceptRoles(opType));
+    public String add(HttpServletRequest request, ModelMap map, String opType) throws Exception {
+    	map.addAttribute("roleList",this.getAcceptRoles(opType,getSystemFlag()));
     	map.addAttribute("filePath",PropertiesUtil.getInstance().getProperty("pmfilesDomain"));
     	Pattern pattern = Pattern.compile("^13800138.*$", Pattern.CASE_INSENSITIVE);
     	map.addAttribute("telephone", this.getNextPhone(pattern));
@@ -134,10 +133,10 @@ public class UserController extends BaseController{
 	 */
     @ActionVerification(key="edit")
     @RequestMapping(value="/userController/{userId}/edit", method = RequestMethod.GET)
-    public String edit(@PathVariable String userId , ModelMap map, String opType) throws Exception {
+    public String edit(HttpServletRequest request,@PathVariable String userId , ModelMap map, String opType) throws Exception {
     	BoUser user=userService.getUserById(userId);
     	map.addAttribute("mngUser",user);
-		map.addAttribute("roleList", this.getAcceptRoles(opType));
+		map.addAttribute("roleList", this.getAcceptRoles(opType,getSystemFlag()));
 		map.addAttribute("filePath",PropertiesUtil.getInstance().getProperty("pmfilesDomain"));
 		return "system/user/userEdit";
     }
@@ -149,7 +148,6 @@ public class UserController extends BaseController{
    	@ResponseBody
     @ActionVerification(key="add")
     public AjaxJson create(HttpServletRequest request,BoUser user){
-    	BoUser userParam = ResourceUtil.getSessionUser();
     	user.setCreateUser(userParam.getUserNo());
     	user.setCreateIp(IPUtil.getClientIP(request));
     	AjaxJson j = new AjaxJson();
@@ -157,15 +155,13 @@ public class UserController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功新增用户："+user.getUserNo();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<method:create()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增用户："+user.getUserNo()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<method:create()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;
@@ -178,7 +174,6 @@ public class UserController extends BaseController{
    	@ResponseBody
     @ActionVerification(key="edit")
     public AjaxJson update(HttpServletRequest request,BoUser user){
-    	BoUser userParam = ResourceUtil.getSessionUser();
     	user.setUpdateUser(userParam.getUserNo());
     	user.setUpdateIp(IPUtil.getClientIP(request));
     	AjaxJson j = new AjaxJson();
@@ -187,15 +182,13 @@ public class UserController extends BaseController{
     		chatShowTradeService.asyncTradeByBoUser(user);
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改用户："+user.getUserNo();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
     		logger.info("<--method:update()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改用户："+user.getUserNo()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
     	}
    		return j;
@@ -225,15 +218,13 @@ public class UserController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 重置密码成功!";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
     		logger.info("<<method:saveResetPwd()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 重置密码失败!";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE);
     		logger.error("<<method:saveResetPwd()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;
@@ -246,22 +237,30 @@ public class UserController extends BaseController{
     @ResponseBody
     @ActionVerification(key="delete")
     public AjaxJson batchDel(HttpServletRequest request){
-    	BoUser userParam = ResourceUtil.getSessionUser();
     	String delIds = request.getParameter("ids");
     	AjaxJson j = new AjaxJson();
-    	ApiResult result =userService.deleteUser(delIds.contains(",")?delIds.split(","):new String[]{delIds});
+    	if(StringUtils.isBlank(delIds)){
+    		j.setSuccess(false);
+    		j.setMsg("请选择要删除的记录！");
+    		return j;
+    	}
+    	String[] idArr=delIds.contains(",")?delIds.split(","):new String[]{delIds};
+    	if(ArrayUtils.contains(idArr,userParam.getUserId())){
+    		j.setSuccess(false);
+    		j.setMsg("不能删除自己的用户信息！");
+    		return j;
+    	}
+    	ApiResult result =userService.deleteUser(idArr);
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量删除用户成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:batchDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量删除用户失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;
@@ -274,22 +273,29 @@ public class UserController extends BaseController{
     @ResponseBody
     @ActionVerification(key="delete")
     public AjaxJson oneDel(HttpServletRequest request,HttpServletResponse response){
-    	BoUser userParam = ResourceUtil.getSessionUser();
     	String delId = request.getParameter("id");
     	AjaxJson j = new AjaxJson();
+    	if(StringUtils.isBlank(delId)){
+    		j.setSuccess(false);
+    		j.setMsg("请选择要删除的记录！");
+    		return j;
+    	}
+    	if(delId.equals(userParam.getUserId())){
+    		j.setSuccess(false);
+    		j.setMsg("不能删除自己的用户信息！");
+    		return j;
+    	}
     	ApiResult result = userService.deleteUser(new String[]{delId});
     	if(result.isOk()){
           	j.setSuccess(true);
           	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除用户成功";
-          	logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-          					 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+          	addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:oneDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除用户失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:oneDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;
@@ -300,18 +306,18 @@ public class UserController extends BaseController{
      * @param opType
      * @return
      */
-    private List<BoRole> getAcceptRoles(String opType){
+    private List<BoRole> getAcceptRoles(String opType,String systemCategory){
     	if("analyst".equals(opType)){
-    		return roleService.getAnalystRoleList();
+    		return roleService.getAnalystRoleList(systemCategory);
     	}else{
-    		return roleService.getRoleList();
+    		return roleService.getRoleList(systemCategory);
     	}
     }
     
     @RequestMapping(value = "/userController/getAnalystList", method = RequestMethod.POST,produces = "plain/text; charset=UTF-8")
    	@ResponseBody
     public String getAnalystList(HttpServletRequest request,ModelMap map) throws Exception {
-    	List<BoUser> allAnalysts = userService.getUserListByRole("analyst");
+    	List<BoUser> allAnalysts = userService.getUserListByRole(getSystemFlag(),"analyst");
     	String hasOther=request.getParameter("hasOther");
     	if(StringUtils.isNotBlank(hasOther) && !request.getServerName().contains("hx9999.com")){
     		String path=PropertiesUtil.getInstance().getProperty("pmfilesDomain")+"/upload/pic/header/chat/201508";
@@ -341,4 +347,52 @@ public class UserController extends BaseController{
     private String getNextPhone(Pattern pattern){
     	return userService.getNextUserPhone(pattern);
     }
+
+	/**
+	 * 功能：用户管理-设置直播地址
+	 */
+	@ActionVerification(key="setLiveLinks")
+	@RequestMapping(value="/userController/{userId}/getLiveLinks", method = RequestMethod.GET)
+	public String getVideoUrl(@PathVariable String userId , ModelMap map) throws Exception {
+		BoUser user=userService.getUserById(userId);
+		map.addAttribute("mngUser",user);
+		return "system/user/liveLinks";
+	}
+
+	/**
+	 * 功能：用户管理-设置直播地址
+	 */
+	@ActionVerification(key="setLiveLinks")
+	@ResponseBody
+	@RequestMapping(value="/userController/setLiveLinks", method = RequestMethod.POST)
+	public AjaxJson setLiveLinks(HttpServletRequest request, HttpServletResponse response) {
+		AjaxJson j = new AjaxJson();
+		String userId = request.getParameter("userId");
+		String liveLinks = request.getParameter("liveLinks");
+		ApiResult result =userService.saveLiveLinks(userId, liveLinks);
+		if(result.isOk()){
+			j.setSuccess(true);
+			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功设置直播地址："+userId;
+			addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
+			logger.info("<--method:update()|"+message);
+		}else{
+			j.setSuccess(false);
+			j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
+			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置直播地址："+userId+" 失败";
+			addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
+			logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
+		}
+		return j;
+	}
+
+	/**
+	 * 获取分析师直播地址
+	 */
+	@RequestMapping(value="/userController/getAnalystLiveLink", method = RequestMethod.POST,produces = "plain/text; charset=UTF-8")
+	@ResponseBody
+	public String getAnalystLiveLink(HttpServletRequest request , ModelMap map) throws Exception {
+		String userId = request.getParameter("userId");
+		BoUser user=userService.getUserByNo(userId);
+		return JSONArray.toJSONString(user.getLiveLinks());
+	}
 }

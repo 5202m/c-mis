@@ -39,6 +39,7 @@ public class MemberService{
 		Query query=new Query();
 		if(member != null){
 			Criteria criteria = new Criteria();
+			criteria.and("systemCategory").is(member.getSystemCategory());
 			if(StringUtils.isNotBlank(member.getMobilePhone())){
 				criteria.and("mobilePhone").regex(StringUtil.toFuzzyMatch(member.getMobilePhone()));
 			}
@@ -61,8 +62,8 @@ public class MemberService{
 	/**
 	 * 功能：根据mobilePhone-->获取会员
 	 */
-	public Member getByMobilePhone(String mobilePhone){
-		return memberDao.getByMemberMobilePhone(mobilePhone);
+	public Member getByMobilePhone(String systemCategory,String mobilePhone){
+		return memberDao.getByMemberMobilePhone(systemCategory,mobilePhone);
 	}
 
 
@@ -71,17 +72,17 @@ public class MemberService{
 	 * @param userNos
 	 * @return
 	 */
-	public List<Member> getMemberListByMobiles(String[] mobiles, String groupType)
+	public List<Member> getMemberListByMobiles(String systemCategory,String[] mobiles, String groupType)
 	{
 		Query query=new Query();
 		Criteria criteria = Criteria.where("valid").is(1);
+		criteria.and("systemCategory").is(systemCategory);
 		if(mobiles != null && mobiles.length > 0)
 		{
 			criteria.and("mobilePhone").in((Object[])mobiles);
 		}
 		criteria.and("loginPlatform.chatUserGroup._id").is(groupType);
 		query.addCriteria(criteria);
-		
 		return memberDao.findListInclude(Member.class, query, "mobilePhone", "loginPlatform.chatUserGroup.$");
 	}
 	
@@ -112,7 +113,7 @@ public class MemberService{
     		BeanUtils.copyExceptNull(member, memberParam);
     		memberDao.update(member);
     	}else{
-    		if(memberDao.getByMemberMobilePhone(memberParam.getMobilePhone())!=null){
+    		if(memberDao.getByMemberMobilePhone(memberParam.getSystemCategory(),memberParam.getMobilePhone())!=null){
     			return result.setCode(ResultCode.Error102);
     		}
     		memberDao.addMember(memberParam);
@@ -174,8 +175,8 @@ public class MemberService{
 	 * @param nickname
 	 * @return
 	 */
-	public ApiResult modifyName(String mobile,String groupType,String nickname){
-		return memberDao.modifyName(mobile,groupType,nickname);
+	public ApiResult modifyName(String systemCategory,String mobile,String groupType,String nickname){
+		return memberDao.modifyName(systemCategory,mobile,groupType,nickname);
 	}
 	
 	/**
@@ -281,6 +282,7 @@ public class MemberService{
 			criteria.and("loginPlatform.chatUserGroup").elemMatch(userGroupCriteria);
 			query.addCriteria(criteria);
 		}
+		query.addCriteria(Criteria.where("systemCategory").is(member.getSystemCategory()));
 		return memberDao.findPageInclude(Member.class, query, dCriteria,"loginPlatform.chatUserGroup.$","mobilePhone","updateDate");
 	}
 	
@@ -293,10 +295,10 @@ public class MemberService{
 	 * @author:Jade.zhu   
 	 * @since  1.0.0
 	 */
-	public List<Member> getMemberByUserId(String[] userIds){
+	public List<Member> getMemberByUserId(String systemCategory,String groupType,String[] userIds){
 		return memberDao.findListInclude(Member.class, Query.query(
 				   new Criteria().andOperator(Criteria.where("loginPlatform.chatUserGroup.userId").in((Object[])userIds)
-				   ,Criteria.where("valid").is(1))), "loginPlatform.chatUserGroup.$");
+				   ,Criteria.where("valid").is(1),Criteria.where("systemCategory").is(systemCategory))), "loginPlatform.chatUserGroup.$");
 	}
 
 	/*****
@@ -305,11 +307,11 @@ public class MemberService{
 	 * @param groupType
 	 * @return
 	 */
-	public List<Member> getMemberByUserIdGroupType(String[] userIds,String groupType){
+	public List<Member> getMemberByUserIdGroupType(String systemCategory,String groupType,String[] userIds){
 		Criteria criteria = new Criteria();
 		Criteria userGroupCriteria = new Criteria();
 		userGroupCriteria.and("userId").in((Object[])userIds).and("_id").is(groupType);
-		criteria.and("valid").is(1).and("loginPlatform.chatUserGroup").elemMatch(userGroupCriteria);
+		criteria.and("systemCategory").is(systemCategory).and("valid").is(1).and("loginPlatform.chatUserGroup").elemMatch(userGroupCriteria);
 		Query query =new Query();
 		query.addCriteria(criteria);
 		return memberDao.findListInclude(Member.class, query, "loginPlatform.chatUserGroup.$","mobilePhone");

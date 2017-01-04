@@ -37,10 +37,13 @@ public class TreeVo{
 	/**菜单类型： 分数字字典 1、数据字典分类2 两种  */
 	private String type;
 	
+	private String flag;
 	/**
 	 * 状态(0：禁用 1：启用)
 	 */
 	private Integer status;
+	
+	private String value;
 	
 	/**子菜单*/
 	private List<TreeVo>  children = new ArrayList<TreeVo>();
@@ -140,4 +143,21 @@ public class TreeVo{
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
+
+	public String getFlag() {
+		return flag;
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
 }

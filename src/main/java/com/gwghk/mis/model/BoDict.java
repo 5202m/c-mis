@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
  * 摘要：数据字典实体对象(系统管理)
  * @author Gavin.guo
  */
-public class BoDict extends BaseModel{ 
+public class BoDict extends BaseModelExt{ 
 
 	@Id
 	private String id;
@@ -53,6 +53,11 @@ public class BoDict extends BaseModel{
 	 * 用于显示菜单的名称
 	 */
 	private String name;
+	
+	/**
+	 * 用于显示菜单的格外值
+	 */
+	private String value;
 
 	/**
 	 * 子类字典
@@ -144,4 +149,13 @@ public class BoDict extends BaseModel{
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
 }

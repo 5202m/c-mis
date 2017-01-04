@@ -130,6 +130,9 @@ public class BeanUtils{
     }
 	
 	public static <T> T clone(Object obj, Class<T> targetClazz){
+		if(obj==null){
+			return null;
+		}
 		try {
 			return copy(targetClazz.newInstance(), obj, false);
 		} catch (Exception e) {

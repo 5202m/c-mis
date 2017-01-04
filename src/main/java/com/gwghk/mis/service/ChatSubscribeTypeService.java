@@ -24,7 +24,6 @@ import com.gwghk.mis.dao.ChatSubscribeTypeDao;
 import com.gwghk.mis.enums.ResultCode;
 import com.gwghk.mis.model.ChatSubscribeType;
 import com.gwghk.mis.util.BeanUtils;
-import com.gwghk.mis.util.StringUtil;
 
 /**   
  * @description:   订阅配置Service类
@@ -52,11 +51,11 @@ public class ChatSubscribeTypeService {
 	 */
 	public ApiResult saveSubscribeType(ChatSubscribeType subscribeType, boolean isUpdate){
 		ApiResult result=new ApiResult();
+		if(subscribeType == null){
+			return result.setCode(ResultCode.Error104);
+		}
 		if(isUpdate){
 			ChatSubscribeType chatSubscribeType = chatSubscribeTypeDao.getSubscribeTypeById(subscribeType.getId());
-			if(subscribeType == null){
-				return result.setCode(ResultCode.Error104);
-			}
 			BeanUtils.copyExceptNull(chatSubscribeType, subscribeType);
 			chatSubscribeTypeDao.updateSubscribeType(chatSubscribeType);
 		} else {
@@ -80,6 +79,7 @@ public class ChatSubscribeTypeService {
 		ChatSubscribeType subscribeType = dCriteria.getSearchModel();
 		Criteria criteria = Criteria.where("valid").is(1);
 		if(subscribeType!=null){
+			criteria.and("systemCategory").is(subscribeType.getSystemCategory());
 			if(StringUtils.isNotBlank(subscribeType.getGroupType())){
 				criteria.and("groupType").is(subscribeType.getGroupType());
 			}
@@ -149,12 +149,11 @@ public class ChatSubscribeTypeService {
 	 * @author:Jade.zhu
 	 * @since  1.0.0
 	 */
-	public List<ChatSubscribeType> getSubscribeType(){
+	public List<ChatSubscribeType> getSubscribeType(String systemCategory){
 		Query query=new Query();
 		Criteria criteria = Criteria.where("valid").is(1);
-		criteria.and("status").is(1);
+		criteria.and("status").is(1).and("systemCategory").is(systemCategory);
 		query.addCriteria(criteria);
-		
 		return chatSubscribeTypeDao.getSubscribeType(query);
 	}
 }

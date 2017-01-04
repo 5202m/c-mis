@@ -29,7 +29,6 @@ import com.gwghk.mis.constant.WebConstant;
 import com.gwghk.mis.model.SmsConfig;
 import com.gwghk.mis.model.SmsInfo;
 import com.gwghk.mis.service.SmsConfigService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
@@ -55,8 +54,8 @@ public class SmsConfigController extends BaseController{
 	@RequestMapping(value = "/smsConfig/index", method = RequestMethod.GET)
 	public String index(HttpServletRequest request, ModelMap map) {
 		DictConstant dict=DictConstant.getInstance();
-		map.put("smsUseTypes", ResourceUtil.getSubDictListByParentCode(dict.DICT_SMS_USE_TYPE));
-		map.put("status", ResourceUtil.getSubDictListByParentCode(dict.DICT_USE_STATUS));
+		map.put("smsUseTypes", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_SMS_USE_TYPE));
+		map.put("status", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_USE_STATUS));
 		logger.debug("-->start into SmsConfigController.index() and url is /SmsConfigController/index.do");
 		return "sms/smsConfig/smsConfigList";
 	}
@@ -134,13 +133,13 @@ public class SmsConfigController extends BaseController{
     	if(result.isOk()){
 	    	j.setSuccess(true);
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 保存短信配置成功：[" + smsConfig.getType() + "-" + smsConfig.getUseType() + "]!";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<save()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 保存短信配置失败：[" + smsConfig.getType() + "-" + smsConfig.getUseType() + "]!";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<save()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;
@@ -162,13 +161,13 @@ public class SmsConfigController extends BaseController{
 		if(result.isOk()){
 			j.setSuccess(true);
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除短信配置成功：" + smsCfgId + "!";
-			logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
 			logger.info("<<delete()|"+message);
 		}else{
 			j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除短信配置失败：" + smsCfgId + "!";
-			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
 			logger.error("<<delete()|"+message+",ErrorMsg:"+result.toString());
 		}
 		return j;

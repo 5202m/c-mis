@@ -43,6 +43,7 @@ public class ChatPointsConfigService {
 		Query query = new Query();
 		Criteria criteria = Criteria.where("isDeleted").is(0);
 		if (chatPointsConfig != null) {
+			criteria.and("systemCategory").is(chatPointsConfig.getSystemCategory());
 			if (StringUtils.isNotBlank(chatPointsConfig.getGroupType())) {
 				criteria.and("groupType").is(chatPointsConfig.getGroupType());
 			}

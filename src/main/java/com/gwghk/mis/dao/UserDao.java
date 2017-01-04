@@ -7,15 +7,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.redis.connection.SortParameters.Order;
 import org.springframework.stereotype.Repository;
 
 import com.gwghk.mis.common.dao.MongoDBBaseDao;
 import com.gwghk.mis.common.model.DetachedCriteria;
 import com.gwghk.mis.common.model.Page;
 import com.gwghk.mis.enums.IdSeq;
+import com.gwghk.mis.model.BaseUser;
 import com.gwghk.mis.model.BoRole;
+import com.gwghk.mis.model.BoSystemUser;
 import com.gwghk.mis.model.BoUser;
+import com.gwghk.mis.util.BeanUtils;
 import com.mongodb.WriteResult;
 
 /**
@@ -176,5 +178,47 @@ public class UserDao extends MongoDBBaseDao{
 		query.with(new Sort(Sort.Direction.DESC, "telephone"));
 		query.limit(1);
 		return this.findOne(BoUser.class, query);
+	}
+
+	/****
+	 * 修改用户角色信息 根据用户角色
+	 * @param role
+	 */
+	public void updateByRole(BoRole role){
+		Query query = new Query(Criteria.where("role.roleId").is(role.getRoleId()));
+		this.mongoTemplate.updateMulti(query,new Update().set("role",role),BoUser.class);
+	}
+	/**
+	 * 提取user类
+	 * @param isSuper
+	 * @return
+	 */
+	private Class<?> getUserClass(boolean isSuper){
+		Class<?> classObj=null;
+		try {
+			classObj=Class.forName(isSuper?"com.gwghk.mis.model.BoSystemUser":"com.gwghk.mis.model.BoUser");
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
+		return classObj;
+	}
+	
+	/**
+	 * 功能:根据不同的参数 -->查询用户基本信息
+	 */
+	public BaseUser getBaseUserRow(Query query,boolean isSuper){
+		return BeanUtils.clone(this.mongoTemplate.findOne(query,getUserClass(isSuper)), BaseUser.class);
+	}
+	
+	/**
+	 * 修改用户登录信息
+	 * @param user
+	 * @param isSuper
+	 */
+	public void modifyLoginInfo(BaseUser user,boolean isSuper){
+		Query query = new Query(Criteria.where("id").is(user.getUserId()));
+		Update update=new Update().set("loginDate",user.getLoginDate()).set("loginIp",user.getLoginIp())
+				.set("loginTimes",user.getLoginTimes()).set("updateIp",user.getUpdateIp()).set("updateUser",user.getUpdateUser());
+		this.mongoTemplate.updateMulti(query,update,isSuper?BoSystemUser.class:BoUser.class);
 	}
 }

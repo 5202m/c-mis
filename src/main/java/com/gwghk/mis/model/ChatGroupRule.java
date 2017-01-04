@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date   2015年4月1日
  */
 @Document
-public class ChatGroupRule extends BaseModel{
+public class ChatGroupRule extends BaseModelExt{
 	/**
 	 * 规则id
 	 */

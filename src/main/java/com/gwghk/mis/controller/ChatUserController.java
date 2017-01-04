@@ -39,10 +39,8 @@ import com.gwghk.mis.service.ChatApiService;
 import com.gwghk.mis.service.ChatClientGroupService;
 import com.gwghk.mis.service.ChatGroupService;
 import com.gwghk.mis.service.MemberService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.ExcelUtil;
-import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
 import com.gwghk.mis.util.ResourceUtil;
 import com.gwghk.mis.util.StringUtil;
@@ -76,7 +74,7 @@ public class ChatUserController extends BaseController{
 	 */
 	private List<ChatGroup> formatTreeList(List<BoDict> dictList){
     	List<ChatGroup> nodeList = new ArrayList<ChatGroup>(); 
-    	List<ChatGroup> groupList=chatGroupService.getChatGroupList("id","name","groupType");
+    	List<ChatGroup> groupList=chatGroupService.getChatGroupList(getSystemFlag(),"id","name","groupType");
     	ChatGroup tbean=null;
     	for(BoDict dict:dictList){
     		tbean=new ChatGroup();
@@ -94,15 +92,15 @@ public class ChatUserController extends BaseController{
 	}
 	
 	/**
-	 * 功能：聊天室内容管理-首页
+	 * 功能：退出房间
 	 */
 	@RequestMapping(value = "/chatUserController/toExitRoom", method = RequestMethod.GET)
 	public  String  toExitRoom(HttpServletRequest request,ModelMap map){
 		DictConstant dict=DictConstant.getInstance();
     	map.put("userIds", request.getParameter("userIds"));
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
 		logger.debug(">>start into chatUserController.toExitRoom() and url is /chatUserController/toExitRoom.do");
-		return "chat/exitRoom";
+		return "chat/analyst/exitRoom";
 	}
 	
 	/**
@@ -122,7 +120,7 @@ public class ChatUserController extends BaseController{
 			return j;
 		}
 		if(chatUserRoomId.endsWith(",")){//逗号结尾为房间大类
-			List<ChatGroup> list=chatGroupService.findByGroupType(chatUserRoomId.replace(",",""));
+			List<ChatGroup> list=chatGroupService.findByGroupType(getSystemFlag(),chatUserRoomId.replace(",",""));
 			ArrayList<String> roomIdList=new ArrayList<String>();
 			for(ChatGroup row :list){
 				roomIdList.add(row.getId());
@@ -133,15 +131,13 @@ public class ChatUserController extends BaseController{
 		if(apiResult.isOk()){
 			j.setSuccess(true);
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置退出房间成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:exitRoom()|"+message);
 		}else{
 			j.setSuccess(false);
 			j.setMsg(ResourceBundleUtil.getByMessage(apiResult.getCode()));
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置退出房间失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:exitRoom()|"+message+",ErrorMsg:"+apiResult.toString());
 		}
 		return j;
@@ -152,12 +148,12 @@ public class ChatUserController extends BaseController{
 	@RequestMapping(value = "/chatUserController/index", method = RequestMethod.GET)
 	public  String  index(HttpServletRequest request,ModelMap map){
 		DictConstant dict=DictConstant.getInstance();
-    	map.put("clientGroupList", chatClientGroupService.getClientGroupList(null));
-		List<BoDict> dictList=ResourceUtil.getSubDictListByParentCode(dict.DICT_USE_STATUS);
+    	map.put("clientGroupList", chatClientGroupService.getClientGroupList(getSystemFlag(),null));
+		List<BoDict> dictList=ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_USE_STATUS);
     	map.put("statusList", dictList);
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
 		logger.debug(">>start into chatUserController.index() and url is /chatUserController/index.do");
-		return "chat/userList";
+		return "chat/member/userList";
 	}
 
 	/**
@@ -229,10 +225,9 @@ public class ChatUserController extends BaseController{
  			}
  		 }
  		 map.put("memberId", memberId);
- 		 map.put("mobilePhone", member.getMobilePhone());
     	 map.put("groupId", groupId);
     	 map.put("groupType", groupType);
-    	 return "chat/userGag";
+    	 return "chat/member/userGag";
     }
     
 	/**
@@ -245,7 +240,6 @@ public class ChatUserController extends BaseController{
 		AjaxJson j = new AjaxJson();
 		String groupType = request.getParameter("groupType");
 		String memberId = request.getParameter("memberId");
-		String mobilePhone = request.getParameter("mobilePhone");
 		String groupId = request.getParameter("groupId");
 		String gagDate = request.getParameter("gagDate");
 		String gagTips = request.getParameter("gagTips");
@@ -253,16 +247,14 @@ public class ChatUserController extends BaseController{
 		ApiResult apiResult = memberService.saveUserGag(groupType,memberId,groupId,gagDate,gagTips,remark);
 		if(apiResult.isOk()){
 			j.setSuccess(true);
-    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户[" + groupType + ","  + groupId + "," + mobilePhone + "," + gagDate + "]禁言成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_GAG
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户禁言成功";
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:setUserGag()|"+message);
 		}else{
 			j.setSuccess(false);
 			j.setMsg(ResourceBundleUtil.getByMessage(apiResult.getCode()));
-    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户[" + groupType + ","  + groupId + "," + mobilePhone + "," + gagDate + "]禁言失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_GAG
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户禁言失败";
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:setUserGag()|"+message+",ErrorMsg:"+apiResult.toString());
 		}
 		return j;
@@ -292,8 +284,8 @@ public class ChatUserController extends BaseController{
     	 map.put("vipUserRemark", vipUserRemark);
     	 map.put("clientGroup", clientGroup);
     	 map.put("accountNo", accountNo);
-     	 map.put("clientGroupList", chatClientGroupService.getClientGroupList(groupType));
-    	 return "chat/userSetting";
+     	 map.put("clientGroupList", chatClientGroupService.getClientGroupList(getSystemFlag(),groupType));
+    	 return "chat/member/userSetting";
     }
     
     /**
@@ -315,15 +307,13 @@ public class ChatUserController extends BaseController{
 		if(apiResult.isOk()){
 			j.setSuccess(true);
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:userSetting()|"+message);
 		}else{
 			j.setSuccess(false);
 			j.setMsg(ResourceBundleUtil.getByMessage(apiResult.getCode()));
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:userSetting()|"+message+",ErrorMsg:"+apiResult.toString());
 		}
 		return j;
@@ -351,20 +341,18 @@ public class ChatUserController extends BaseController{
 			j.setMsg("请求参数有误，请联系管理员！");
 			return j;
 		}
-		ApiResult apiResult = memberService.modifyName(mobile,groupType,nickname);
+		ApiResult apiResult = memberService.modifyName(getSystemFlag(),mobile,groupType,nickname);
 		if(apiResult.isOk()){
 			j.setSuccess(true);
 			j.setObj(nickname);
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 操作成功提示:把客户("+mobile+")的昵称【"+oldname+"】改成【"+nickname+"】";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:userSetting()|"+message);
 		}else{
 			j.setSuccess(false);
 			j.setMsg(apiResult.getErrorMsg());
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 操作失败提示:把客户("+mobile+")的昵称【"+oldname+"】改成【"+nickname+"】";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:userSetting()|"+message+",ErrorMsg:"+apiResult.toString());
 		}
 		return j;
@@ -406,8 +394,8 @@ public class ChatUserController extends BaseController{
 			builder.getHSSFWorkbook().getSheetAt(0).protectSheet(pwd);
 			Page<Member> page = memberService.getChatUserPage(this.createDetachedCriteria(dataGrid, member),onlineStartDate,onlineEndDate,createDateStart,createDateEnd);
 			List<Member>  memberList = page.getCollection();
-			List<ChatGroup> chatGroupList=chatGroupService.getChatGroupAllList("id","name");
-			List<ChatClientGroup> clientGroupList=chatClientGroupService.getClientGroupList(groupType);
+			List<ChatGroup> chatGroupList=chatGroupService.getChatGroupAllList(getSystemFlag(),"id","name");
+			List<ChatClientGroup> clientGroupList=chatClientGroupService.getClientGroupList(getSystemFlag(),groupType);
 			ChatUserGroup userGroup=null;
 			Member cm=null;
 			if(memberList != null && memberList.size() > 0){
@@ -426,7 +414,7 @@ public class ChatUserController extends BaseController{
 			builder.parse();
 			ExcelUtil.wrapExcelExportResponse("成员记录", request, response);
 			builder.write(response.getOutputStream());
-    		logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出成员记录操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出成员记录操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT);
 		}catch(Exception e){
 			logger.error("<<method:exportRecord()|chat user export error!",e);
 		}

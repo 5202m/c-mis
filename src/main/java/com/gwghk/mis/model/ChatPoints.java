@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date   2016年09月02日
  */
 @Document
-public class ChatPoints extends BaseModel{
+public class ChatPoints extends BaseModelExt{
 	
 	/**
 	 * 主键

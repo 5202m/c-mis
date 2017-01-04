@@ -45,7 +45,6 @@ import com.gwghk.mis.model.ChatSubscribeType;
 import com.gwghk.mis.service.ChatGroupService;
 import com.gwghk.mis.service.ChatSubscribeTypeService;
 import com.gwghk.mis.service.UserService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.JsonUtil;
@@ -77,8 +76,8 @@ private static final Logger logger = LoggerFactory.getLogger(ChatSubscribeTypeCo
 	@RequestMapping(value = "/chatSubscribeTypeController/index", method = RequestMethod.GET)
 	public String index(HttpServletRequest request,ModelMap map, String opType){
 		DictConstant dict=DictConstant.getInstance();
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
-		return "chat/subscribeTypeList";
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
+		return "chat/subscribe/subscribeTypeList";
 	}
 	
 	/**
@@ -142,8 +141,8 @@ private static final Logger logger = LoggerFactory.getLogger(ChatSubscribeTypeCo
     @ActionVerification(key="add")
     public String add(ModelMap map, String opType) throws Exception {
     	DictConstant dict=DictConstant.getInstance();
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
-    	return "chat/subscribeTypeAdd";
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
+    	return "chat/subscribe/subscribeTypeAdd";
     }
 	
 	/**
@@ -164,9 +163,9 @@ private static final Logger logger = LoggerFactory.getLogger(ChatSubscribeTypeCo
     	map.put("chatSubscribeType",subscribeType);
     	
     	DictConstant dict=DictConstant.getInstance();
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
     	
-    	return "chat/subscribeTypeView";
+    	return "chat/subscribe/subscribeTypeView";
     }
 	
 	/**
@@ -186,11 +185,11 @@ private static final Logger logger = LoggerFactory.getLogger(ChatSubscribeTypeCo
     public String edit(@PathVariable String subscribeTypeId , ModelMap map, String opType) throws Exception {
 		DictConstant dict=DictConstant.getInstance();
     	ChatSubscribeType subscribeType=chatSubscribeTypeService.getSubscribeTypeById(subscribeTypeId);
-    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
+    	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
     	map.put("chatSubscribeType",subscribeType);
     	map.put("startDateStr",DateUtil.getDateSecondFormat(subscribeType.getStartDate()));
     	map.put("endDateStr",DateUtil.getDateSecondFormat(subscribeType.getEndDate()));
-		return "chat/subscribeTypeEdit";
+		return "chat/subscribe/subscribeTypeEdit";
     }
 	
 	/**
@@ -219,15 +218,13 @@ private static final Logger logger = LoggerFactory.getLogger(ChatSubscribeTypeCo
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功新增订阅配置："+userParam.getUserNo();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<method:create()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增订阅配置："+userParam.getUserNo()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<method:create()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;
@@ -259,15 +256,13 @@ private static final Logger logger = LoggerFactory.getLogger(ChatSubscribeTypeCo
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改订阅配置："+userParam.getUserNo();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
     		logger.info("<--method:update()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改订阅配置："+userParam.getUserNo()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
     	}
    		return j;
@@ -295,15 +290,13 @@ private static final Logger logger = LoggerFactory.getLogger(ChatSubscribeTypeCo
     	if(result.isOk()){
           	j.setSuccess(true);
           	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除订阅配置成功";
-          	logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-          					 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+          	addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:oneDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除订阅配置失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:oneDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;
@@ -324,23 +317,19 @@ private static final Logger logger = LoggerFactory.getLogger(ChatSubscribeTypeCo
     @ResponseBody
     @ActionVerification(key="delete")
     public AjaxJson batchDel(HttpServletRequest request,HttpServletResponse response){
-    	
-  		BoUser userParam = ResourceUtil.getSessionUser();
     	String delIds = request.getParameter("ids");
     	AjaxJson j = new AjaxJson();
     	ApiResult result = chatSubscribeTypeService.deleteSubscibeType(delIds.contains(",")?delIds.split(","):new String[]{delIds});
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量删除订阅配置成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
     		logger.info("<<method:batchDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量删除订阅配置失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
     		logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;
@@ -353,7 +342,7 @@ private static final Logger logger = LoggerFactory.getLogger(ChatSubscribeTypeCo
     	String analysts=request.getParameter("analysts");
        	List<TreeBean> treeList=new ArrayList<TreeBean>();
        	TreeBean tbean=null;
-       	List<BoUser> allAnalysts = userService.getUserListByRole("analyst");
+       	List<BoUser> allAnalysts = userService.getUserListByRole(getSystemFlag(),"analyst");
        	String[] nameArr={"梁育诗","罗恩•威廉","黃湛铭","赵相宾","周游","刘敏","陈杭霞","金道研究院"};
     	BoUser user=null;
     	for(int i=0;i<nameArr.length;i++){

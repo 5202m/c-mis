@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date   2015年7月10日
  */
 @Document
-public class ChatClientGroup extends BaseModel {
+public class ChatClientGroup extends BaseModelExt {
 	/**
 	 * 主键id
 	 */

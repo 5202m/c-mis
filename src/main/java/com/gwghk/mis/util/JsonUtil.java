@@ -34,6 +34,16 @@ public class JsonUtil {
      * @return
      */
 	public static String formatListToTreeJson(List<TreeBean> nodeListTmp,boolean fillChild){
+    	return JSONArray.fromObject(formatToTreeJson(nodeListTmp,fillChild)).toString();
+    }
+	
+	/**
+     * 功能：树形格式化
+     * @param nodeListTmp
+     * @param fillChild 是否填充child节点数据
+     * @return
+     */
+	public static List<TreeBean> formatToTreeJson(List<TreeBean> nodeListTmp,boolean fillChild){
     	List<TreeBean> nodeList = new ArrayList<TreeBean>(); 
     	for(TreeBean outNode : nodeListTmp){
     	    boolean flag = false;  
@@ -57,10 +67,9 @@ public class JsonUtil {
     	    if(!flag){
     	        nodeList.add(outNode);   
     	    }  
-    	}  
-    	return JSONArray.fromObject(nodeList).toString();
+    	} 
+    	return nodeList;
     }
-	
 	
 	/**
 	 * 格式json

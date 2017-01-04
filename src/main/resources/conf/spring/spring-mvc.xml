@@ -67,10 +67,12 @@
 					<list>
 						<value>loginController/login.do</value>
 						<value>index.do</value>
+						<value>admin.do</value>
 						<value>login.do</value>
 						<value>logout.do</value>
 						<value>captchaController/get.do</value>
 						<value>loginController/checkLogin.do</value>
+						<value>loginController/checkAdminLogin.do</value>
 						<value>sms/send.do</value>
 					</list>
 				</property>

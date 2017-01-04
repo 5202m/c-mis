@@ -5,11 +5,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.gwghk.mis.common.model.ApiResult;
 import com.gwghk.mis.common.model.TreeBean;
 import com.gwghk.mis.constant.WebConstant;
@@ -52,6 +54,9 @@ public class MenuService{
 			TreeBean menuBean=null;
 			JSONObject jsonObj=null;
 			for(BoMenu row:menuList){
+				if("system_category".equals(row.getCode())){
+					continue;
+				}
 				menuBean=new TreeBean();
 				menuBean.setText(WebConstant.LOCALE_ZH_CN.equals(lang)?row.getNameCN():(WebConstant.LOCALE_ZH_TW.equals(lang)?row.getNameTW():row.getNameEN()));
 				menuBean.setId(row.getMenuId());
@@ -73,9 +78,9 @@ public class MenuService{
 	 * @param lang
 	 * @return
 	 */
-	public MenuResult getMenuRoleTreeJson(String roleId,boolean hasFun,String lang){
+	public MenuResult getMenuRoleTreeJson(String loginRoleId,String currRoleId,boolean hasFun,String lang,boolean superIndexMenu){
 		List<TreeBean> menuBeanList=new ArrayList<TreeBean>();
-		List<BoMenu> menulist=hasFun?menuDao.getAllMenuList():menuDao.getMenuByRoleId(roleId);
+		List<BoMenu> menulist=hasFun?menuDao.getAllMenuList():(superIndexMenu?menuDao.getMenuList():menuDao.getMenuByRoleId(currRoleId));
 	    Map<String,List<BoMenu>> funMap=new LinkedHashMap<String,List<BoMenu>>();
 		if(menulist!=null&&menulist.size()>0){
 			TreeBean menuBean=null;
@@ -84,17 +89,20 @@ public class MenuService{
 			boolean hasRole=false;
 			String langText="";
 			List<BoRole> roleList=null;
+			if(loginRoleId!=null){//登录角色不为空的公司超级用户，只显示登录角色中授权的菜单
+				menulist.removeIf(e->e.getRoleList()!=null && e.getRoleList().stream().allMatch(b->!b.getRoleId().equals(loginRoleId)));
+			}
 			for(BoMenu row:menulist){
 				hasRole=false;
 				menuBean=new TreeBean();
 				roleList=row.getRoleList();
-				if(roleList!=null&&roleList.size()>0){
-					hasRole=roleList.stream().anyMatch(e->e.getRoleId().equals(roleId));
+				if(currRoleId!=null && roleList!=null&&roleList.size()>0){
+					hasRole=roleList.stream().anyMatch(e->e.getRoleId().equals(currRoleId));
 				}
 				jsonObj=new JSONObject();
 				jsonObj.put("type", row.getType());
 				if(!hasFun){
-					if(!hasRole){
+					if(currRoleId!=null && !hasRole){
 						 continue;
 					}
 					if(row.getType()==1){
@@ -111,22 +119,35 @@ public class MenuService{
 				langText=WebConstant.LOCALE_ZH_CN.equals(lang)?row.getNameCN():(WebConstant.LOCALE_ZH_TW.equals(lang)?row.getNameTW():row.getNameEN());
 				menuBean.setText(langText);
 				menuBean.setTitle(langText);
+				menuBean.setCode(row.getCode());
 				menuBean.setSort(row.getSort()==null?0:row.getSort());
 				menuBean.setId(row.getMenuId());
 				menuBean.setParentId(row.getParentMenuId());
+				jsonObj.put("code",row.getCode());
 				menuBean.setAttributes(jsonObj);
 				menuBeanList.add(menuBean);
 			}
 		}
 		MenuResult result=new MenuResult();
-		result.setMenuJson(JsonUtil.formatListToTreeJson(menuBeanList,!hasFun));
+		List<TreeBean> lst=JsonUtil.formatToTreeJson(menuBeanList,!hasFun);
+		List<TreeBean> sysList=new ArrayList<TreeBean>();
+		String jsonStr=null;
+		if(superIndexMenu){
+        	for(TreeBean outNode : lst){
+    			if("system_setting".equals(outNode.getCode())){//超级管理员只是显示系统设置菜单
+    				sysList.add(outNode);
+    				jsonStr=JSONArray.fromObject(sysList).toString();
+    				break;
+    			}
+    		}
+        }else{
+        	jsonStr=JSONArray.fromObject(lst).toString();
+        }
+		result.setMenuJson(jsonStr);
 		result.setFunMap(funMap);
 	    return result;
 	}
 	
-	
-	
-
 	/**
 	 * 通过menuId取菜单信息
 	 * @param menuId

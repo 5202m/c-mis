@@ -17,11 +17,14 @@ import org.springframework.stereotype.Service;
 import com.gwghk.mis.common.model.ApiResult;
 import com.gwghk.mis.common.model.DetachedCriteria;
 import com.gwghk.mis.common.model.DictResult;
+import com.gwghk.mis.constant.WebConstant;
 import com.gwghk.mis.dao.DictDao;
 import com.gwghk.mis.enums.IdSeq;
 import com.gwghk.mis.enums.ResultCode;
+import com.gwghk.mis.enums.SortDirection;
 import com.gwghk.mis.model.BoDict;
 import com.gwghk.mis.util.BeanUtils;
+import com.gwghk.mis.util.CacheManager;
 
 /**
  * 摘要：数据字典相关Service
@@ -40,6 +43,7 @@ public class DictService{
     public ApiResult saveParentDict(BoDict dictParam,boolean isUpdate){
     	BoDict dict=null;
     	ApiResult result = new ApiResult();
+    	dictParam.setSystemCategory(null);
     	if(isUpdate){
         	dict=dictDao.getDictByCode(dictParam.getCode());
            	BeanUtils.copyExceptNull(dict, dictParam);
@@ -54,9 +58,24 @@ public class DictService{
     		dictDao.add(dictParam);
     	}
 		result.setReturnObj(new Object[]{dictParam});
+		this.synchDictCache();
 		return result;
     }
     
+    /**
+     * 同步字典缓存
+     */
+    public void synchDictCache(){
+    	LinkedHashMap<String,SortDirection> dictMap = new LinkedHashMap<String,SortDirection>();
+		dictMap.put("id", SortDirection.ASC);
+		dictMap.put("sort", SortDirection.ASC);
+		DetachedCriteria<BoDict> detachedCriteria = new DetachedCriteria<BoDict>();
+		detachedCriteria.setOrderbyMap(dictMap);
+		List<BoDict> dictParamList =this.getDictList(detachedCriteria);
+		if(dictParamList != null && dictParamList.size() > 0){//将数据字典列表放到缓存中
+			CacheManager.putContent(WebConstant.DICT_KEY, dictParamList, -1);
+		}
+    }
     
     /**
 	 * 功能：新增或修改子类字典信息
@@ -72,9 +91,11 @@ public class DictService{
     		if(dictDao.getDictByChildCode(parentCode, dictParam.getCode())!=null){
     			return result.setCode(ResultCode.Error100);
     		}
+    		dictParam.setValid(1);
     	  	dictDao.addChildDict(parentCode,dictParam);
     	}
 		result.setReturnObj(new Object[]{dictParam});
+		this.synchDictCache();
 		return result;
     }
     
@@ -90,6 +111,7 @@ public class DictService{
 		}else{
 			isSuccess=dictDao.deleteChildById(id);
 		}
+    	this.synchDictCache();
     	return result.setCode(isSuccess?ResultCode.OK:ResultCode.FAIL);
     }
 	

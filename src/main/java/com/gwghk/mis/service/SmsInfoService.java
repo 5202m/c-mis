@@ -56,6 +56,7 @@ public class SmsInfoService {
 		Query query = new Query();
 		Criteria criteria = new Criteria();
 		if (smsInfo != null) {
+			criteria.and("systemCategory").is(smsInfo.getSystemCategory());
 			boolean hasStartTime = StringUtils.isNotBlank(smsInfo.getSendStart()); 
 			if(hasStartTime){
 				criteria = criteria.and("sendTime").gte(DateUtil.parseDateSecondFormat(smsInfo.getSendStart()));
@@ -105,12 +106,13 @@ public class SmsInfoService {
 	 * @param startDate
 	 * @return
 	 */
-	public int smsCount(String mobile, String type, String useType, Date startDate){
+	public int smsCount(String systemCategory,String mobile, String type, String useType, Date startDate){
 		Criteria criteria = Criteria.where("cntFlag").is(1);
 		criteria.and("mobilePhone").is(mobile);
 		criteria.and("type").is(type);
 		criteria.and("useType").is(useType);
 		criteria.and("sendTime").gte(startDate);
+		criteria.and("systemCategory").is(systemCategory);
 		return smsInfoDao.count(SmsInfo.class, new Query(criteria)).intValue();
 	}
 	
@@ -119,19 +121,19 @@ public class SmsInfoService {
 	 * @param smsId
 	 * @return
 	 */
-	public Map<String, Object> getSmsInfoMap(String smsId){
+	public Map<String, Object> getSmsInfoMap(String systemCategory,String smsId){
 		Map<String, Object> loc_result = new HashMap<String, Object>();
 		SmsInfo loc_sms = smsInfoDao.findSmsInfo(smsId);
 		loc_result.put("mobilePhone", loc_sms.getMobilePhone());
 		loc_result.put("type", loc_sms.getType());
 		loc_result.put("useType", loc_sms.getUseType());
 		loc_result.put("deviceKey", loc_sms.getDeviceKey());
-		SmsConfig loc_smsConfig = smsConfigService.findByType(loc_sms.getType(), loc_sms.getUseType());
+		SmsConfig loc_smsConfig = smsConfigService.findByType(systemCategory,loc_sms.getType(), loc_sms.getUseType());
 		if(loc_smsConfig != null && new Integer(1).equals(loc_smsConfig.getStatus())){
 			loc_result.put("cnt", loc_smsConfig.getCnt());
 			loc_result.put("cycle", loc_smsConfig.getCycle());
 			Date loc_start = DateUtil.getStartDateOfCycle(new Date(), loc_smsConfig.getCycle());
-			int loc_cnt = this.smsCount(loc_sms.getMobilePhone(), loc_sms.getType(), loc_sms.getUseType(), loc_start);
+			int loc_cnt = this.smsCount(systemCategory,loc_sms.getMobilePhone(), loc_sms.getType(), loc_sms.getUseType(), loc_start);
 			loc_result.put("cntUsed", loc_cnt);
 			loc_result.put("resetStart", DateUtil.formatDate(loc_start, DateUtil.FORMAT_YYYYDDMMHHMMSS));
 			Date loc_end = DateUtil.getEndDateOfCycle(new Date(), loc_smsConfig.getCycle());
@@ -148,7 +150,7 @@ public class SmsInfoService {
 	 * @param deviceKey
 	 * @param startDate
 	 */
-	public ApiResult setCntFlag(String mobilePhone, String type, String useType, String deviceKey, String startDate){
+	public ApiResult setCntFlag(String systemCategory,String mobilePhone, String type, String useType, String deviceKey, String startDate){
 		ApiResult result = new ApiResult();
 		if(StringUtils.isBlank(mobilePhone) || StringUtils.isBlank(type) || StringUtils.isBlank(useType) || StringUtils.isBlank(startDate)){
 			result.setCode(ResultCode.Error103);
@@ -158,6 +160,7 @@ public class SmsInfoService {
 			Criteria criteria = Criteria.where("cntFlag").is(1);
 			criteria.and("type").is(type);
 			criteria.and("useType").is(useType);
+			criteria.and("systemCategory").is(systemCategory);
 			criteria.and("sendTime").gte(loc_startDate);
 			if (StringUtils.isNotBlank(deviceKey)) {
 				criteria.orOperator(Criteria.where("mobilePhone").is(mobilePhone), Criteria.where("deviceKey").is(deviceKey));

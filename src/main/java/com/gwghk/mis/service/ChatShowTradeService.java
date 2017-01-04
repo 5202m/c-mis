@@ -93,6 +93,7 @@ public class ChatShowTradeService{
 		ChatShowTrade chatShowTrade=dCriteria.getSearchModel();
 		Criteria criteria = Criteria.where("valid").is(1);
 		if(chatShowTrade!=null){
+			criteria.and("systemCategory").is(chatShowTrade.getSystemCategory());
 			if(StringUtils.isNotBlank(chatShowTrade.getGroupType())){
 				criteria.and("groupType").is(chatShowTrade.getGroupType());
 			}

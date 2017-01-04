@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date   2015年3月13日
  */
 @Document
-public class BoLog extends BaseModel{
+public class BoLog extends BaseModelExt{
 
 	@Id
 	private String id;

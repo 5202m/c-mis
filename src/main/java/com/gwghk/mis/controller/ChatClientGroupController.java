@@ -29,13 +29,10 @@ import com.gwghk.mis.common.model.Page;
 import com.gwghk.mis.common.model.TreeBean;
 import com.gwghk.mis.constant.DictConstant;
 import com.gwghk.mis.constant.WebConstant;
-import com.gwghk.mis.model.BoUser;
 import com.gwghk.mis.model.ChatClientGroup;
 import com.gwghk.mis.service.ChatClientGroupService;
 import com.gwghk.mis.service.ChatGroupService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
-import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.JsonUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
 import com.gwghk.mis.util.ResourceUtil;
@@ -62,8 +59,8 @@ public class ChatClientGroupController extends BaseController{
 	 */
 	private void setCommonShow(ModelMap map){
     	DictConstant dict=DictConstant.getInstance();
-    	map.put("chatGroupList", chatGroupService.getChatGroupList("id","name", "groupType"));
-		map.put("groupTypeList", ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE));
+    	map.put("chatGroupList", chatGroupService.getChatGroupList(this.getSystemFlag(),"id","name", "groupType"));
+		map.put("groupTypeList", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE));
 	}
 	
 	   /**
@@ -77,7 +74,7 @@ public class ChatClientGroupController extends BaseController{
     	String filter=request.getParameter("filter");
        	List<TreeBean> treeList=new ArrayList<TreeBean>();
        	TreeBean tbean=null;
-       	List<ChatClientGroup> subList=chatClientGroupService.getClientGroupList(groupType);
+       	List<ChatClientGroup> subList=chatClientGroupService.getClientGroupList(groupType,getSystemFlag());
        	clientGroup=StringUtils.isBlank(clientGroup)?"":(",".concat(clientGroup).concat(","));
        	for(ChatClientGroup row:subList){
        		 if(StringUtils.isNotBlank(filter) && (","+filter+",").contains(","+row.getClientGroupId()+",")){
@@ -102,7 +99,7 @@ public class ChatClientGroupController extends BaseController{
 	public  String  index(HttpServletRequest request,ModelMap map){
 		setCommonShow(map);
 		logger.debug(">>start into chatClientGroupController.index() and url is /chatClientGroupController/index.do");
-		return "chat/clientGroupList";
+		return "chat/rooms/clientGroupList";
 	}
 
 	/**
@@ -132,7 +129,7 @@ public class ChatClientGroupController extends BaseController{
     public String add(ModelMap map) throws Exception {
     	setCommonShow(map);
     	map.addAttribute("clientGroup",new ChatClientGroup());
-    	return "chat/clientGroupSubmit";
+    	return "chat/rooms/clientGroupSubmit";
     }
     
 	/**
@@ -143,7 +140,7 @@ public class ChatClientGroupController extends BaseController{
     public String edit(@PathVariable String clientGroupId , ModelMap map) throws Exception {
     	setCommonShow(map);
     	map.addAttribute("clientGroup",chatClientGroupService.getById(clientGroupId));
-		return "chat/clientGroupSubmit";
+		return "chat/rooms/clientGroupSubmit";
     }
     
 	  /**
@@ -159,15 +156,15 @@ public class ChatClientGroupController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + clientGroup.getCreateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功新增客户组别："+clientGroup.getName();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT
+    						 );
     		logger.info("<<method:create()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = "用户：" + clientGroup.getCreateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增客户组别："+clientGroup.getName()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
+    						 );
     		logger.error("<<method:create()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;
@@ -186,15 +183,15 @@ public class ChatClientGroupController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + clientGroup.getUpdateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改客户组别："+clientGroup.getId();
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
+    						 );
     		logger.info("<--method:update()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = "用户：" + clientGroup.getUpdateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改客户组别："+clientGroup.getId()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
+    						 );
     		logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
     	}
    		return j;
@@ -207,7 +204,6 @@ public class ChatClientGroupController extends BaseController{
     @ResponseBody
     @ActionVerification(key="delete")
     public AjaxJson del(HttpServletRequest request,HttpServletResponse response){
-    	BoUser boUser = ResourceUtil.getSessionUser();
     	String delIds = request.getParameter("ids");
     	if(StringUtils.isBlank(delIds)){
     		delIds = request.getParameter("id");
@@ -216,16 +212,16 @@ public class ChatClientGroupController extends BaseController{
     	ApiResult result =chatClientGroupService.deleteClientGroup(delIds.split(","));
     	if(result.isOk()){
     		j.setSuccess(true);
-    		String message = "用户：" + boUser.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除客户组别成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除客户组别成功";
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
+    						 );
     		logger.info("<<method:batchDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
-    		String message = "用户：" + boUser.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除客户组别失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除客户组别失败";
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
+    						 );
     		logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;

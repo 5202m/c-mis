@@ -39,7 +39,7 @@ public class CommonController extends BaseController{
        	List<TreeBean> treeList=new ArrayList<TreeBean>();
        	TreeBean tbean=null;
        	String dictCode=DictConstant.getInstance().DICT_PLATFORM;
-       	Map<String, List<BoDict>> dictMap=ResourceUtil.getDictListByLocale(new String[]{dictCode});
+       	Map<String, List<BoDict>> dictMap=ResourceUtil.getDictListByLocale(getSystemFlag(),new String[]{dictCode});
        	List<BoDict> subList=dictMap.get(dictCode);
         platform=StringUtils.isBlank(platform)?"":(",".concat(platform).concat(","));
         if(subList!=null && subList.size()>0){
@@ -67,7 +67,7 @@ public class CommonController extends BaseController{
        	List<TreeBean> treeList=new ArrayList<TreeBean>();
        	TreeBean tbean=null;
        	String dictCode=DictConstant.getInstance().DICT_CHAT_TALK_STYLE;
-       	Map<String, List<BoDict>> dictMap=ResourceUtil.getDictListByLocale(new String[]{dictCode});
+       	Map<String, List<BoDict>> dictMap=ResourceUtil.getDictListByLocale(getSystemFlag(),new String[]{dictCode});
        	List<BoDict> subList=dictMap.get(dictCode);
        	talkStyle=StringUtils.isBlank(talkStyle)?"":(",".concat(talkStyle).concat(","));
        	for(BoDict row:subList){

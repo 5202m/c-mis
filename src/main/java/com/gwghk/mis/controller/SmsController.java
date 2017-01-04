@@ -28,9 +28,7 @@ import com.gwghk.mis.constant.WebConstant;
 import com.gwghk.mis.model.SmsInfo;
 import com.gwghk.mis.service.PmApiService;
 import com.gwghk.mis.service.SmsInfoService;
-import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
-import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
 import com.gwghk.mis.util.ResourceUtil;
 
@@ -57,7 +55,7 @@ public class SmsController extends BaseController{
 	@RequestMapping(value = "/sms/index", method = RequestMethod.GET)
 	public String index(HttpServletRequest request, ModelMap map) {
 		DictConstant dict=DictConstant.getInstance();
-		map.put("smsUseTypes", ResourceUtil.getSubDictListByParentCode(dict.DICT_SMS_USE_TYPE));
+		map.put("smsUseTypes", ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_SMS_USE_TYPE));
 		logger.debug("-->start into SmsInfoController.index() and url is /smsInfoController/index.do");
 		return "sms/smsInfo/smsInfoList";
 	}
@@ -96,13 +94,13 @@ public class SmsController extends BaseController{
     	if(result.isOk()){
 	    	j.setSuccess(true);
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 重发短信成功smsId=" + smsId + "!";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<resend()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 重发短信失败smsId=" + smsId + "!";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<resend()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;
@@ -118,7 +116,7 @@ public class SmsController extends BaseController{
 	@RequestMapping(value="/sms/preReset",method=RequestMethod.GET)
 	@ActionVerification(key="reply")
     public String preEdit(HttpServletRequest request,@Param("smsId")String smsId, ModelMap map){
-		map.putAll(smsInfoService.getSmsInfoMap(smsId));
+		map.putAll(smsInfoService.getSmsInfoMap(getSystemFlag(),smsId));
         return "sms/smsInfo/smsResetCnt";
     }
 	
@@ -137,17 +135,17 @@ public class SmsController extends BaseController{
         String useType = request.getParameter("useType");
         String deviceKey = request.getParameter("deviceKey");
         String startDate = request.getParameter("resetStart");
-        ApiResult result = smsInfoService.setCntFlag(mobile, type, useType, deviceKey, startDate);
+        ApiResult result = smsInfoService.setCntFlag(getSystemFlag(),mobile, type, useType, deviceKey, startDate);
     	if(result.isOk()){
 	    	j.setSuccess(true);
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 重置短信计数器成功：" + mobile + "!";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
     		logger.info("<<resend()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 重置短信计数器失败：" + mobile + "!";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
     		logger.error("<<resend()|"+message+",ErrorMsg:"+result.toString());
     	}
 		return j;

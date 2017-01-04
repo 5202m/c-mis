@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date 2015/2/2
  */
 @Document
-public class BoRole extends BaseModel{ 
+public class BoRole extends BaseModelExt{ 
 
 	/**
 	 * 角户Id

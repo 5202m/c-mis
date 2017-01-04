@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date   2015年10月28日
  */
 @Document
-public class SmsInfo extends BaseModel{
+public class SmsInfo extends BaseModelExt{
 
 	/**
 	 * 主键

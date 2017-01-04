@@ -43,9 +43,8 @@ public class DictConstant {
 	/**积分项目*/
 	public  String DICT_POINTS_ITEM = "points_item";
 	
-	/**外接直播*/
-	public  String DICT_EXTERNAL_STUDIO = "external_studio";
-	
+	/**角色类别*/
+	public  String DICT_ROLE_TYPE = "role_type";
 
 	public String getDICT_PLATFORM() {
 		return DICT_PLATFORM;
@@ -103,12 +102,27 @@ public class DictConstant {
 		DICT_SMS_USE_TYPE = dICT_SMS_USE_TYPE;
 	}
 
-	public String getDICT_EXTERNAL_STUDIO() {
-		return DICT_EXTERNAL_STUDIO;
+	public String getDICT_POINTS_TYPE() {
+		return DICT_POINTS_TYPE;
 	}
 
-	public void setDICT_EXTERNAL_STUDIO(String dICT_EXTERNAL_STUDIO) {
-		DICT_EXTERNAL_STUDIO = dICT_EXTERNAL_STUDIO;
-	} 
-	
+	public void setDICT_POINTS_TYPE(String dICT_POINTS_TYPE) {
+		DICT_POINTS_TYPE = dICT_POINTS_TYPE;
+	}
+
+	public String getDICT_POINTS_ITEM() {
+		return DICT_POINTS_ITEM;
+	}
+
+	public void setDICT_POINTS_ITEM(String dICT_POINTS_ITEM) {
+		DICT_POINTS_ITEM = dICT_POINTS_ITEM;
+	}
+
+	public String getDICT_ROLE_TYPE() {
+		return DICT_ROLE_TYPE;
+	}
+
+	public void setDICT_ROLE_TYPE(String dICT_ROLE_TYPE) {
+		DICT_ROLE_TYPE = dICT_ROLE_TYPE;
+	}
 }

@@ -1,9 +1,5 @@
 package com.gwghk.mis.model;
 
-import java.util.Date;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -12,28 +8,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date   2015年2月4日
  */
 @Document
-public class BoUser extends BaseModel{ 
-	/**
-	 * 用户Id
-	 */
-	@Id
-	private String userId;
+public class BoUser extends BaseUser{ 
 	
-    /**
-     * 用户账号
-     */
-	@Indexed
-	private String userNo;
-
-	/**
-     * 密码
-     */
-	private String password;
-
-	/**
-     * 姓名
-     */
-	private String userName;
+	private String systemCategory;//所属系统
+	
+	private String liveLinks;//直播连接
 
 	/**
      * 邮件地址
@@ -49,21 +28,6 @@ public class BoUser extends BaseModel{
      * 职位
      */
 	private String position;
-
-	/**
-     * 登录ip
-     */
-	private String loginIp;
-
-	/**
-     * 登陆次数
-     */
-	private Integer loginTimes;
-
-	/**
-     * 登陆时间
-     */
-	private Date loginDate;
 
 	/**
      * 是否删除 1-未删除  0-已删除
@@ -85,11 +49,6 @@ public class BoUser extends BaseModel{
 	 */
 	private String introductionImg;
 	
-	/**
-	 * 备注
-	 */
-	private String remark;
-
 	private BoRole role;
 
 	private String avatar;
@@ -180,38 +139,6 @@ public class BoUser extends BaseModel{
 		this.userNoOrName = userNoOrName;
 	}
 
-	public String getUserId () { 
-		return this.userId;
-	}
-
-	public void setUserId (String userId) { 
-		this.userId = userId;
-	}
-
-	public String getUserNo () { 
-		return this.userNo;
-	}
-
-	public void setUserNo (String userNo) { 
-		this.userNo = userNo;
-	}
-
-	public String getPassword () { 
-		return this.password;
-	}
-
-	public void setPassword (String password) { 
-		this.password = password;
-	}
-
-	public String getUserName () { 
-		return this.userName;
-	}
-
-	public void setUserName (String userName) { 
-		this.userName = userName;
-	}
-
 	public String getEmail () { 
 		return this.email;
 	}
@@ -236,29 +163,6 @@ public class BoUser extends BaseModel{
 		this.position = position;
 	}
 
-	public String getLoginIp () { 
-		return this.loginIp;
-	}
-
-	public void setLoginIp (String loginIp) { 
-		this.loginIp = loginIp;
-	}
-
-	public Integer getLoginTimes () { 
-		return this.loginTimes;
-	}
-
-	public void setLoginTimes (Integer loginTimes) { 
-		this.loginTimes = loginTimes;
-	}
-
-	public Date getLoginDate () { 
-		return this.loginDate;
-	}
-
-	public void setLoginDate (Date loginDate) { 
-		this.loginDate = loginDate;
-	}
 
 	public Integer getValid () { 
 		return this.valid;
@@ -315,5 +219,20 @@ public class BoUser extends BaseModel{
 	public void setTag(String tag) {
 		this.tag = tag;
 	}
+
+	public String getLiveLinks() {
+		return liveLinks;
+	}
+
+	public void setLiveLinks(String liveLinks) {
+		this.liveLinks = liveLinks;
+	}
 	
+	public String getSystemCategory() {
+		return systemCategory;
+	}
+
+	public void setSystemCategory(String systemCategory) {
+		this.systemCategory = systemCategory;
+	}
 }

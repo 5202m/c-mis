@@ -69,6 +69,7 @@ public class ChatSubscribeService {
 		ChatSubscribe subscribe = dCriteria.getSearchModel();
 		Criteria criteria = Criteria.where("valid").is(1);
 		if(subscribe!=null){
+			criteria.and("systemCategory").is(subscribe.getSystemCategory());
 			if(StringUtils.isNotBlank(subscribe.getType())){
 				criteria.and("type").is(subscribe.getType());
 			}

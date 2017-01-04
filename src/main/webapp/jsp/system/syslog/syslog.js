@@ -17,12 +17,30 @@ var systemLog = {
 			gridId : systemLog.gridId,
 			singleSelect : true,
 			url : basePath+'/sysLogController/datagrid.do',
-			queryParams :{operateType : $("#operateType").val()},
 			columns : [[
 			    {title : 'id',field : 'id',hidden:true,width:100},
 	            {title : $.i18n.prop("syslog.no"),field : 'userNo',width:100},				/**账户*/
 	            {title : $.i18n.prop("syslog.operatetype"),field : 'operateType',width:100,sortable : true,formatter : function(value, rowData, rowIndex) { /**操作类型*/
-					return $("#operateType option[value='" + value + "']").text();
+					if (value == 1) {
+						return $.i18n.prop("syslog.login");
+					} else if(value == 2){
+						return $.i18n.prop("syslog.exit");
+					} else if(value == 3){
+						return $.i18n.prop("syslog.add");
+					} else if(value == 4){
+						return $.i18n.prop("syslog.del");
+					} else if(value == 5){
+						return $.i18n.prop("syslog.edit");
+					} else if(value == 6){
+						return $.i18n.prop("syslog.other");
+					} else if(value == 7){
+						return '审批';
+					} else if(value == 8){
+						return '取消审批';
+					} else if(value == 9){
+						return '导出记录';
+					}
+					return '';
 				  }
 	            },
 				{title : $.i18n.prop("syslog.operatedate"),field : 'operateDate',width:100,sortable : true,formatter : function(value, rowData, rowIndex) {  /**操作时间*/

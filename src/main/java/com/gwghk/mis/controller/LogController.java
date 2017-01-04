@@ -6,8 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.gwghk.mis.model.BoUser;
-import com.gwghk.mis.util.ResourceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +42,6 @@ public class LogController extends BaseController{
 	@RequestMapping(value = "/sysLogController/index", method = RequestMethod.GET)
 	public  String  index(ModelMap map){
 		logger.debug("-->start into sysLogController.index()...");
-		BoUser sessionUser = ResourceUtil.getSessionUser();
-		String roleNo = "";
-		if(sessionUser != null && sessionUser.getRole() != null){
-			roleNo = sessionUser.getRole().getRoleNo();
-		}
-		map.put("loginRoleId", roleNo);
 		return "system/syslog/syslogList";
 	}
 

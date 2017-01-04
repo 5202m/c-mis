@@ -35,7 +35,19 @@
         </div>
         <div id="shortcut_menu">
           <ul>
-            <li><a id="homeLinkId" title="<spring:message code="main.homePage" />" href="http://www.24k.hk/" target="_blank" class="button_short03" onFocus="this.blur()"></a></li>
+             <li style="padding: 6px 3px;"> 
+              <span>系统类别  
+               <select id="yxui_main_sysfag_select" name="systemCategory" style="width: 70px;">
+                 <c:if test="${sessionScope.SESSION_SUPER_FLAG==true}">
+                   <option value="">-请选择-</option>
+                 </c:if>
+                 <c:forEach var="systemCategory" items="${systemCategoryList}">
+		                   <option value="${systemCategory.code}">${systemCategory.name}</option>
+		         </c:forEach>
+			  </select>  
+	        </span>  
+            </li>
+            <%-- <li><a id="homeLinkId" title="<spring:message code="main.homePage" />" href="http://www.24k.hk/" target="_blank" class="button_short03" onFocus="this.blur()"></a></li> --%>
             <li><a title="<spring:message code="main.editPwd" />" href="#" class="button_short02" onFocus="this.blur()" onclick="updatePwd()"></a></li>
             <%--  <li><a title="<spring:message code="main.feedback" />" href="#" class="button_short05" onFocus="this.blur()" onclick="feedbackOpen()"></a></li>
             <li><a title="<spring:message code="main.help" />" href="#" class="button_short04" onFocus="this.blur()" onclick="helpOpen()"></a></li>
@@ -111,6 +123,20 @@
   if(window.location.href.indexOf('handanadmin')!=-1){
     $("#homeLinkId").attr("href","http://www.hx9999.com");
   }
+  $("#yxui_main_sysfag_select").change(function(){
+	  var $center = $('#yxui_main_tabs');
+	  var closeTabsTitle = [];
+	  $.each($center.tabs('tabs'), function() {
+		var opt = $(this).panel('options');
+		if (opt.closable) {
+			closeTabsTitle.push(opt.title);
+		}
+	 });
+	 for (var i = 0; i < closeTabsTitle.length; i++) {
+		$center.tabs('close', closeTabsTitle[i]);
+	 }
+	 $.messager.alert($.i18n.prop("common.operate.tips"),"切换系统类别成功！",'info');
+  });
 </script>
 </body>
 </html>

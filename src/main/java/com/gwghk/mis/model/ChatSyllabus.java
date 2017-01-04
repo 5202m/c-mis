@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date   2015年12月24日
  */
 @Document
-public class ChatSyllabus extends BaseModel{
+public class ChatSyllabus extends BaseModelExt{
 	
 	/**
 	 * 课程表编号

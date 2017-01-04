@@ -45,9 +45,9 @@ public class MemberDao extends MongoDBBaseDao{
 	/**
 	 * 功能：根据mobilePhone-->获取会员
 	 */
-	public Member getByMemberMobilePhone(String mobilePhone){
+	public Member getByMemberMobilePhone(String systemCategory,String mobilePhone){
 		return this.findOne(Member.class,Query.query(
-				   new Criteria().andOperator(Criteria.where("mobilePhone").is(mobilePhone),Criteria.where("valid").is(1))));
+				   new Criteria().andOperator(Criteria.where("mobilePhone").is(mobilePhone).and("systemCategory").is(systemCategory),Criteria.where("valid").is(1))));
 	}
 	
 	/**
@@ -131,16 +131,16 @@ public class MemberDao extends MongoDBBaseDao{
 	 * @param nickname
 	 * @return
 	 */
-	public ApiResult modifyName(String mobile,String groupType,String nickname){
+	public ApiResult modifyName(String systemCategory,String mobile,String groupType,String nickname){
 		ApiResult result=new ApiResult();
 		Criteria mCri=new Criteria();
-		mCri.and("mobilePhone").ne(mobile).and("valid").is(1);
+		mCri.and("mobilePhone").ne(mobile).and("valid").is(1).and("systemCategory").is(systemCategory);
 		mCri.and("loginPlatform.chatUserGroup").elemMatch(new Criteria().and("id").is(groupType).and("nickname").is(nickname).and("userType").is(0));
 		if(this.mongoTemplate.count(Query.query(mCri), Member.class)>0){
 			return result.setErrorMsg("该昵称已被占用！");
 		}
 		Criteria searchObj=new Criteria();
-		searchObj.and("mobilePhone").is(mobile).and("valid").is(1);
+		searchObj.and("mobilePhone").is(mobile).and("valid").is(1).and("systemCategory").is(systemCategory);
 		searchObj.and("loginPlatform.chatUserGroup").elemMatch(new Criteria().and("id").is(groupType).and("userType").is(0));
 		Update update=new Update();
 		update.set("loginPlatform.chatUserGroup.$.nickname", nickname);

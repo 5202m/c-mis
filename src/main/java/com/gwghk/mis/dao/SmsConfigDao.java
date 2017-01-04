@@ -53,10 +53,11 @@ public class SmsConfigDao extends MongoDBBaseDao {
 	 * @param useType
 	 * @return
 	 */
-	public SmsConfig findSmsCfg(String type, String useType){
+	public SmsConfig findSmsCfg(String systemCategory, String type, String useType){
 		Criteria criteria = Criteria.where("type").is(type);
 		criteria.and("useType").is(useType);
 		criteria.and("isDeleted").is(1);
+		criteria.and("systemCategory").is(systemCategory);
 		return this.findOne(SmsConfig.class, new Query(criteria));
 	}
 	

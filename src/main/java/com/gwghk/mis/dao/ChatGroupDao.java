@@ -52,8 +52,8 @@ public class ChatGroupDao extends MongoDBBaseDao{
 	/**
 	 * 功能：查询组列表
 	 */
-	public List<ChatGroup> findGroupList(){
-		return this.findList(ChatGroup.class, new Query(Criteria.where("valid").is(1)));
+	public List<ChatGroup> findGroupList(String systemCategory){
+		return this.findList(ChatGroup.class, new Query(Criteria.where("valid").is(1).and("systemCategory").is(systemCategory)));
 	}
 	
 	/**
@@ -66,8 +66,8 @@ public class ChatGroupDao extends MongoDBBaseDao{
 	/**
 	 * 功能： 根据GroupType--> 查询组列表
 	 */
-	public List<ChatGroup> findByGroupType(String groupType){
-		return this.findList(ChatGroup.class, new Query(Criteria.where("groupType").is(groupType)));
+	public List<ChatGroup> findByGroupType(String systemCategory,String groupType){
+		return this.findList(ChatGroup.class, new Query(Criteria.where("groupType").is(groupType).and("systemCategory").is(systemCategory)));
 	}
 	/**
 	 * 功能： 根据组Id集合 --> 查询组列表
@@ -80,9 +80,9 @@ public class ChatGroupDao extends MongoDBBaseDao{
 	 * 查询规则所在房间
 	 * @param group
 	 */
-	public List<String> getRoomIdByRuleId(String ruleId){
+	public List<String> getRoomIdByRuleId(String systemCategory,String ruleId){
 		if(StringUtils.isNotBlank(ruleId)){
-			List<ChatGroup> groupList=this.findList(ChatGroup.class, new Query(Criteria.where("chatRules.id").is(ruleId)));
+			List<ChatGroup> groupList=this.findList(ChatGroup.class, new Query(Criteria.where("chatRules.id").is(ruleId).and("systemCategory").is(systemCategory)));
 			List<String> strList=new ArrayList<String>();
 			for(ChatGroup g: groupList){
 				strList.add(g.getId());
