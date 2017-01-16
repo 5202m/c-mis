@@ -81,7 +81,7 @@ var Syllabus = {
 				}
 			}
 		}
-		var tmpLinkArr=null;
+		var tmpLinkArr=[];
 		if(devLinks.smcbLink && devLinks.smcbLink.length>0){
 			tmpLinkArr=devLinks.smcbLink;
 		}
