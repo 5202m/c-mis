@@ -150,7 +150,7 @@ public class ChatMessageController extends BaseController{
 			dataGrid.setRows(0);
 			dataGrid.setSort("publishTime");
 			dataGrid.setOrder("desc");
-//			chatMessage.getContent().setMsgType("text");  //默认只导出文本类型
+            //chatMessage.getContent().setMsgType("text");  //默认只导出文本类型
 			Page<ChatMessage> page = chatMessageService.getChatMessagePage(this.createDetachedCriteria(dataGrid, chatMessage));
 			List<ChatGroup> groupList=chatGroupService.getChatGroupList("id","name","groupType");
 			List<ChatMessage>  chatMessageList = page.getCollection();
@@ -203,8 +203,10 @@ public class ChatMessageController extends BaseController{
 					row.set("status", cm.getStatus()==1?"通过":(cm.getStatus()==2?"拒绝":"等待审批"));//0、等待审批，1、通过 ；2、拒绝
 					row.set("valid", cm.getValid()==1?"正常":"删除");
 					toUser=cm.getToUser();
+					row.set("talkStyle", "公聊");
 					if(toUser!=null && StringUtils.isNotBlank(toUser.getUserId())){
 						toUserName=toUser.getNickname();
+						row.set("talkStyle", toUser.getTalkStyle()==1?"私聊":"@TA");
 					}
 					row.set("toUserName", toUserName);
 				}
