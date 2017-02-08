@@ -45,6 +45,15 @@ public class DictConstant {
 	
 	/**角色类别*/
 	public  String DICT_ROLE_TYPE = "role_type";
+	
+	/**PC直播链接*/
+	public String DICT_LIVE_URL_PC = "live_url_pc";
+	
+	/**mb直播链接*/
+	public String DICT_LIVE_URL_MB = "live_url_mb";
+	
+	/**audio直播链接*/
+	public String DICT_LIVE_URL_AUDIO = "live_url_audio";
 
 	public String getDICT_PLATFORM() {
 		return DICT_PLATFORM;
@@ -124,5 +133,29 @@ public class DictConstant {
 
 	public void setDICT_ROLE_TYPE(String dICT_ROLE_TYPE) {
 		DICT_ROLE_TYPE = dICT_ROLE_TYPE;
+	}
+
+	public String getDICT_LIVE_URL_PC() {
+		return DICT_LIVE_URL_PC;
+	}
+
+	public void setDICT_LIVE_URL_PC(String dICT_LIVE_URL_PC) {
+		DICT_LIVE_URL_PC = dICT_LIVE_URL_PC;
+	}
+
+	public String getDICT_LIVE_URL_MB() {
+		return DICT_LIVE_URL_MB;
+	}
+
+	public void setDICT_LIVE_URL_MB(String dICT_LIVE_URL_MB) {
+		DICT_LIVE_URL_MB = dICT_LIVE_URL_MB;
+	}
+
+	public String getDICT_LIVE_URL_AUDIO() {
+		return DICT_LIVE_URL_AUDIO;
+	}
+
+	public void setDICT_LIVE_URL_AUDIO(String dICT_LIVE_URL_AUDIO) {
+		DICT_LIVE_URL_AUDIO = dICT_LIVE_URL_AUDIO;
 	}
 }

@@ -29,12 +29,14 @@ var chatPushInfo = {
 	    	 chatPushInfo.roomsComboxData=getJson(basePath +"/chatGroupController/getGroupTreeList.do?groupType="+$(this).val());
 	    	 //设置房间下拉框
 			 $("#chatPushInfoRoomIds").combotree({
-			    data:chatPushInfo.roomsComboxData
+				 panelWidth:180,
+			     data:chatPushInfo.roomsComboxData
 			 });
 			 chatPushInfo.cGroupComboxData=getJson(basePath +"/chatClientGroupController/getClientGroupList.do",{clientGroup:"${chatGroup.clientGroupStr}",groupType:this.value})
 			//设置客户组下拉框
 			 $("#chatPushInfoClientGroupId").combotree({
-			    data:chatPushInfo.cGroupComboxData
+				 panelWidth:180,
+			     data:chatPushInfo.cGroupComboxData
 			 });
 	     }).trigger("change");
 	},

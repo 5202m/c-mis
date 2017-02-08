@@ -123,7 +123,6 @@ $(function() {
         <th><spring:message code="user.role" /><!-- 所属角色 --></th>
         <td>
          	<select id="roleId" name="role.roleId" style="width: 155px;">
-         		<option value=""><spring:message code="common.pleaseselect" /><!-- 请选择 --></option>
          		<c:forEach var="role" items="${roleList}">
       				<option value="${role.roleId}">${role.roleName}【${role.remark}】</option>
       			</c:forEach>   		

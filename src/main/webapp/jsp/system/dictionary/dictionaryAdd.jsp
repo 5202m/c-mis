@@ -32,13 +32,13 @@
 	             </select>
 	          </td>
 	        </tr>
+	        </c:if>
 	        <tr>
 	          <th>参数值</th>
 	          <td colspan="3">
 	             <input type="text" name="value" style="width:450px;"/>
 	          </td>
 	        </tr>
-	      </c:if>
 	      <tr>
 	          <th>状态： </th>
 	      	  <td colspan="3">

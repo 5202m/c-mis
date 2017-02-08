@@ -11,7 +11,8 @@
    String contextPath = request.getContextPath();
 %>
 <!-- easyui -->
-<link id="yxuiTheme" type="text/css" rel="stylesheet" href="<%=contextPath%>/base/js/easyui/themes/yxui/easyui.css"/>
+<%-- <link id="yxuiTheme" type="text/css" rel="stylesheet" href="<%=contextPath%>/base/js/easyui/themes/yxui/easyui.css"/> --%>
+<link id="yxuiTheme" type="text/css" rel="stylesheet" href="<%=contextPath%>/base/js/easyui/themes/bootstrap/easyui.css"/>
 <link type="text/css" rel="stylesheet" href="<%=contextPath%>/base/js/easyui/themes/icon.css" />
 <!-- yxui.css baseIcons.css -->
 <link type="text/css" rel="stylesheet" href="<%=contextPath%>/base/css/yxui.css" />
@@ -66,7 +67,7 @@
     </div>
   </div>
   <!-- west -->
-  <div data-options="region:'west'" style="width:210px;">
+  <div data-options="region:'west'" style="width:210px;" split="true">
     <div id="yxui_main_accordion" class="easyui-accordion" data-options="fit:true,border:false,animate:false"></div>
   </div>
   <!-- center -->
@@ -112,12 +113,12 @@
 <!-- main -->
 <script type="text/javascript" src="<%=contextPath%>/js/lib/jquery.i18n.properties-1.0.9.js"></script>
 <script type="text/javascript" src="<%=contextPath%>/js/common.js" charset="UTF-8"></script>
-<script type="text/javascript" src="<%=contextPath%>/jsp/main/main.js" charset="UTF-8"></script>
+<script type="text/javascript" src="<%=contextPath%>/jsp/main/main.js?t=1.6" charset="UTF-8"></script>
 <!-- uploadify -->
 <script type="text/javascript" src="<%=contextPath%>/base/js/uploadify/jquery.uploadify.min.js" charset="utf-8" ></script>
 
 <!-- 工具类 -->
-<script type="text/javascript" src="<%=contextPath%>/base/js/extends/goldOfficeUtils.js" charset="UTF-8"></script>
+<script type="text/javascript" src="<%=contextPath%>/base/js/extends/goldOfficeUtils.js?t=2.0" charset="UTF-8"></script>
 <script type="text/javascript" src="<%=contextPath%>/base/js/extends/Event.js" charset="UTF-8"></script>
 <script type="text/javascript">
   if(window.location.href.indexOf('handanadmin')!=-1){

@@ -302,4 +302,12 @@ public class StringUtil {
 	   return result.toString();
    }
    
+   /**
+    * 提取分割匹配正则
+    * @param val
+    * @returns {Object}
+    */
+   public static String getSplitMatchReg(String val){
+     return "/^"+val+"|,"+val+"$|,"+val+",/g";
+   }
 }

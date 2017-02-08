@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,7 @@ import com.gwghk.mis.enums.SortDirection;
 import com.gwghk.mis.model.BoDict;
 import com.gwghk.mis.util.BeanUtils;
 import com.gwghk.mis.util.CacheManager;
+import com.gwghk.mis.util.StringUtil;
 
 /**
  * 摘要：数据字典相关Service
@@ -200,6 +204,32 @@ public class DictService{
 				if(dictChildrenTmp != null){
 					for (BoDict dictChild : dictChildrenTmp) {
 						if(new Integer(1).equals(dictChild.getStatus())){
+							dictChildren.add(dictChild);
+						}
+					}
+				}
+				dict.setChildren(dictChildren);
+			}
+		}
+		return dictList;
+	}
+	
+	/**
+	 * 查询字典列表，并过滤禁用的字典。
+	 * @param detachedCriteria
+	 * @return
+	 */
+	public List<BoDict> getDictListByPrefix(String prefix,String systemCategory) {
+		List<BoDict> dictList = dictDao.findList(BoDict.class, Query.query(Criteria.where("valid").is(1).and("status").is(1).and("code").regex(StringUtil.toFuzzyMatch(prefix))).with(new Sort(new Order(Direction.ASC,"sort"))));
+		List<BoDict> dictChildrenTmp = null;
+		List<BoDict> dictChildren = null;
+		if(dictList != null){
+			for (BoDict dict : dictList) {
+				dictChildrenTmp = dict.getChildren();
+				dictChildren = new ArrayList<BoDict>();
+				if(dictChildrenTmp != null){
+					for (BoDict dictChild : dictChildrenTmp) {
+						if(new Integer(1).equals(dictChild.getStatus()) && dictChild.getSystemCategory()!=null && StringUtil.containKeyword(dictChild.getSystemCategory(), systemCategory, false)){
 							dictChildren.add(dictChild);
 						}
 					}

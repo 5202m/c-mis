@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,21 +25,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gwghk.mis.authority.ActionVerification;
 import com.gwghk.mis.common.model.AjaxJson;
 import com.gwghk.mis.common.model.ApiResult;
 import com.gwghk.mis.common.model.DataGrid;
 import com.gwghk.mis.common.model.Page;
 import com.gwghk.mis.constant.WebConstant;
+import com.gwghk.mis.model.BoDict;
 import com.gwghk.mis.model.BoRole;
 import com.gwghk.mis.model.BoUser;
 import com.gwghk.mis.service.ChatShowTradeService;
+import com.gwghk.mis.service.DictService;
 import com.gwghk.mis.service.RoleService;
 import com.gwghk.mis.service.UserService;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.PropertiesUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
+import com.gwghk.mis.util.ResourceUtil;
+import com.gwghk.mis.util.StringUtil;
 
 /**
  * 摘要：分析师管理
@@ -56,6 +62,10 @@ public class AnalystController extends BaseController{
 	
 	@Autowired
 	private RoleService roleService;
+	
+	
+	@Autowired
+	private DictService dictService;
 	
 	@Autowired
 	private ChatShowTradeService chatShowTradeService;
@@ -358,6 +368,41 @@ public class AnalystController extends BaseController{
 	public String getVideoUrl(@PathVariable String userId , ModelMap map) throws Exception {
 		BoUser user=userService.getUserById(userId);
 		map.addAttribute("mngUser",user);
+		List<BoDict> liveTitleList=dictService.getDictListByPrefix("live_url_", this.getSystemFlag());
+		map.put("liveList", liveTitleList);
+		String links=user.getLiveLinks();
+		JSONArray objArr=new JSONArray();
+		if(StringUtils.isNotBlank(links)){
+			objArr=JSONObject.parseArray(links);
+			for(int i=0;i<objArr.size();i++){
+				JSONObject obj=objArr.getJSONObject(i);
+				String codeTmp=obj.get("code").toString();
+				String link=obj.getString("url");
+				try{
+					liveTitleList.stream().filter(e->codeTmp.equals(e.getValue())).findFirst().get().getChildren().forEach(e->{
+						if(StringUtil.containKeyword(e.getSystemCategory(),this.getSystemFlag(),false)){
+							String val=e.getValue();
+							if(val!=null){
+								if(val.equals(link)){
+									obj.put("name", e.getNameCN());
+								}else{
+									val=val.replace("{0}", "(\\d+/?\\d+?)");
+									String num=link.replaceFirst(val, "$1");
+									if(StringUtils.isNotBlank(num)&& Pattern.matches("\\d+/?\\d+?", num)){
+										if(link.contains(";")){
+											obj.put("url", link.split(";")[0]);
+										}
+										obj.put("name", e.getNameCN());
+										obj.put("numCode", num);
+									}
+								}
+							}
+						}
+					});
+				}catch(Exception e){}
+			}
+		}
+		map.put("existLiveList", objArr);
 		return "chat/analyst/liveLinks";
 	}
 

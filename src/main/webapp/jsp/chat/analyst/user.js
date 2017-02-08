@@ -4,37 +4,6 @@
  * @date   2014-10-14
  */
 var chatAnalyst = {
-	liveLinks:{
-		obsUrlIndex:["playlist.m3u8","index.m3u8","playlist.m3u8"],
-		obsLabel:{
-			main_sz:{name:'大陆{0},房间:{1}',url:['sz.hhkcdn.com/live']},
-			main_hk:{name:'海外{0},房间:{1}',url:['hk.hhkcdn.com/live']},
-			other_sz:{name:'大陆(备用{0}),房间:{1}',url:['sz.vpcdn.com/live','sz6.phgse.cn/live','ct1.phgsa.cn:1935/live']},
-			other_hk:{name:'海外(备用{0}),房间:{1}',url:['hk.vpcdn.com/live','h6.phgse.cn/live','ct.phgsa.cn:1935/live']}
-		},
-		studio:{
-			obsCode:["01","02","05"],
-			yyLink:[
-				{code:1,name:'yy:92628431/92628431',url:'http://yy.com/s/92628431/92628431/yyscene.swf'},
-				{code:1,name:'yy:92628431/2439533296',url:'http://yy.com/s/92628431/2439533296/yyscene.swf'},
-			]
-		},
-		fxstudio:{
-			obsCode:["03","04"],
-			yyLink:[
-				{code:1,name:'yy:92628431/2537339360',url:'http://yy.com/s/92628431/2537339360/yyscene.swf'},
-				{code:1,name:'yy:92628431/2559592756',url:'http://yy.com/s/92628431/2559592756/yyscene.swf'}
-			]
-		},
-		hxstudio:{
-			obsCode:["10","11","12"],
-			yyLink:[
-				{code:1,name:'yy:46327234/46327234',url:'http://yy.com/s/46327234/46327234/yyscene.swf'},
-				{code:1,name:'yy:82992602/82992602',url:'http://yy.com/s/82992602/82992602/yyscene.swf'}
-			]
-		},
-		oneTVLink:{code:1,name:'oneTV',url:'http://www.one-tv.com/stream/live_mpegts.swf'}
-	},
 	gridId : 'chat_analyst_datagrid',
 	opType : '',
 	init : function(){
@@ -347,76 +316,6 @@ var chatAnalyst = {
 		goldOfficeUtils.deleteOne('chat_analyst_datagrid',recordId,url);
 	},
 	/**
-	 * 提取连接
-	 * @param type 设备类型
-	 * @param rmType 房间类型
-	 * @returns
-	 */
-	getLiveLinks:function(type){
-		$.each(['studio','fxstudio','hxstudio'],function(k, v){
-			var pcSz=[],pcHk=[],mbSz=[],mbHk=[],mbAudioSz=[],mbAudioHk=[];
-			var devLinks=chatAnalyst.liveLinks[v];
-			var rw=null;
-			var obsLabel=chatAnalyst.liveLinks.obsLabel;
-			var codeList=null,urlTmp=null;
-			if(type==1){
-				if(k==0) {
-					var oneTVLink = chatAnalyst.liveLinks.oneTVLink;
-					pcSz.push('<label><input type="checkbox" name="liveLink" value="' + oneTVLink.url + '" code="' + oneTVLink.code + '" />' + oneTVLink.name + '</label>');
-				}
-				$.each(devLinks.yyLink,function(i, row){
-					pcSz.push('<label><input type="checkbox" name="liveLink" value="'+row.url+'" code="'+row.code+'" />'+row.name+'</label>');
-				});
-			}
-			for(var rwIndex in obsLabel){
-				rw=obsLabel[rwIndex];
-				for(var i in rw.url){
-					codeList=devLinks.obsCode;
-					for(var cd in codeList){
-						if(type==1){
-							urlTmp="rtmp://"+rw.url[i]+"/"+codeList[cd];
-						}else{
-							urlTmp="http://"+rw.url[i].replace("h6","h5").replace("sz6","sz")+"/"+codeList[cd]+(type==4?"A/":"/")+chatAnalyst.liveLinks.obsUrlIndex[i];
-						}
-						if(type==1){
-							if(rw.name.indexOf('大陆')>-1){
-								pcSz.push('<label><input type="checkbox" name="liveLink" value="'+urlTmp+'" code="'+type+'" />'+(rw.name.formatStr(rw.url.length==1?"":parseInt(i)+1,codeList[cd]))+'</label>');
-							}else{
-								pcHk.push('<label><input type="checkbox" name="liveLink" value="'+urlTmp+'" code="'+type+'" />'+(rw.name.formatStr(rw.url.length==1?"":parseInt(i)+1,codeList[cd]))+'</label>');
-							}
-						}else if(type==3){
-							if(rw.name.indexOf('大陆')>-1){
-								mbSz.push('<label><input type="checkbox" name="liveLink" value="'+urlTmp+'" code="'+type+'" />'+(rw.name.formatStr(rw.url.length==1?"":parseInt(i)+1,codeList[cd]))+'</label>');
-							}else{
-								mbHk.push('<label><input type="checkbox" name="liveLink" value="'+urlTmp+'" code="'+type+'" />'+(rw.name.formatStr(rw.url.length==1?"":parseInt(i)+1,codeList[cd]))+'</label>');
-							}
-						}else if(type==4){
-							if(rw.name.indexOf('大陆')>-1){
-								mbAudioSz.push('<label><input type="checkbox" name="liveLink" value="'+urlTmp+'" code="'+type+'" />'+(rw.name.formatStr(rw.url.length==1?"":parseInt(i)+1,codeList[cd]))+'</label>');
-							}else{
-								mbAudioHk.push('<label><input type="checkbox" name="liveLink" value="'+urlTmp+'" code="'+type+'" />'+(rw.name.formatStr(rw.url.length==1?"":parseInt(i)+1,codeList[cd]))+'</label>');
-							}
-						}
-					}
-				}
-			}
-			pcSz = pcSz.concat(pcHk);
-			mbSz = mbSz.concat(mbHk);
-			mbAudioSz = mbAudioSz.concat(mbAudioHk);
-			$('#setLiveLinks_form #videoUrlPc').append(pcSz.join(''));
-			$('#setLiveLinks_form #videoUrlMb').append(mbSz.join(''));
-			$('#setLiveLinks_form #audioUrlMb').append(mbAudioSz.join(''));
-		});
-	},
-	setLiveLinks:function(liveLinks){
-		if(isValid(liveLinks)){
-			liveLinks = JSON.parse(liveLinks);
-			$.each(liveLinks, function(i, row){
-				$('#setLiveLinks_form input[name="liveLink"][code="'+row.code+'"][value="'+row.url+'"]').prop('checked',true);
-			});
-		}
-	},
-	/**
 	 * 设置直播地址
 	 */
 	saveLiveLinks : function(recordId){
@@ -435,9 +334,13 @@ var chatAnalyst = {
 					iconCls : "ope-save",
 					handler : function(){
 						var liveLinks = [];
-						$('#setLiveLinks_form input[name="liveLink"]').each(function(){
-							if($(this).is(':checked')) {
-								liveLinks.push({'code':$(this).attr('code'),'url':$(this).val(),'name':$(this).parent().text()});
+						$('#setLiveLinks_form .live-tab-panel').each(function(){
+							var tmpLinks=$(this).find(".live-sel-num").map(function(){
+								var tn=$(this).attr('tn'),tl=$(this).attr('tl');
+								return {'code':$(this).attr('tc'),'url':isValid(tn)?tl.formatStr(tn):tl};
+							}).get();
+							if(tmpLinks){
+								liveLinks=liveLinks.concat(tmpLinks);
 							}
 						});
 						goldOfficeUtils.ajax({

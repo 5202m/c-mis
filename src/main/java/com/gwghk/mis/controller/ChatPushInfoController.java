@@ -74,7 +74,7 @@ public class ChatPushInfoController extends BaseController{
 	public  String  index(HttpServletRequest request,ModelMap map){
 		setCommonShow(map);
 		logger.debug(">>start into chatPushInfoController.index() and url is /chatPushInfoController/index.do");
-		return "chat/pushInfoList";
+		return "chat/push/pushInfoList";
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class ChatPushInfoController extends BaseController{
     public String add(ModelMap map) throws Exception {
     	setCommonShow(map);
     	map.addAttribute("chatPushInfo",new ChatPushInfo());
-    	return "chat/pushInfoSubmit";
+    	return "chat/push/pushInfoSubmit";
     }
     
 	/**
@@ -117,7 +117,7 @@ public class ChatPushInfoController extends BaseController{
     	map.addAttribute("roomIdStr",StringUtils.join(pushInfo.getRoomIds(), ","));
     	map.addAttribute("clientGroupStr",StringUtils.join(pushInfo.getClientGroup(), ","));
     	map.addAttribute("chatPushInfo",pushInfo);
-		return "chat/pushInfoSubmit";
+		return "chat/push/pushInfoSubmit";
     }
     
 	  /**

@@ -54,7 +54,7 @@ var goldOfficeUtils = {
 			draggable : config.draggable,
 			resizable : config.resizable,
 			loadingMessage : config.loadingMessage,
-			onLoad : config.onLoad,
+			onLoad :config.onLoad,
 			onOpen : config.onOpen,
 			buttons : config.buttons === undefined ? [{
 				text : '关闭',
@@ -110,7 +110,17 @@ var goldOfficeUtils = {
 			draggable : config.draggable,
 			resizable : config.resizable,
 			loadingMessage : config.loadingMessage,
-			onLoad : config.onLoad,
+			onLoad :function(){
+				$('#'+dialogId+" .combo-text").each(function(){
+		    		var ctpw=$(this).parent().prev("select").width();
+		    		if(ctpw>0){
+		    			$(this).width(ctpw-60);
+		    		}
+		    	});
+				if(config.onLoad){
+					config.onLoad();
+				}
+			},
 			onOpen : config.onOpen,
 			buttons	 : config.buttons === undefined ? [{
 				text : '提交',

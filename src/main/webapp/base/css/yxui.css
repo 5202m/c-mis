@@ -28,14 +28,13 @@
 	width: 30px;
 	height: 32px;
 	float: left;
-	background: url('icons/top_inf_bg.png') top left no-repeat;
 }
 
 .top_menu_bg {
 	width: 520px;
 	height: 32px;
 	float: left;
-	background: url('icons/top_inf_bg2.png') top right repeat-x;
+	margin-top: 10px;
 }
 
 .top_menu_user {
@@ -322,7 +321,6 @@ table.tableForm_L td,table.tableForm_L th {
 
 table.tableForm_L th {
 	text-align: left;
-	background-color: #FCF8E7;
 	font-weight: normal;
 	word-break: keep-all;
 	white-space: nowrap;

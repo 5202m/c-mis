@@ -282,7 +282,7 @@ public class ResourceUtil {
 		 * 功能：提取字典列表(备注：先在缓存中提取，不存在再通过接口提取列表数据)
 		 */
 	@SuppressWarnings("unchecked")
-	private static List<BoDict> getDictList(){
+	public static List<BoDict> getDictList(){
 		Cache cache = CacheManager.getContent(WebConstant.DICT_KEY);
 		List<BoDict> dictParamList = null;
 		if(cache != null && cache.getValue() != null){

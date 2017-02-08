@@ -1,40 +1,149 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/jsp/common/common.jsp"%>
 <style type="text/css">
-    #videoUrlPc label,#videoUrlMb label,#audioUrlMb label {width:220px;float:left;padding:5px;}
+    .live-tab-panel{
+      overflow-y: auto;height:460px;border: 1px solid #B89E61;padding: 5px;
+    }
+    .live_sub_tab{
+       height: 20px;
+       line-height: 20px;
+    }
+    .live-sel-num{
+       border: 1px solid #B89E61;
+       padding: 4px;
+       border-radius: 2px;
+       margin: 5px;
+    }
+    .live-sel-num-tmp{
+      display: none;
+    }
+    .live-next-labdev{
+      margin-top: 4px;padding:5px;
+    }
+    .liveMainSelect,.liveSelect,.dictSetSelect{
+       width:100px;
+    } 
 </style>
 <script type="text/javascript"> 
+	function removeLiveNum(obj){
+		var pDom=$(obj).parents(".live-tab-panel").find(".live_sub_tab");
+		if(pDom.next().find(".live-sel-num").length==1){
+			pDom.find(".liveMainSelect").find("option[value='']").attr("selected",true);
+			pDom.find(".liveSelect").find("option[value='']").attr("selected",true);
+			pDom.find(".dictSetSelect").find("option[value='']").attr("selected",true);
+		}
+		$(obj).parent().remove();
+	}
     $(function(){
-    	chatAnalyst.getLiveLinks(1);
-    	chatAnalyst.getLiveLinks(3);
-    	chatAnalyst.getLiveLinks(4);
-        var liveLinks = '${mngUser.liveLinks}';
-        chatAnalyst.setLiveLinks(liveLinks);
-    });
+    	$(".liveSelect,.dictSetSelect").change(function(){
+    		var pSelectBox=null;
+    		if($(this).hasClass("dictSetSelect")){
+    			pSelectBox=$(this).prev().prev();
+    		}else{
+    			pSelectBox=$(this).prev();
+    		}
+    		if(isBlank(this.value) || (!$(this).hasClass("dictSetSelect") && this.value.indexOf("X")!=-1) ||isBlank(pSelectBox.val())){
+    			$(this).val("");
+    			return false;
+    		}
+    		var tabNext=$(this).parents(".live_sub_tab").next();
+    		if(tabNext.find(".live-sel-num[tn='"+this.value+"'][tl='"+pSelectBox.val()+"']").length>0){
+    			alert("已选择该编号【"+this.value+"】");
+    		}else{
+    			var cloneTmp=$(".live-sel-num-tmp").clone();
+    			cloneTmp.removeClass("live-sel-num-tmp").addClass("live-sel-num").attr("tc",$(this).parents(".live-tab-panel").attr("tc")).attr("tn",this.value).attr("tl",pSelectBox.val()).find("label").text(pSelectBox.find("option[value='"+pSelectBox.val()+"']").text()+"："+this.value);
+    			tabNext.append(cloneTmp);
+    		}
+    	});
+    	$(".live_sub_tab .liveMainSelect").change(function(){
+    		var tabNext=$(this).parents(".live_sub_tab").next();
+    		var numDom=tabNext.find(".live-sel-num");
+    		if(isBlank(this.value) && numDom.length>0){
+    			$.messager.confirm("操作提示", "不选择，所选线路会移除！" , function(r) {
+    				if (r) {
+    					numDom.remove();
+    				}
+    			});
+    		}
+    		$(".liveSelect").show();
+    		var nSelectBox=null;
+    		var isDictSet=this.value && this.value.indexOf(";")!=-1;//数据字典设置有默认值的项
+    		var isNotParamVal=!/\{0\}/g.test(this.value);//数据字典设置没有带参数的项，如{0}
+    		var nbxVal="";
+    		if(isDictSet){
+    			$(".liveSelect").val("").hide();
+    			$(".dictSetSelect").show().html('<option value="">--请选择--</option>');
+    			var lval=this.value.split(";");
+    			if(isValid(lval)){
+    				lval=lval[1].split(",");
+    				for(var i in lval){
+    					$(".dictSetSelect").append('<option value="'+lval[i]+'">'+lval[i]+'</option>');
+    				}
+    			}
+    			nbxVal=$(this).next().next().val();
+    		}else{
+    			nbxVal=isNotParamVal?"":$(this).next().val();
+    			$(".dictSetSelect").val("").hide();
+    		}
+    		if(!isNotParamVal && (isBlank(nbxVal) || (!isDictSet && nbxVal.indexOf("X")!=-1))){
+    			return false;
+    		}
+    		if((isValid(nbxVal) && tabNext.find(".live-sel-num[tn='"+nbxVal+"'][tl='"+this.value+"']").length>0)||(isNotParamVal&& tabNext.find(".live-sel-num[tl='"+this.value+"']").length>0)){
+    			alert("已选择该地址");
+    		}else{
+    			var cloneTmp=$(".live-sel-num-tmp").clone();
+    			cloneTmp.removeClass("live-sel-num-tmp").addClass("live-sel-num").attr("tc",$(this).parents(".live-tab-panel").attr("tc")).attr("tn",nbxVal).attr("tl",this.value).find("label").text($(this).find("option[value='"+this.value+"']").text()+(isValid(nbxVal)?"："+nbxVal:""));
+    			tabNext.append(cloneTmp);
+    		}
+    	});
+    }); 
 </script>
-<div class="easyui-layout" data-options="fit:true" style="padding: 5px; overflow: hidden;">
+<div style="padding: 5px; overflow: hidden;">
+    <div class="live-sel-num-tmp" tn="" tl=""><label></label><a style="float:right;margin-top: -4px;" class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-cancel',disabled:false" onclick="removeLiveNum(this)"></a></div>
     <form id="setLiveLinks_form" method="post">
         <input type="hidden" name="userId" id = "userId" value="${mngUser.userId}">
-        <!-- center -->
-        <div data-options="region:'center',border:false" style="padding: 4px">
-            <div class="easyui-layout" data-options="fit:true,border:false" style="width: 750px; height: 200px;">
-                <!-- west -->
-                <div data-options="region:'west',border:false" style='width: 250px'>
-                    <div class="easyui-panel" data-options="fit:true,title:'视频直播(pc)'">
-                        <div id="videoUrlPc"></div>
-                    </div>
+         <c:forEach var="row" items="${liveList}">
+              <div style='width: 255px;height:490px;float:left;'>
+                <strong>${row.nameCN}</strong>
+                <div class="live-tab-panel" tc="${row.value}">
+                     <div class="live_sub_tab">
+                       		地址：<select class="liveMainSelect">
+	                                 <option value="">--请选择--</option>
+	                                  <c:forEach var="child" items="${row.children}">
+	                                     <option value="${child.value}">${child.nameCN}</option>  
+	                                </c:forEach>		      
+                                  </select>
+                                  <select class="liveSelect">
+	                       		     <option value="">--请选择--</option>
+	                       		     <option value="0X">0X</option> 
+			                       		  <c:forEach var="i" begin="1" end="9" step="1">   
+			                                <option value="0${i}">&nbsp;&nbsp;0${i}</option>   
+			                              </c:forEach>
+			                              <option value="1X">1X</option>  
+			                              <c:forEach var="i" begin="10" end="19" step="1">   
+			                                <option value="${i}">&nbsp;&nbsp;${i}</option>   
+			                              </c:forEach>
+			                              <option value="2X">2X</option>  
+			                              <c:forEach var="i" begin="20" end="29" step="1">   
+			                                <option value="${i}">&nbsp;&nbsp;${i}</option>   
+			                              </c:forEach>
+			                              <option value="2XX">2XX</option>
+			                              <c:forEach var="i" begin="200" end="201" step="1">   
+			                                <option value="${i}">&nbsp;&nbsp;${i}</option>   
+				                          </c:forEach>
+                       		     </select>
+                       		     <select class="dictSetSelect" style="display:none;"></select>
+                       </div>
+                       <div class="live-next-labdev">
+                            <p>已选地址:</p>
+                            <c:forEach var="exRow" items="${existLiveList}">
+                             <c:if test="${exRow.code==row.value}">
+                                <div class="live-sel-num" tc="${exRow.code}" tn="${exRow.numCode}" tl="${exRow.url}"><label>${exRow.name}<c:if test="${not empty exRow.numCode}">：${exRow.numCode}</c:if></label><a style="float:right;margin-top: -4px;" class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-cancel',disabled:false" onclick="removeLiveNum(this)"></a></div>
+                             </c:if>             
+                             </c:forEach>
+                       </div>
                 </div>
-                <div data-options="region:'center',border:false" style='width: 250px'>
-                    <div class="easyui-panel" data-options="fit:true,title:'视频直播(mb)'">
-                        <div id="videoUrlMb"></div>
-                    </div>
-                </div>
-                <div data-options="region:'east',border:false" style='width: 250px'>
-                    <div class="easyui-panel" data-options="fit:true,title:'音频直播(mb)'">
-                        <div id="audioUrlMb"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+              </div>
+         </c:forEach>
     </form>
 </div>

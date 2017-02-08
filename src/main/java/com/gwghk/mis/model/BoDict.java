@@ -64,6 +64,11 @@ public class BoDict extends BaseModelExt{
 	 */
 	private List<BoDict> children;
 	
+	/**
+	 * 仅用于显示层的参数，非数据层字段
+	 */
+	private boolean checked;
+	
 	public String getId() {
 		return id;
 	}
@@ -156,6 +161,14 @@ public class BoDict extends BaseModelExt{
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public boolean isChecked() {
+		return checked;
+	}
+
+	public void setChecked(boolean checked) {
+		this.checked = checked;
 	}
 	
 }

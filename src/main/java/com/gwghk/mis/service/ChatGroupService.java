@@ -189,7 +189,7 @@ public class ChatGroupService{
 				criter.and("name").regex(StringUtil.toFuzzyMatch(model.getName()));
 			}
 			if(StringUtils.isNotBlank(model.getChatRuleIds())){
-				criter.and("chatRules.id").regex(model.getChatRuleIds().replaceAll(",","|"));;
+				criter.and("chatRules.id").regex(model.getChatRuleIds().replaceAll(",","|"));
 			}
 			if(model.getStatus()!=null){
 				criter.and("status").is(model.getStatus());

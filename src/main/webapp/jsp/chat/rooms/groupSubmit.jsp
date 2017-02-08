@@ -12,57 +12,58 @@
 				 $("#clientGroupTreeId").hide();
 			 }
 			 $("#clientGroupSelectId").combotree({
+				    panelWidth:180,
 				    data:getJson("<%=request.getContextPath()%>/chatClientGroupController/getClientGroupList.do",{clientGroup:"${chatGroup.clientGroup}",groupType:this.value}),
 				}); 
 		 }).trigger("change");
 		 var openDateTmp='${chatGroup.openDate}';
 		 $("#chatGroup_openDate_div").dateTimeWeek({data:(isValid(openDateTmp)?JSON.parse(openDateTmp):null)});
-		 getJson("<%=request.getContextPath()%>/chatGroupRuleController/getGroupRuleCombox.do",null,function(data){
-			var contentRuleIds=$("#chatSubmitRuleIds").attr("tId");
-			//设置内容规则的下拉框
-			for(var i in data){
-				if(contentRuleIds.indexOf(data[i].id)!=-1){
-					data[i].checked=true;
+		 var reData=getJson("<%=request.getContextPath()%>/chatGroupRuleController/getGroupRuleCombox.do");
+		 var contentRuleIds=$("#chatSubmitRuleIds").attr("tId");
+		 //设置内容规则的下拉框
+		 for(var i in reData){
+			if(contentRuleIds.indexOf(reData[i].id)!=-1){
+				reData[i].checked=true;
+			}
+		 }
+		 $("#chatSubmitRuleIds").combotree({
+			panelWidth:300,
+			data:reData
+		}); 
+		//对话列表
+		var tsData=getJson("<%=request.getContextPath()%>/commonController/getTalkStyleList.do");
+		var chatTalkStyleIds=$("#chatTalkStyleIds").attr("tId");
+		if(!chatTalkStyleIds){
+			//默认选中“对话”
+			chatTalkStyleIds = "0";
+		}
+		//设置对话列表的下拉框
+		for(var i in tsData){
+			if(chatTalkStyleIds.indexOf(tsData[i].id)!=-1){
+				tsData[i].checked=true;
+				if(tsData[i].id==1){
+					$("#chatWhisperRoleSpan").show();
 				}
 			}
-			$("#chatSubmitRuleIds").combotree({
-			    data:data
-			}); 
-		},true);
-		//对话列表
-		getJson("<%=request.getContextPath()%>/commonController/getTalkStyleList.do",null,function(data){
-				var chatTalkStyleIds=$("#chatTalkStyleIds").attr("tId");
-				if(!chatTalkStyleIds){
-					//默认选中“对话”
-					chatTalkStyleIds = "0";
-				}
-				//设置对话列表的下拉框
-				for(var i in data){
-					if(chatTalkStyleIds.indexOf(data[i].id)!=-1){
-						data[i].checked=true;
-						if(data[i].id==1){
-							$("#chatWhisperRoleSpan").show();
-						}
-					}
-				}
-				$("#chatTalkStyleIds").combotree({
-				    data:data,
-				    onCheck:function(r){
-				    	var tsObj=$("#chatGroupSubmitForm input[name=talkStyleStr]");
-				    	if(tsObj.length==0){
-				    		$("#chatWhisperRoleSpan").hide();
+		}
+		$("#chatTalkStyleIds").combotree({
+			panelWidth:120,
+		    data:tsData,
+		    onCheck:function(r){
+		    	var tsObj=$("#chatGroupSubmitForm input[name=talkStyleStr]");
+		    	if(tsObj.length==0){
+		    		$("#chatWhisperRoleSpan").hide();
+		    	}else{
+		    		tsObj.each(function(){
+			    		if("1"==$(this).val()){
+				    		$("#chatWhisperRoleSpan").show();
 				    	}else{
-				    		tsObj.each(function(){
-					    		if("1"==$(this).val()){
-						    		$("#chatWhisperRoleSpan").show();
-						    	}else{
-						    		$("#chatWhisperRoleSpan").hide();
-						    	}
-					    	});
+				    		$("#chatWhisperRoleSpan").hide();
 				    	}
-				    }
-				}); 
-		},true);
+			    	});
+		    	}
+		    }
+		}); 
 		//私聊角色
 		var whisperRoleData=[{id:3,text:'客服'},{id:2,text:'分析师'},{id:1,text:'管理员'}];
 		var whisperRoleTmp=$("#chatWhisperRoleId").attr("tId");
@@ -77,6 +78,7 @@
 			}
 		}
 		$("#chatWhisperRoleId").combotree({
+			panelWidth:120,
 		    data:whisperRoleData
 		});
 		var defTemplate = $('#defTemplate').val();
@@ -123,7 +125,7 @@
 	      <tr>
 	          <th>聊天方式</th>
 	          <td colspan="3">
-	             <select class="easyui-combotree" style="width:175px;" name="talkStyleStr"  id="chatTalkStyleIds" tId="${chatGroup.talkStyle}" class="easyui-validatebox" data-options="required:true,missingMessage:'请输入聊天方式',cascadeCheck:false" multiple></select>
+	             <select class="easyui-combotree" style="width:180px;" name="talkStyleStr"  id="chatTalkStyleIds" tId="${chatGroup.talkStyle}" class="easyui-validatebox" data-options="required:true,missingMessage:'请输入聊天方式',cascadeCheck:false" multiple></select>
 	             <span style="margin-left:40px;display:none;" id="chatWhisperRoleSpan">角色授权(私聊)<span style="margin-left:18px;"><select class="easyui-combotree" style="width:175px;" name="chatWhisperRoleStr"  id="chatWhisperRoleId" tId="${chatGroup.whisperRoles}" class="easyui-validatebox" data-options="required:true,missingMessage:'请选择角色',cascadeCheck:false" multiple></select></span></span>
 	          </td>
 	      </tr>

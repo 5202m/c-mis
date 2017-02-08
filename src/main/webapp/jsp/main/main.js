@@ -188,6 +188,12 @@ var main={
 							    	   $("[class~="+obj[i].code+"]","#"+node.id).show();
 							       }
 							    }
+						    	$(".combo-text").each(function(){
+						    		var ctpw=$(this).parent().prev("select").width();
+						    		if(ctpw>0){
+						    			$(this).width(ctpw-60);
+						    		}
+						    	});
 						   }
 						});
 					}

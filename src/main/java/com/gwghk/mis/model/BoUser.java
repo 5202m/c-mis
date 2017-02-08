@@ -12,6 +12,9 @@ public class BoUser extends BaseUser{
 	
 	private String systemCategory;//所属系统
 	
+	/**
+	 * 数据格式：[{code:'',link:''}]
+	 */
 	private String liveLinks;//直播连接
 
 	/**

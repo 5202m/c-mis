@@ -49,7 +49,8 @@ var systemDictionary = {
 			    		return '禁用';
 			    	}
 			    }},
-			    {title : 'type',field:'type',width:100,hidden : true}
+			    {title : 'type',field:'type',width:100,hidden : true},
+			    {title : "排序号",field:'sort',width:30},
 			]],
 			// 此方法主要用于异步处理
 			onBeforeLoad:function(row,param){

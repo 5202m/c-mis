@@ -22,7 +22,7 @@
           </td>
           <th>聊天规则</th>
           <td>
-             <select class="easyui-combotree" style="width:400px;" name="chatRuleId"  id="chatRuleIds" data-options="cascadeCheck:false" multiple></select>
+             <select class="easyui-combotree" style="width:200px;" name="chatRuleId"  id="chatRuleIds" data-options="cascadeCheck:false" multiple></select>
           </td>
           <th>聊天方式</th>
           <td>

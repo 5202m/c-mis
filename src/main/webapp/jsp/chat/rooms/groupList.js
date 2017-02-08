@@ -21,9 +21,11 @@ var chatGroup = {
 		chatGroup.ruleComboxData=data;
 		//设置规则的下拉框
 		$("#chatRuleIds").combotree({
+			panelWidth:300,
 		    data:data
 		});
 		$("#chatTalkStyleId").combotree({
+			panelWidth:180,
 		    data:chatGroup.talkStyleComboxData
 		}); 
 	},

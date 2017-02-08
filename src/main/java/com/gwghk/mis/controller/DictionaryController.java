@@ -77,6 +77,7 @@ public class DictionaryController extends BaseController{
 				typeGroupDic.setNameCN(type.getNameCN());
 				typeGroupDic.setNameTW(type.getNameTW());
 				typeGroupDic.setNameEN(type.getNameEN());
+				typeGroupDic.setValue(type.getValue());
 				typeGroupDic.setState("closed");
 				typeGroupDic.setType("1");
 				typeGroupDic.setSort(type.getSort());

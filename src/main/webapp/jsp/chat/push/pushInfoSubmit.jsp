@@ -19,11 +19,13 @@
 			 }
 	    	 //设置房间下拉框
 			 $("#chatPushInfoSMRoomIds").combotree({
+				panelWidth:180,
 			    data:getJson(basePath +"/chatGroupController/getGroupTreeList.do",{groupType:this.value,groupId:initgroupId})
 			 });
 			//设置客户组下拉框
 			 $("#chatPushInfoSMClientGroupId").combotree({
-			    data:getJson(basePath +"/chatClientGroupController/getClientGroupList.do",{clientGroup:initclientGroup,groupType:this.value})
+				 panelWidth:180,
+			     data:getJson(basePath +"/chatClientGroupController/getClientGroupList.do",{clientGroup:initclientGroup,groupType:this.value})
 			 });
 			 initclientGroup='';
 			 initgroupId='';
