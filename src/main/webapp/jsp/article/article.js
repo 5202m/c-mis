@@ -85,7 +85,9 @@ var article = {
 		});
 	},
 	/**
-	 * 格式化平台
+	 * 
+	 * @MethodName: formatPlatfrom
+	 * @Description: TODO
 	 * @param value
 	 * @returns
 	 */
@@ -107,6 +109,12 @@ var article = {
 		}
 		return result.join("，");
 	},
+	/**
+	 * 
+	 * @MethodName: setEvent
+	 * @Description: TODO
+	 * @return void
+	 */
 	setEvent:function(){
 		// 列表查询
 		$("#article_queryForm_search").on("click",function(){

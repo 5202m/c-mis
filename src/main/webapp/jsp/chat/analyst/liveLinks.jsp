@@ -23,16 +23,26 @@
     .liveMainSelect,.liveSelect,.dictSetSelect{
        width:100px;
     } 
+   .live-sel-num .ope-cancel{
+      background-position-y:1px; 
+   }
+   .live-sel-num .easyui-linkbutton {
+      float:right; margin-top: -2px;width: 25px;height: 25px;
+    }
 </style>
 <script type="text/javascript"> 
 	function removeLiveNum(obj){
-		var pDom=$(obj).parents(".live-tab-panel").find(".live_sub_tab");
-		if(pDom.next().find(".live-sel-num").length==1){
-			pDom.find(".liveMainSelect").find("option[value='']").attr("selected",true);
-			pDom.find(".liveSelect").find("option[value='']").attr("selected",true);
-			pDom.find(".dictSetSelect").find("option[value='']").attr("selected",true);
-		}
-		$(obj).parent().remove();
+		$.messager.confirm("操作提示", "确实要移除该项地址吗？" , function(r) {
+			if (r) {
+				var pDom=$(obj).parents(".live-tab-panel").find(".live_sub_tab");
+				if(pDom.next().find(".live-sel-num").length==1){
+					pDom.find(".liveMainSelect").find("option[value='']").attr("selected",true);
+					pDom.find(".liveSelect").find("option[value='']").attr("selected",true);
+					pDom.find(".dictSetSelect").find("option[value='']").attr("selected",true);
+				}
+				$(obj).parent().remove();
+			}
+		});
 	}
     $(function(){
     	$(".liveSelect,.dictSetSelect").change(function(){
@@ -99,7 +109,7 @@
     }); 
 </script>
 <div style="padding: 5px; overflow: hidden;">
-    <div class="live-sel-num-tmp" tn="" tl=""><label></label><a style="float:right;margin-top: -4px;" class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-cancel',disabled:false" onclick="removeLiveNum(this)"></a></div>
+    <div class="live-sel-num-tmp" tn="" tl=""><label></label><a class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-cancel',disabled:false" onclick="removeLiveNum(this)"></a></div>
     <form id="setLiveLinks_form" method="post">
         <input type="hidden" name="userId" id = "userId" value="${mngUser.userId}">
          <c:forEach var="row" items="${liveList}">
@@ -138,7 +148,7 @@
                             <p>已选地址:</p>
                             <c:forEach var="exRow" items="${existLiveList}">
                              <c:if test="${exRow.code==row.value}">
-                                <div class="live-sel-num" tc="${exRow.code}" tn="${exRow.numCode}" tl="${exRow.url}"><label>${exRow.name}<c:if test="${not empty exRow.numCode}">：${exRow.numCode}</c:if></label><a style="float:right;margin-top: -4px;" class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-cancel',disabled:false" onclick="removeLiveNum(this)"></a></div>
+                                <div class="live-sel-num" tc="${exRow.code}" tn="${exRow.numCode}" tl="${exRow.url}"><label>${exRow.name}<c:if test="${not empty exRow.numCode}">：${exRow.numCode}</c:if></label><a class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-cancel',disabled:false" onclick="removeLiveNum(this)"></a></div>
                              </c:if>             
                              </c:forEach>
                        </div>

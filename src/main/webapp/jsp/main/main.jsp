@@ -11,13 +11,12 @@
    String contextPath = request.getContextPath();
 %>
 <!-- easyui -->
-<%-- <link id="yxuiTheme" type="text/css" rel="stylesheet" href="<%=contextPath%>/base/js/easyui/themes/yxui/easyui.css"/> --%>
 <link id="yxuiTheme" type="text/css" rel="stylesheet" href="<%=contextPath%>/base/js/easyui/themes/bootstrap/easyui.css"/>
 <link type="text/css" rel="stylesheet" href="<%=contextPath%>/base/js/easyui/themes/icon.css" />
 <!-- yxui.css baseIcons.css -->
-<link type="text/css" rel="stylesheet" href="<%=contextPath%>/base/css/yxui.css" />
+<link type="text/css" rel="stylesheet" href="<%=contextPath%>/base/css/yxui.css?t=1.2" />
 <link type="text/css" rel="stylesheet" href="<%=contextPath%>/base/css/yxuiForm.css" />
-<link type="text/css" rel="stylesheet" href="<%=contextPath%>/base/css/baseIcons.css" />
+<link type="text/css" rel="stylesheet" href="<%=contextPath%>/base/css/baseIcons.css?t=1.2" />
 <!-- portal -->
 <link type="text/css" rel="stylesheet" href="<%=contextPath%>/base/js/easyui-portal/portal.css" />
 <!-- uploadify -->

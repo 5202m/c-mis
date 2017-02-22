@@ -324,8 +324,8 @@ var chatAnalyst = {
 		var submitUrl =  formatUrl(basePath + '/analystController/setLiveLinks.do');
 		goldOfficeUtils.openEditorDialog({
 			title : "设置直播地址",
-			width : 800,
-			height : 575,
+			width : 810,
+			height : 580,
 			href : url,
 			iconCls : 'pag-edit',
 			buttons:[

@@ -2,6 +2,9 @@
     height:180px;
     overflow:auto;
 }
+.date-time-week-body .ope-add,.date-time-week-body .ope-remove{
+	background-position-y: 1px;
+}
 .date-time-week{
   border-bottom: 1px solid #D0D0D0;
   padding: 2px 0 2px 0px;
