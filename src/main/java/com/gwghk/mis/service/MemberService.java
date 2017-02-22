@@ -232,7 +232,7 @@ public class MemberService{
 				if("vip".equals(userGroup.getClientGroup())){
 					userGroupCriteria.and("vipUser").is(true);
 				}else{
-					userGroupCriteria.and("vipUser").is(false);
+					userGroupCriteria.and("vipUser").ne(true);
 					userGroupCriteria.and("clientGroup").is(userGroup.getClientGroup());
 				}
 			}
