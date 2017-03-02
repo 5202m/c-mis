@@ -1,9 +1,6 @@
 package com.gwghk.mis.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -385,6 +382,7 @@ public class ChatGroupService{
 			if(members != null){
 				ChatUserGroup groupTmp = null;
 				TraninClient newTc = null;
+				Date now = new Date();
 				for (Member member : members) {
 					groupTmp = member.getLoginPlatform().getChatUserGroup().get(0);
 					if(importUserIds.contains(groupTmp.getUserId()) == false){
@@ -392,6 +390,7 @@ public class ChatGroupService{
 						newTc.setClientId(groupTmp.getUserId());
 						newTc.setNickname(groupTmp.getNickname());
 						newTc.setIsAuth(1);
+						newTc.setDateTime(now);
 						newTcs.add(newTc);
 						importUserIds.add(groupTmp.getUserId());
 						importMobiles.add(member.getMobilePhone());

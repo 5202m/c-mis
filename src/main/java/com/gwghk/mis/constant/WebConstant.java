@@ -99,4 +99,6 @@ public class WebConstant {
 	 public final static String CHAT_VISITOR_REP_T_TEMPLATE_PATH ="/template/chat_visitor_repT_data.xls";
 	/**房间未授权用户列表**/
 	public final static String ROOM_UN_AUTH_CLINET_DATA = "/template/room_un_auth_client_data.xls";
+	/**房间未授权用户列表**/
+	public final static String ROOM_TRAIN_CLINET_DATA = "/template/room_train_client_data.xls";
 }
