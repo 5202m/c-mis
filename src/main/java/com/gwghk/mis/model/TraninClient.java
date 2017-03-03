@@ -3,6 +3,8 @@ package com.gwghk.mis.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
+
 @Document
 public class TraninClient {
 
@@ -26,6 +28,11 @@ public class TraninClient {
 	 * 是否授权
 	 */
 	private Integer isAuth;
+
+	/**
+	 * 报名时间
+	 */
+	private Date dateTime;
 
 	public String getId() {
 		return id;
@@ -58,5 +65,12 @@ public class TraninClient {
 	public void setIsAuth(Integer isAuth) {
 		this.isAuth = isAuth;
 	}
-    
+
+	public Date getDateTime() {
+		return dateTime;
+	}
+
+	public void setDateTime(Date dateTime) {
+		this.dateTime = dateTime;
+	}
 }

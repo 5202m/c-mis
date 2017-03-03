@@ -221,6 +221,12 @@
                 <input  name="label" style="width:50%;" value="${chatGroup.label}">
 			</td>
 		</tr>
+		<tr>
+			<th colspan="2">培训班配置（标记详情页、lp页面的配置信息）</th>
+			<td colspan="2">
+				<input  name="trainConfig" style="width:50%;" value="${chatGroup.trainConfig}">
+			</td>
+		</tr>
     </table>
   </form>
 </div>

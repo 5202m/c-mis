@@ -167,8 +167,8 @@ var chatGroup = {
 		var submitUrl =  formatUrl(basePath + '/chatGroupController/create.do');
 		goldOfficeUtils.openEditorDialog({
 			title : $.i18n.prop("common.operatetitle.add"),			/**添加记录*/
-			width : 700,
-			height : 515,
+			width : 750,
+			height : 650,
 			href : url,
 			iconCls : 'pag-add',
 			handler : function(){   //提交时处理
@@ -216,8 +216,8 @@ var chatGroup = {
 		var submitUrl =  formatUrl(basePath + '/chatGroupController/update.do');
 		goldOfficeUtils.openEditorDialog({
 			title : $.i18n.prop("common.operatetitle.edit"),   /**修改记录*/
-			width : 700,
-			height : 515,
+			width : 750,
+			height : 650,
 			href : url,
 			iconCls : 'pag-edit',
 			handler : function(){    //提交时处理

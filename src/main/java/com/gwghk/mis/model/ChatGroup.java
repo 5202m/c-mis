@@ -115,7 +115,12 @@ public class ChatGroup extends BaseModel{
 	 * 培训用户
 	 */
 	private List<TraninClient> traninClient;
-	
+
+	/**
+	 * 培训班配置
+	 */
+	private String trainConfig;
+
 	/**
 	 * 房间类别（普通，vip，培训班）
 	 */
@@ -307,6 +312,14 @@ public class ChatGroup extends BaseModel{
 
 	public void setTraninClient(List<TraninClient> traninClient) {
 		this.traninClient = traninClient;
+	}
+
+	public String getTrainConfig() {
+		return trainConfig;
+	}
+
+	public void setTrainConfig(String trainConfig) {
+		this.trainConfig = trainConfig;
 	}
 
 	public String getRoomType() {
