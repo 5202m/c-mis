@@ -626,7 +626,7 @@ public class ChatGroupController extends BaseController{
 					TraninClient traninClient = traninClientMap.get(chatUserGroup.getUserId());
 					if(traninClient != null){
 						row.set("isAuth", traninClient.getIsAuth() == 1 ? "通过" : "未通过");
-						row.set("dateTime", traninClient.getDateTime() == null ? "" : DateUtil.formatDate(traninClient.getDateTime(), "yyyy-MM-dd"));
+						row.set("dateTime", traninClient.getDateTime() == null ? "" : DateUtil.formatDate(traninClient.getDateTime(), "yyyy-MM-dd HH:mm:ss"));
 					}
 				}catch (Exception e){
 					logger.error("<--method:exportUnAuthClient()|" + e + ",ErrorMsg:" + e.toString());
