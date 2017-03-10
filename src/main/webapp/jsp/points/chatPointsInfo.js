@@ -429,6 +429,26 @@ var chatPointsInfo = {
 				});
 			}
 		});
+	},
+	/**
+	 * 功能：导出记录
+	 */
+	exportRecord : function(){
+		var loc_params = $('#'+chatPointsInfo.gridId).datagrid('options').queryParams;
+		var loc_val1 = $("#chatPointsInfo_pointsStart").val() || "";
+		var loc_val2 = $("#chatPointsInfo_pointsEnd").val() || "";
+		if(/^\d*$/.test(loc_val1) == false && /^\d*$/.test(loc_val2) == false){
+			alert("积分范围只能输入整数！");
+			$("#chatPointsInfo_pointsStart").val(loc_val1.replace(/[^\d]/g, ""));
+			$("#chatPointsInfo_pointsEnd").val(loc_val2.replace(/[^\d]/g, ""));
+			return;
+		}
+
+		$("#chatPointsInfo_queryForm select,#chatPointsInfo_queryForm input").each(function(){
+			loc_params[$(this).attr("name")] = $(this).val();
+		});
+		var path = basePath+ '/chatPointsController/exportRecord.do?'+$.param(loc_params);
+		window.location.href = path;
 	}
 };
 		

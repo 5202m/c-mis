@@ -72,6 +72,7 @@
 			<spring:message code="common.buttons.refresh" />
 			<!-- 刷新 -->
 		</a>
+		<a class="easyui-linkbutton export" data-options="plain:true,iconCls:'ope-export',disabled:false"  onclick="chatPointsInfo.exportRecord();">导出记录</a>
 	</div>
 
 	<!-- datagrid-操作按钮 -->

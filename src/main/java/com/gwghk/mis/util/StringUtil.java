@@ -301,5 +301,22 @@ public class StringUtil {
 	   }
 	   return result.toString();
    }
-   
+
+	/**
+	 * 根据手机号返回userId
+	 * @param mobilePhone
+	 * @return
+	 */
+	public static String formatMobileToUserId(String mobilePhone){
+		if(mobilePhone == null){
+			return "";
+		}
+		String[] str = new String[]{"p", "x", "i", "u", "d", "c", "v", "s", "n", "f"};
+		String userId = "";
+		for(int i = 0,length = mobilePhone.length(); i < length; i++){
+			userId = userId.concat(str[Integer.parseInt(mobilePhone.substring(i, i+1))]);
+		}
+		return userId;
+	}
+
 }
