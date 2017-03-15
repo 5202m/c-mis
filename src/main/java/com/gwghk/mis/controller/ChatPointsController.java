@@ -2,7 +2,9 @@ package com.gwghk.mis.controller;
 
 import com.gwghk.mis.model.BoDict;
 import com.gwghk.mis.model.ChatGroup;
+import com.gwghk.mis.model.ChatPointsConfig;
 import com.gwghk.mis.model.ChatPointsJournal;
+import com.gwghk.mis.service.ChatPointsConfigService;
 import com.gwghk.mis.util.ExcelUtil;
 import com.gwghk.mis.util.StringUtil;
 import com.sdk.orm.DataRowSet;
@@ -59,7 +61,10 @@ public class ChatPointsController extends BaseController{
 
 	@Autowired
 	private ChatPointsService chatPointsService;
-	
+
+	@Autowired
+	private ChatPointsConfigService chatPointsConfigService;
+
 	@Autowired
 	private ChatGroupService chatGroupService;
 	
@@ -157,7 +162,6 @@ public class ChatPointsController extends BaseController{
 	/**
 	 * 删除
 	 * @param request
-	 * @param chatPoints
 	 * @return
 	 */
 	@RequestMapping(value="/chatPointsInfo/delete",method=RequestMethod.POST)
@@ -265,6 +269,17 @@ public class ChatPointsController extends BaseController{
 			Page<ChatPoints> page = chatPointsService.getChatPoints(this.createDetachedCriteria(dataGrid, chatPoints), params, true);
 			List<ChatPoints> list = page.getCollection();
 			List<BoDict> boDictList = ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE);
+			DataGrid pointsConfigdataGrid = new DataGrid();
+			pointsConfigdataGrid.setPage(0);
+			pointsConfigdataGrid.setRows(0);
+			pointsConfigdataGrid.setSort("updateDate");
+			pointsConfigdataGrid.setOrder("desc");
+			ChatPointsConfig chatPointsConfig = new ChatPointsConfig();
+      if(StringUtils.isNotBlank(chatPoints.getGroupType())) {
+        chatPointsConfig.setGroupType(chatPoints.getGroupType());
+      }
+			Page<ChatPointsConfig> pointsConfigPage = chatPointsConfigService.getChatPointsConfigs(this.createDetachedCriteria(dataGrid, chatPointsConfig));
+			List<ChatPointsConfig> pointsConfigList = pointsConfigPage.getCollection();
 			if (list != null && list.size() > 0) {
 				DataRowSet dataSet = new DataRowSet();
 				for(ChatPoints cp : list){
@@ -281,7 +296,24 @@ public class ChatPointsController extends BaseController{
 						row.set("userId", StringUtils.isNumeric(cp.getUserId())?StringUtil.formatMobileToUserId(cp.getUserId()):cp.getUserId());
 						row.set("pointsGlobal", cp.getPointsGlobal());
 						row.set("points", cp.getPoints());
-						row.set("remark", cpj.getRemark());
+            if(StringUtils.isNotBlank(cpj.getRemark())) {
+              row.set("remark", cpj.getRemark());
+            } else {
+              if(pointsConfigList != null && pointsConfigList.size() > 0) {
+                for (ChatPointsConfig cpc : pointsConfigList) {
+                  if(cpc.getItem().equals(cpj.getItem()) && cpc.getGroupType().equals(cp.getGroupType())){
+                    if(StringUtils.isNotBlank(cpc.getTips())) {
+                      row.set("remark", cpc.getTips());
+                    }else{
+                      row.set("remark", cpc.getRemark());
+                    }
+                    break;
+                  }
+                }
+              } else {
+                continue;
+              }
+            }
 						row.set("before", cpj.getBefore());
 						row.set("change", cpj.getChange());
 						row.set("after", cpj.getAfter());

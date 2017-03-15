@@ -19,7 +19,7 @@ var chatPraise = {
       url : basePath+'/chatPraiseController/datagrid.do',
       columns : [[
         {title : 'id',field : 'id',checkbox : true, hidden: true},
-        {title : $.i18n.prop("common.operate"),field : 'todo',hidden:true, formatter : function(value, rowData, rowIndex) {		/**操作*/
+        {title : $.i18n.prop("common.operate"),field : 'todo', formatter : function(value, rowData, rowIndex) {		/**操作*/
           $("#praise_datagrid_rowOperation a").each(function(){
             $(this).attr("id",rowData.id);
           });
@@ -35,15 +35,7 @@ var chatPraise = {
         {title : "点赞数", field : 'praiseNum'}
 
       ]],
-      toolbar : '#praise_datagrid_toolbar'/*,
-      onLoadSuccess:function(){
-        $.each($('.datagrid-btable tr'), function(){
-          var $this = $(this);
-          if(isBlank($this.find('td[field="praiseId"] div').text())){
-            $this.hide();
-          }
-        });
-      }*/
+      toolbar : '#praise_datagrid_toolbar'
     });
   },
   setEvent:function(){
@@ -94,6 +86,41 @@ var chatPraise = {
    */
   refresh : function(){
     $('#'+chatPraise.gridId).datagrid('reload');
+  },
+  /**
+   * 功能：修改
+   * @param recordId   dataGrid行Id
+   */
+  edit : function(recordId){
+    $("#praise_datagrid").datagrid('unselectAll');
+    var url = formatUrl(basePath + '/chatPraiseController/'+recordId+'/edit.do');
+    var submitUrl =  formatUrl(basePath + '/chatPraiseController/update.do');
+    goldOfficeUtils.openEditorDialog({
+      dialogId : "editWindow",
+      title : $.i18n.prop("common.operatetitle.edit"),   /**修改记录*/
+      width : 500,
+      height : 300,
+      href : url,
+      iconCls : 'pag-edit',
+      handler : function(){    //提交时处理
+        if($("#praiseEditFrom").form('validate')){
+          goldOfficeUtils.ajaxSubmitForm({
+            url : submitUrl,
+            formId : 'praiseEditFrom',
+            onSuccess : function(data){   //提交成功后处理
+              var d = $.parseJSON(data);
+              if (d.success) {
+                $("#editWindow").dialog("close");
+                chatPraise.refresh();
+                $.messager.alert($.i18n.prop("common.operate.tips"),$.i18n.prop("common.editsuccess"),'info');/**操作提示  修改成功!*/
+              }else{
+                $.messager.alert($.i18n.prop("common.operate.tips"),'修改失败','error');  /**操作提示  修改失败!*/
+              }
+            }
+          });
+        }
+      }
+    });
   },
   /**
    * 设置分析师选择列表

@@ -1,15 +1,24 @@
 package com.gwghk.mis.controller;
 
+import com.gwghk.mis.authority.ActionVerification;
+import com.gwghk.mis.common.model.AjaxJson;
+import com.gwghk.mis.common.model.ApiResult;
 import com.gwghk.mis.common.model.DataGrid;
 import com.gwghk.mis.common.model.Page;
 import com.gwghk.mis.constant.DictConstant;
+import com.gwghk.mis.constant.WebConstant;
 import com.gwghk.mis.model.BoDict;
 import com.gwghk.mis.model.ChatGroup;
 import com.gwghk.mis.model.ChatPraise;
 import com.gwghk.mis.service.ChatGroupService;
 import com.gwghk.mis.service.ChatPraiseService;
+import com.gwghk.mis.util.BrowserUtils;
+import com.gwghk.mis.util.DateUtil;
+import com.gwghk.mis.util.IPUtil;
+import com.gwghk.mis.util.ResourceBundleUtil;
 import com.gwghk.mis.util.ResourceUtil;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -103,4 +113,47 @@ public class ChatPraiseController extends BaseController{
     return result;
   }
 
+  /**
+   * 点赞管理，修改
+   * @param praiseId
+   * @param map
+   * @param opType
+   * @return
+   * @throws Exception
+   */
+  @ActionVerification(key="edit")
+  @RequestMapping(value="/chatPraiseController/{praiseId}/edit", method = RequestMethod.GET)
+  public String edit(@PathVariable String praiseId , ModelMap map, String opType) throws Exception {
+    ChatPraise chatPraise = chatPraiseService.getPraiseById(praiseId);
+    map.put("chatPraise", chatPraise);
+    return "chat/chatPraiseEdit";
+  }
+
+  /**
+   * 功能：点赞管理-保存更新
+   */
+  @RequestMapping(value="/chatPraiseController/update",method=RequestMethod.POST)
+  @ResponseBody
+  @ActionVerification(key="edit")
+  public AjaxJson update(HttpServletRequest request,ChatPraise chatPraise){
+    AjaxJson j = new AjaxJson();
+
+    ApiResult result = chatPraiseService.modifyPraise(chatPraise);
+    if(result.isOk()){
+      j.setSuccess(true);
+      String message = " 用户: " + userParam.getUserNo() + " "+ DateUtil
+          .getDateSecondFormat(new Date()) + " 成功修改点赞："+userParam.getUserNo();
+      logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
+          , BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+      logger.info("<--method:update()|"+message);
+    }else{
+      j.setSuccess(false);
+      j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
+      String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改点赞："+userParam.getUserNo()+" 失败";
+      logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
+          ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+      logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
+    }
+    return j;
+  }
 }

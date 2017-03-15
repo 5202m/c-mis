@@ -46,12 +46,12 @@
 
     <!-- datagrid-toolbar -->
     <div id="praise_datagrid_toolbar">
-        <a class="easyui-linkbutton refresh" data-options="plain:true,iconCls:'ope-reload',disabled:false"   onclick="chatSubscribe.refresh();"><spring:message code="common.buttons.refresh" /><!-- 刷新 --></a>
+        <a class="easyui-linkbutton refresh" data-options="plain:true,iconCls:'ope-reload',disabled:false"   onclick="chatPraise.refresh();"><spring:message code="common.buttons.refresh" /><!-- 刷新 --></a>
     </div>
 
     <!-- datagrid-操作按钮 -->
     <div id="praise_datagrid_rowOperation">
-        <a class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-view',disabled:false" onclick="chatSubscribe.view(this.id)"><spring:message code="common.buttons.view" /><!-- 查看 --></a>
+        <a class="easyui-linkbutton edit" data-options="plain:true,iconCls:'ope-edit',disabled:false" onclick="chatPraise.edit(this.id)"><spring:message code="common.buttons.edit" /><!-- 查看 --></a>
     </div>
 
 </div>
