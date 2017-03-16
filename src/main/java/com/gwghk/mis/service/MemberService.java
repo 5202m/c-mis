@@ -314,4 +314,19 @@ public class MemberService{
 		query.addCriteria(criteria);
 		return memberDao.findListInclude(Member.class, query, "loginPlatform.chatUserGroup.$","mobilePhone");
 	}
+
+	/*****
+	 * 根据所属组返回用户信息
+	 * @param groupType
+	 * @return
+	 */
+	public List<Member> getMemberByGroupType(String groupType){
+		Criteria criteria = new Criteria();
+		Criteria userGroupCriteria = new Criteria();
+		userGroupCriteria.and("_id").is(groupType);
+		criteria.and("valid").is(1).and("loginPlatform.chatUserGroup").elemMatch(userGroupCriteria);
+		Query query =new Query();
+		query.addCriteria(criteria);
+		return memberDao.findListInclude(Member.class, query, "loginPlatform.chatUserGroup.$","mobilePhone");
+	}
 }

@@ -4,7 +4,10 @@ import com.gwghk.mis.model.BoDict;
 import com.gwghk.mis.model.ChatGroup;
 import com.gwghk.mis.model.ChatPointsConfig;
 import com.gwghk.mis.model.ChatPointsJournal;
+import com.gwghk.mis.model.ChatUserGroup;
+import com.gwghk.mis.model.Member;
 import com.gwghk.mis.service.ChatPointsConfigService;
+import com.gwghk.mis.service.MemberService;
 import com.gwghk.mis.util.ExcelUtil;
 import com.gwghk.mis.util.StringUtil;
 import com.sdk.orm.DataRowSet;
@@ -40,7 +43,6 @@ import com.gwghk.mis.constant.DictConstant;
 import com.gwghk.mis.constant.WebConstant;
 import com.gwghk.mis.model.ChatPoints;
 import com.gwghk.mis.model.SmsInfo;
-import com.gwghk.mis.service.ChatGroupService;
 import com.gwghk.mis.service.ChatPointsService;
 import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.DateUtil;
@@ -66,7 +68,7 @@ public class ChatPointsController extends BaseController{
 	private ChatPointsConfigService chatPointsConfigService;
 
 	@Autowired
-	private ChatGroupService chatGroupService;
+	private MemberService memberService;
 	
 	/**
 	 * 功能：积分配置管理-首页
@@ -261,6 +263,8 @@ public class ChatPointsController extends BaseController{
 			}
 
 			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.CHAT_POINTS_RECORDS_TEMPLATE_PATH)));
+			String pwd=StringUtil.random(6);
+			builder.getHSSFWorkbook().getSheetAt(0).protectSheet(pwd);
 			DataGrid dataGrid = new DataGrid();
 			dataGrid.setPage(0);
 			dataGrid.setRows(0);
@@ -274,25 +278,40 @@ public class ChatPointsController extends BaseController{
 			pointsConfigdataGrid.setRows(0);
 			pointsConfigdataGrid.setSort("updateDate");
 			pointsConfigdataGrid.setOrder("desc");
+			List<Member> memberList = null;
 			ChatPointsConfig chatPointsConfig = new ChatPointsConfig();
       if(StringUtils.isNotBlank(chatPoints.getGroupType())) {
         chatPointsConfig.setGroupType(chatPoints.getGroupType());
+				memberList = memberService.getMemberByGroupType(chatPoints.getGroupType());
       }
 			Page<ChatPointsConfig> pointsConfigPage = chatPointsConfigService.getChatPointsConfigs(this.createDetachedCriteria(dataGrid, chatPointsConfig));
 			List<ChatPointsConfig> pointsConfigList = pointsConfigPage.getCollection();
 			if (list != null && list.size() > 0) {
 				DataRowSet dataSet = new DataRowSet();
 				for(ChatPoints cp : list){
-					for(ChatPointsJournal cpj : cp.getJournal()) {
-						IRow row = dataSet.append();
-						String roomName = "";
-						for (BoDict bd : boDictList) {
-							if (bd.getCode().equals(cp.getGroupType())) {
-								roomName = bd.getNameCN();
+					String roomName = "", accountNo = "";
+					for (BoDict bd : boDictList) {
+						if (bd.getCode().equals(cp.getGroupType())) {
+							roomName = bd.getNameCN();
+							break;
+						}
+					}
+					if(memberList != null && memberList.size() > 0){
+						for (Member member : memberList) {
+							if (StringUtils.isNotBlank(cp.getUserId()) && StringUtils.isNotBlank(member.getMobilePhone()) && member.getMobilePhone().equals(cp.getUserId())) {
+								ChatUserGroup chatUserGroup = member.getLoginPlatform().getChatUserGroup().get(0);
+								if(StringUtils.isNotBlank(chatUserGroup.getAccountNo())) {
+									accountNo = member.getLoginPlatform().getChatUserGroup().get(0).getAccountNo();
+								}
 								break;
 							}
 						}
+					}
+					for(ChatPointsJournal cpj : cp.getJournal()) {
+						IRow row = dataSet.append();
 						row.set("roomName", roomName);
+						row.set("mobilePhone", cp.getUserId());
+						row.set("accountNo", accountNo);
 						row.set("userId", StringUtils.isNumeric(cp.getUserId())?StringUtil.formatMobileToUserId(cp.getUserId()):cp.getUserId());
 						row.set("pointsGlobal", cp.getPointsGlobal());
 						row.set("points", cp.getPoints());
@@ -327,7 +346,7 @@ public class ChatPointsController extends BaseController{
 			builder.parse();
 			ExcelUtil.wrapExcelExportResponse("客户积分明细", request, response);
 			builder.write(response.getOutputStream());
-			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户积分明细操作成功", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户积分明细操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
 		} catch (Exception e) {
 			logger.error("<<method:exportRecord()|chat Points>>", e);
 		}
