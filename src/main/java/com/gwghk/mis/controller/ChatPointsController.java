@@ -301,7 +301,7 @@ public class ChatPointsController extends BaseController{
 							if (StringUtils.isNotBlank(cp.getUserId()) && StringUtils.isNotBlank(member.getMobilePhone()) && member.getMobilePhone().equals(cp.getUserId())) {
 								ChatUserGroup chatUserGroup = member.getLoginPlatform().getChatUserGroup().get(0);
 								if(StringUtils.isNotBlank(chatUserGroup.getAccountNo())) {
-									accountNo = member.getLoginPlatform().getChatUserGroup().get(0).getAccountNo();
+									accountNo = chatUserGroup.getAccountNo();
 								}
 								break;
 							}
