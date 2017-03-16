@@ -23,7 +23,7 @@ import com.gwghk.mis.service.ChatVisitorService;
  * 聊天室访客定时任务
  * </p>
  */
-@Component
+//@Component
 public class ChatVisitorTask
 {
 	private static final Logger logger = LoggerFactory.getLogger(ChatVisitorTask.class);
@@ -34,7 +34,7 @@ public class ChatVisitorTask
 	/**
 	 * 访客统计——在线时长分类统计、各类在线人数统计
 	 */
-	@Scheduled(cron="0 0 0 * * ?")
+//	@Scheduled(cron="0 0 0 * * ?")
 	public void statVisitorsDay(){
 		if (TaskManager.off()){
 			return;
@@ -54,7 +54,7 @@ public class ChatVisitorTask
 	/**
 	 * 访客统计——整点在线人数统计
 	 */
-	@Scheduled(cron="0 0 * * * ?")
+//	@Scheduled(cron="0 0 * * * ?")
 	public void statVisitorsTimePoint(){
 		if (TaskManager.off()){
 			return;
