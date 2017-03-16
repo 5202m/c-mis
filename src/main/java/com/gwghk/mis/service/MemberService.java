@@ -68,7 +68,8 @@ public class MemberService{
 
 	/**
 	 * 按照指定的用户编号查询用户列表
-	 * @param userNos
+	 * @param mobiles
+	 * @param groupType
 	 * @return
 	 */
 	public List<Member> getMemberListByMobiles(String[] mobiles, String groupType)
@@ -192,7 +193,7 @@ public class MemberService{
 		Query query=new Query();
 		ChatUserGroup userGroup=member.getLoginPlatform().getChatUserGroup().get(0);
 		if(userGroup != null){
-			Criteria criteria = new Criteria();
+			Criteria criteria = Criteria.where("valid").is(1);
 			Criteria userGroupCriteria = new Criteria();
 			Criteria roomCriteria = new Criteria();
 			boolean roomFlag = false;
