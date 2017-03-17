@@ -103,4 +103,6 @@ public class WebConstant {
 	public final static String ROOM_TRAIN_CLINET_DATA = "/template/room_train_client_data.xls";
 	/**积分明细模板的路径*/
 	public final static String CHAT_POINTS_RECORDS_TEMPLATE_PATH ="/template/chat_points_data.xls";
+	/**订阅模板的路径*/
+	public final static String CHAT_SUBSCRIBE_RECORDS_TEMPLATE_PATH ="/template/chat_subscribe_data.xls";
 }

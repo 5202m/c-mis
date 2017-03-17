@@ -1,5 +1,16 @@
 package com.gwghk.mis.controller;
 
+import com.gwghk.mis.model.ChatUserGroup;
+import com.gwghk.mis.model.Member;
+import com.gwghk.mis.service.MemberService;
+import com.gwghk.mis.service.UserService;
+import com.gwghk.mis.util.ExcelUtil;
+import com.gwghk.mis.util.PropertiesUtil;
+import com.gwghk.mis.util.StringUtil;
+import com.sdk.orm.DataRowSet;
+import com.sdk.orm.IRow;
+import com.sdk.poi.POIExcelBuilder;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +20,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +77,12 @@ public class ChatSubscribeController extends BaseController {
 	
 	@Autowired
 	private ChatSubscribeTypeService chatSubscribeTypeService;
+
+	@Autowired
+	private MemberService memberService;
+
+	@Autowired
+	private UserService userService;
 	
 	@RequestMapping(value = "/chatSubscribeController/index", method = RequestMethod.GET)
 	public String index(HttpServletRequest request,ModelMap map, String opType){
@@ -303,6 +321,145 @@ public class ChatSubscribeController extends BaseController {
   		return j;
   		
     }
-    
-    
+
+	/**
+	 * 导出客户订阅服务列表
+	 * @param request
+	 * @param response
+	 * @param chatSubscribe
+	 */
+	@RequestMapping(value = "/chatSubscribeController/exportRecord", method = RequestMethod.GET)
+	public void exportRecord(HttpServletRequest request, HttpServletResponse response, ChatSubscribe chatSubscribe){
+		try {
+			DictConstant dict=DictConstant.getInstance();
+
+			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.CHAT_SUBSCRIBE_RECORDS_TEMPLATE_PATH)));
+			String pwd= StringUtil.random(6);
+			builder.getHSSFWorkbook().getSheetAt(0).protectSheet(pwd);
+			DataGrid dataGrid = new DataGrid();
+			dataGrid.setPage(0);
+			dataGrid.setRows(0);
+			dataGrid.setSort("updateDate");
+			dataGrid.setOrder("desc");
+			Page<ChatSubscribe> page = chatSubscribeService.getSubscribePage(this.createDetachedCriteria(dataGrid, chatSubscribe));
+			List<ChatSubscribe> list = page.getCollection();
+			List<BoDict> boDictList = ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE);
+			DataGrid subscribeTypedataGrid = new DataGrid();
+			subscribeTypedataGrid.setPage(0);
+			subscribeTypedataGrid.setRows(0);
+			subscribeTypedataGrid.setSort("updateDate");
+			subscribeTypedataGrid.setOrder("desc");
+			List<Member> memberList = null;
+			ChatSubscribeType chatSubscribeType = new ChatSubscribeType();
+			if(StringUtils.isNotBlank(chatSubscribe.getGroupType())) {
+				chatSubscribeType.setGroupType(chatSubscribe.getGroupType());
+			}
+			memberList = memberService.getMemberByGroupType(chatSubscribe.getGroupType());
+			Page<ChatSubscribeType> chatSubscribeTypePage = chatSubscribeTypeService.getSubscribeTypePage(this.createDetachedCriteria(subscribeTypedataGrid, chatSubscribeType));
+			List<ChatSubscribeType> chatSubscribeTypeList = chatSubscribeTypePage.getCollection();
+			List<BoUser> allAnalysts = getAnalystsList();
+			if (list != null && list.size() > 0) {
+				DataRowSet dataSet = new DataRowSet();
+				for(ChatSubscribe cs : list){
+					String roomName = "", accountNo = "", nickName = "", analystName = "", subscribeType = "";
+					for (BoDict bd : boDictList) {
+						if (bd.getCode().equals(cs.getGroupType())) {
+							roomName = bd.getNameCN();
+							break;
+						}
+					}
+					if(memberList != null && memberList.size() > 0){
+						for (Member member : memberList) {
+							if (StringUtils.isNotBlank(cs.getUserId()) && StringUtils.isNotBlank(member.getMobilePhone()) && member.getMobilePhone().equals(cs.getUserId())) {
+								if(member.getLoginPlatform().getChatUserGroup().size()>0){
+									List<ChatUserGroup> chatUserGroupList = member.getLoginPlatform().getChatUserGroup();
+									for(ChatUserGroup cug : chatUserGroupList){
+										if(cug.getId().equals(cs.getGroupType())){
+											if (StringUtils.isNotBlank(cug.getAccountNo())) {
+												accountNo = cug.getAccountNo();
+											}
+											if (StringUtils.isNotBlank(cug.getNickname())) {
+												nickName = cug.getNickname();
+											}
+											break;
+										}
+									}
+								} else {
+									ChatUserGroup chatUserGroup = member.getLoginPlatform().getChatUserGroup().get(0);
+									if (StringUtils.isNotBlank(chatUserGroup.getAccountNo())) {
+										accountNo = chatUserGroup.getAccountNo();
+									}
+									if (StringUtils.isNotBlank(chatUserGroup.getNickname())) {
+										nickName = chatUserGroup.getNickname();
+									}
+								}
+								break;
+							}
+						}
+					}
+					if(chatSubscribeTypeList != null && chatSubscribeTypeList.size() > 0){
+						for(ChatSubscribeType cst : chatSubscribeTypeList){
+							if(cst.getCode().equals(cs.getType())){
+								subscribeType = cst.getName();
+								break;
+							}
+						}
+					}
+					IRow row = dataSet.append();
+					row.set("roomName", roomName);
+					row.set("mobilePhone", cs.getUserId());
+					row.set("accountNo", accountNo);
+					row.set("type", subscribeType);
+					row.set("nickName", nickName);
+					row.set("userId", StringUtils.isNumeric(cs.getUserId())?StringUtil.formatMobileToUserId(cs.getUserId()):cs.getUserId());
+					if(StringUtils.isNotBlank(cs.getNoticeType())) {
+						row.set("noticeType", cs.getNoticeType() == "email" ? "邮件" : "短信");
+					}else{
+						row.set("noticeType", "");
+					}
+					row.set("startDate", cs.getStartDate());
+					row.set("endDate", cs.getEndDate());
+					row.set("remarks", cs.getRemarks());
+					for(BoUser user : allAnalysts){
+						if(StringUtils.indexOf(user.getUserNo(), cs.getAnalyst()) > -1){
+							if(StringUtils.isNotBlank(analystName)){
+								analystName += ",";
+							}
+							analystName += user.getUserName();
+						}
+					}
+					row.set("analysts", analystName);
+					row.set("valid", cs.getValid()==1?"有效":"无效");
+				}
+				builder.put("rowSet", dataSet);
+			} else {
+				builder.put("rowSet", new DataRowSet());
+			}
+			builder.parse();
+			ExcelUtil.wrapExcelExportResponse("客户订阅服务列表", request, response);
+			builder.write(response.getOutputStream());
+			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户订阅服务操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+		} catch (Exception e) {
+			logger.error("<<method:exportRecord()|chat Subscribe>>", e);
+		}
+	}
+
+	/**
+	 * 获取所有分析师
+	 * @return
+	 */
+	private List<BoUser> getAnalystsList(){
+		List<BoUser> allAnalysts = userService.getUserListByRole("analyst");
+		String[] nameArr={"梁育诗","罗恩•威廉","黃湛铭","赵相宾","周游","刘敏","陈杭霞","金道研究院"};
+		BoUser user=null;
+		for(int i = 0, len = nameArr.length; i < len; i++){
+			user = new BoUser();
+			user.setUserId(nameArr[i]);
+			user.setUserNo(nameArr[i]);
+			user.setUserName(nameArr[i]);
+			user.setPosition("金道研究院");
+			allAnalysts.add(user);
+		}
+		return allAnalysts;
+	}
 }

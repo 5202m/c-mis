@@ -14,15 +14,15 @@ var chatSubscribe = {
 				singleSelect : false,
 				url : basePath+'/chatSubscribeController/datagrid.do',
 				columns : [[
-				            {title : 'id',field : 'id',checkbox : true},
-				            {title : $.i18n.prop("common.operate"),field : 'todo',formatter : function(value, rowData, rowIndex) {		/**操作*/
+							{title : 'id',field : 'id',checkbox : true},
+							{title : $.i18n.prop("common.operate"),field : 'todo',formatter : function(value, rowData, rowIndex) {		/**操作*/
 								$("#subscribe_datagrid_rowOperation a").each(function(){
 									$(this).attr("id",rowData.id);
 							    });
 								return $("#subscribe_datagrid_rowOperation").html();
 							}},
 							
-				            {title : '订阅服务类型',field : 'type',formatter : function(value, rowData, rowIndex) {
+							{title : '订阅服务类型',field : 'type',formatter : function(value, rowData, rowIndex) {
 								var types = !value ? [] : value.split(/[,，]/);
 								for(var i = 0, lenI = types.length; i < lenI; i++){
 									types[i] = chatSubscribe.getDictNameByCode('#type', types[i]);
@@ -187,9 +187,6 @@ var chatSubscribe = {
 							}
 						});
 					}
-				},
-				onLoad : function(){
-					//chatSubscribe.setUserEdit($('#chatSubscribeEditAnalystInput').attr('data-userName'));
 				}
 			});
 		},
@@ -197,7 +194,7 @@ var chatSubscribe = {
 		 * 提取名称
 		 */
 		getDictNameByCode:function(id,code){
-			return $(id).find("option[value='"+code+"']").text();
+			return $(id).find("option[value='"+code+"']:first").text();
 		},
 		/**
 		 * 功能：刷新
@@ -304,7 +301,21 @@ var chatSubscribe = {
 				});
 			}
 			return cName.join('，');
-		}
+		},
+	/**
+	 * 功能：导出记录
+	 */
+	exportRecord : function(){
+		var queryParams = $('#'+chatSubscribe.gridId).datagrid('options').queryParams;
+		$('#subscribe_queryForm select[name],#subscribe_queryForm input[name]').each(function(){
+			queryParams[$(this).attr("name")] = $(this).val();
+		});
+		var analystArr = $("#analystsSelectId").combo("getValues");
+		queryParams["analyst"] = analystArr && analystArr.length > 0 ? analystArr.join(",") : "";
+
+		var path = basePath+ '/chatSubscribeController/exportRecord.do?'+$.param(queryParams);
+		window.location.href = path;
+	}
 }; 
 
 //初始化

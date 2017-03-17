@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import javax.servlet.http.HttpServletResponse;
@@ -244,7 +245,9 @@ public class ChatPointsController extends BaseController{
 		try {
 			DictConstant dict=DictConstant.getInstance();
 			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("type", request.getParameter("type"));
+			String type = request.getParameter("type");
+			String item = chatPoints.getJournal().get(0).getItem();
+			params.put("type", type);
 			String param = request.getParameter("pointsStart");
 			if(StringUtils.isNotBlank(param)){
 				params.put("pointsStart", Long.parseLong(param));
@@ -307,7 +310,18 @@ public class ChatPointsController extends BaseController{
 							}
 						}
 					}
+					Pattern regItem = null;
+					if(StringUtils.isBlank(item) && StringUtils.isNotBlank(type)){
+						regItem = Pattern.compile(type + "_\\w+");
+					}
 					for(ChatPointsJournal cpj : cp.getJournal()) {
+						if(StringUtils.isNotBlank(item) && !item.equals(cpj.getItem())){
+								continue;
+						}else if(regItem != null){
+							if(!regItem.matcher(cpj.getItem()).matches()){
+								continue;
+							}
+						}
 						IRow row = dataSet.append();
 						row.set("roomName", roomName);
 						row.set("mobilePhone", cp.getUserId());

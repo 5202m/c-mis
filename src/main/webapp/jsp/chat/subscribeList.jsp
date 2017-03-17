@@ -76,13 +76,14 @@
     <a class="easyui-linkbutton delete" data-options="plain:true,iconCls:'ope-remove',disabled:false"    onclick="chatSubscribe.batchDel();"><spring:message code="common.buttons.delete" /><!-- 删除 --></a>
     <a class="easyui-linkbutton refresh" data-options="plain:true,iconCls:'ope-reload',disabled:false"   onclick="chatSubscribe.refresh();"><spring:message code="common.buttons.refresh" /><!-- 刷新 --></a>
     <!--a class="easyui-linkbutton setStatus" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatSubscribe.setStatus(1)">审核通过 </a>
-    <a class="easyui-linkbutton setStatus" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatSubscribe.setStatus(-1)">审核不通过 </a--> 
+    <a class="easyui-linkbutton setStatus" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatSubscribe.setStatus(-1)">审核不通过 </a-->
+	  <a class="easyui-linkbutton export" data-options="plain:true,iconCls:'ope-export',disabled:false"  onclick="chatSubscribe.exportRecord();">导出记录</a>
   </div> 
   
   <!-- datagrid-操作按钮 -->
   <div id="subscribe_datagrid_rowOperation">
 	  <!--a class="easyui-linkbutton edit" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatSubscribe.edit(this.id)"><spring:message code="common.buttons.edit" /><!-- 修改 --></a-->
-	  <a class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-view',disabled:false" onclick="chatSubscribe.view(this.id)"><spring:message code="common.buttons.view" /><!-- 查看 --></a>
+	  <a class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-view',disabled:false" onclick="chatSubscribe.view(this.id);"><spring:message code="common.buttons.view" /><!-- 查看 --></a>
 	  <a class="easyui-linkbutton delete" data-options="plain:true,iconCls:'ope-remove',disabled:false"  onclick="chatSubscribe.del(this.id)"><spring:message code="common.buttons.delete" /><!-- 删除 --></a>
   </div>
   
