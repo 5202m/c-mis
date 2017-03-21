@@ -277,7 +277,8 @@ public class ChatPointsController extends BaseController{
 		float listCount = 0, listDetailCount = 0;
 		JSONArray jsonDetail = new JSONArray();
 		JSONArray jsonCollect = new JSONArray();
-		if (list != null && (listCount = list.size()) > 0) {
+		if (list != null && list.size() > 0) {
+			listCount = list.size();
 			for(ChatPoints cp : list) {
 				listDetailCount += cp.getJournal().size();
 			}
@@ -338,7 +339,7 @@ public class ChatPointsController extends BaseController{
 			Map<String, Object> params = new HashMap<String, Object>();
 			String type = request.getParameter("type");
 			String item = chatPoints.getJournal().get(0).getItem();
-			Integer start = Integer.parseInt(request.getParameter("start"));
+			Integer start = Integer.parseInt(request.getParameter("start")) - 1;
 			Integer end = Integer.parseInt(request.getParameter("end"));
 			params.put("type", type);
 			String param = request.getParameter("pointsStart");
@@ -441,7 +442,7 @@ public class ChatPointsController extends BaseController{
 			Map<String, Object> params = new HashMap<String, Object>();
 			String type = request.getParameter("type");
 			String item = chatPoints.getJournal().get(0).getItem();
-			Integer start = Integer.parseInt(request.getParameter("start"));
+			Integer start = Integer.parseInt(request.getParameter("start")) - 1;
 			Integer end = Integer.parseInt(request.getParameter("end"));
 			params.put("type", type);
 			String param = request.getParameter("pointsStart");
