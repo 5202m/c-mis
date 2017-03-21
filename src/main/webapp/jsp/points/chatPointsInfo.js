@@ -372,7 +372,7 @@ var chatPointsInfo = {
 			fitColumns : true,
 			columns : [[
 				{title : $.i18n.prop("common.operate"), field:'op', formatter: function(value, rowData, rowIndex){
-					$("#chatPointsExportPageView_datagrid_rowOperation input").val(rowData['start']+','+rowData['end']);
+					$("#chatPointsExportPageView_datagrid_rowOperation input").val(rowData['type']+','+rowData['start']+','+rowData['end']);
 					return $("#chatPointsExportPageView_datagrid_rowOperation").html();
 				}},
 				{title : "从",field : 'start', formatter : function (value, rowData, rowIndex) {
@@ -450,7 +450,7 @@ var chatPointsInfo = {
 	/**
 	 * 导出积分记录分页
 	 */
-	exportRecordPage : function(){
+	exportRecordPage : function(type){
 		var loc_params = $('#'+chatPointsInfo.gridId).datagrid('options').queryParams;
 		var loc_val1 = $("#chatPointsInfo_pointsStart").val() || "";
 		var loc_val2 = $("#chatPointsInfo_pointsEnd").val() || "";
@@ -464,6 +464,7 @@ var chatPointsInfo = {
 		$("#chatPointsInfo_queryForm select,#chatPointsInfo_queryForm input").each(function(){
 			loc_params[$(this).attr("name")] = $(this).val();
 		});
+		loc_params["exportType"] = type;
 		var url = formatUrl(basePath + '/chatPointsController/exportRecordCount.do');
 		goldOfficeUtils.ajax({
 			url : url+'&'+$.param(loc_params),
@@ -473,7 +474,7 @@ var chatPointsInfo = {
 					var loc_Info = data;
 					goldOfficeUtils.openSimpleDialog({
 						dialogId : "chatPointsExportPageView_win",
-						title : '积分分页导出',
+						title : type=='collect'?'积分汇总分页导出':'积分明细分页导出',
 						width : 300,
 						height : 200,
 						onOpen : function(){
@@ -511,9 +512,12 @@ var chatPointsInfo = {
 			loc_params[$(this).attr("name")] = $(this).val();
 		});
 		var pageValue = $(item).siblings("input").val().split(',');
-		loc_params['start'] = pageValue[0];
-		loc_params['end'] = pageValue[1];
-		var path = basePath+ '/chatPointsController/exportRecord.do?'+$.param(loc_params);
+		loc_params['start'] = pageValue[1];
+		loc_params['end'] = pageValue[2];
+		var path = basePath + '/chatPointsController/exportPointsRecord.do?' + $.param(loc_params);
+		if(pageValue[0] == 2) {
+			path = basePath + '/chatPointsController/exportPointsDetailsRecord.do?' + $.param(loc_params);
+		}
 		window.location.href = path;
 	}
 };

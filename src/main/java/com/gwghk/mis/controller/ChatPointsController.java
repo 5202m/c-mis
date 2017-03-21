@@ -247,6 +247,7 @@ public class ChatPointsController extends BaseController{
 		AjaxJson result = new AjaxJson();
 		DictConstant dict=DictConstant.getInstance();
 		Map<String, Object> params = new HashMap<String, Object>();
+		String exportType = request.getParameter("exportType");
 		String type = request.getParameter("type");
 		String item = chatPoints.getJournal().get(0).getItem();
 		params.put("type", type);
@@ -273,11 +274,12 @@ public class ChatPointsController extends BaseController{
 		dataGrid.setOrder("desc");
 		Page<ChatPoints> page = chatPointsService.getChatPoints(this.createDetachedCriteria(dataGrid, chatPoints), params, true);
 		List<ChatPoints> list = page.getCollection();
-		Integer listCount = 0;
-		JSONArray json = new JSONArray();
-		if (list != null && list.size() > 0) {
+		float listCount = 0, listDetailCount = 0;
+		JSONArray jsonDetail = new JSONArray();
+		JSONArray jsonCollect = new JSONArray();
+		if (list != null && (listCount = list.size()) > 0) {
 			for(ChatPoints cp : list) {
-				listCount += cp.getJournal().size();
+				listDetailCount += cp.getJournal().size();
 			}
 			if(listCount > 30000){
 				int len = (int)Math.ceil(listCount/30000);
@@ -285,28 +287,52 @@ public class ChatPointsController extends BaseController{
 					Map<String, Integer> map = new HashMap<String, Integer>();
 					map.put("start", i * 30000 + 1);
 					map.put("end", (i + 1) * 30000);
-					json.add(map);
+					map.put("type", 1);
+					jsonCollect.add(map);
 				}
 			} else {
 				Map<String, Integer> map = new HashMap<String, Integer>();
 				map.put("start", 1);
-				map.put("end", listCount);
-				json.add(map);
+				map.put("end", (int)listCount);
+				map.put("type", 1);
+				jsonCollect.add(map);
+			}
+			if(listDetailCount > 30000){
+				int len = (int)Math.ceil(listDetailCount/30000);
+				for(int i = 0; i < len; i++){
+					Map<String, Integer> map = new HashMap<String, Integer>();
+					map.put("start", i * 30000 + 1);
+					map.put("end", (i + 1) * 30000);
+					map.put("type", 2);
+					jsonDetail.add(map);
+				}
+			} else {
+				Map<String, Integer> map = new HashMap<String, Integer>();
+				map.put("start", 1);
+				map.put("end", (int)listDetailCount);
+				map.put("type", 2);
+				jsonDetail.add(map);
 			}
 			result.setSuccess(true);
-			result.setObj(json);
+			result.setMsg("point collect:" + listCount + ",detail total:" + listDetailCount);
+			if(exportType.equals("collect")) {
+				result.setObj(jsonCollect);
+			}else{
+				result.setObj(jsonDetail);
+			}
 		}
 		return result;
 	}
 
+
 	/**
-	 * 导出客户积分明细
+	 * 导出客户积分汇总
 	 * @param request
 	 * @param response
 	 * @param chatPoints
 	 */
-	@RequestMapping(value = "/chatPointsController/exportRecord", method = RequestMethod.GET)
-	public void exportRecord(HttpServletRequest request, HttpServletResponse response, ChatPoints chatPoints){
+	@RequestMapping(value = "/chatPointsController/exportPointsRecord", method = RequestMethod.GET)
+	public void exportPointsRecord(HttpServletRequest request, HttpServletResponse response, ChatPoints chatPoints){
 		try {
 			DictConstant dict=DictConstant.getInstance();
 			Map<String, Object> params = new HashMap<String, Object>();
@@ -333,6 +359,109 @@ public class ChatPointsController extends BaseController{
 			}
 
 			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.CHAT_POINTS_RECORDS_TEMPLATE_PATH)));
+			String pwd=StringUtil.random(6);
+			builder.getHSSFWorkbook().getSheetAt(0).protectSheet(pwd);
+			DataGrid dataGrid = new DataGrid();
+			dataGrid.setPage(0);
+			dataGrid.setRows(0);
+			dataGrid.setSort("updateDate");
+			dataGrid.setOrder("desc");
+			Page<ChatPoints> page = chatPointsService.getChatPoints(this.createDetachedCriteria(dataGrid, chatPoints), params, true);
+			List<ChatPoints> list = page.getCollection();
+			List<BoDict> boDictList = ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE);
+			DataGrid pointsConfigdataGrid = new DataGrid();
+			pointsConfigdataGrid.setPage(0);
+			pointsConfigdataGrid.setRows(0);
+			pointsConfigdataGrid.setSort("updateDate");
+			pointsConfigdataGrid.setOrder("desc");
+			List<Member> memberList = null;
+			ChatPointsConfig chatPointsConfig = new ChatPointsConfig();
+			if(StringUtils.isNotBlank(chatPoints.getGroupType())) {
+				chatPointsConfig.setGroupType(chatPoints.getGroupType());
+				memberList = memberService.getMemberByGroupType(chatPoints.getGroupType());
+			}
+			Page<ChatPointsConfig> pointsConfigPage = chatPointsConfigService.getChatPointsConfigs(this.createDetachedCriteria(dataGrid, chatPointsConfig));
+			List<ChatPointsConfig> pointsConfigList = pointsConfigPage.getCollection();
+			Integer listCountI = 0;
+			if (list != null && list.size() > 0) {
+				DataRowSet dataSet = new DataRowSet();
+				for(ChatPoints cp : list){
+					String roomName = "", accountNo = "";
+					for (BoDict bd : boDictList) {
+						if (bd.getCode().equals(cp.getGroupType())) {
+							roomName = bd.getNameCN();
+							break;
+						}
+					}
+					if(memberList != null && memberList.size() > 0){
+						for (Member member : memberList) {
+							if (StringUtils.isNotBlank(cp.getUserId()) && StringUtils.isNotBlank(member.getMobilePhone()) && member.getMobilePhone().equals(cp.getUserId())) {
+								ChatUserGroup chatUserGroup = member.getLoginPlatform().getChatUserGroup().get(0);
+								if(StringUtils.isNotBlank(chatUserGroup.getAccountNo())) {
+									accountNo = chatUserGroup.getAccountNo();
+								}
+								break;
+							}
+						}
+					}
+					if(start <= listCountI && end >= listCountI) {
+						IRow row = dataSet.append();
+						row.set("roomName", roomName);
+						row.set("mobilePhone", cp.getUserId());
+						row.set("accountNo", accountNo);
+						row.set("userId", StringUtils.isNumeric(cp.getUserId()) ? StringUtil.formatMobileToUserId(cp.getUserId()) : cp.getUserId());
+						row.set("pointsGlobal", cp.getPointsGlobal());
+						row.set("points", cp.getPoints());
+					}
+					listCountI++;
+				}
+				builder.put("rowSet", dataSet);
+			} else {
+				builder.put("rowSet", new DataRowSet());
+			}
+			builder.parse();
+			ExcelUtil.wrapExcelExportResponse("客户积分汇总"+start+"~"+end+"条", request, response);
+			builder.write(response.getOutputStream());
+			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户积分汇总"+start+"~"+end+"条操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+		} catch (Exception e) {
+			logger.error("<<method:exportPointsRecord()|chat Points exportPointsRecord>>", e);
+		}
+	}
+
+	/**
+	 * 导出客户积分明细
+	 * @param request
+	 * @param response
+	 * @param chatPoints
+	 */
+	@RequestMapping(value = "/chatPointsController/exportPointsDetailsRecord", method = RequestMethod.GET)
+	public void exportPointsDetailsRecord(HttpServletRequest request, HttpServletResponse response, ChatPoints chatPoints){
+		try {
+			DictConstant dict=DictConstant.getInstance();
+			Map<String, Object> params = new HashMap<String, Object>();
+			String type = request.getParameter("type");
+			String item = chatPoints.getJournal().get(0).getItem();
+			Integer start = Integer.parseInt(request.getParameter("start"));
+			Integer end = Integer.parseInt(request.getParameter("end"));
+			params.put("type", type);
+			String param = request.getParameter("pointsStart");
+			if(StringUtils.isNotBlank(param)){
+				params.put("pointsStart", Long.parseLong(param));
+			}
+			param = request.getParameter("pointsEnd");
+			if(StringUtils.isNotBlank(param)){
+				params.put("pointsEnd", Long.parseLong(param));
+			}
+			param = request.getParameter("timeStart");
+			if(StringUtils.isNotBlank(param)){
+				params.put("timeStart", DateUtil.parseDateSecondFormat(param));
+			}
+			param = request.getParameter("timeEnd");
+			if(StringUtils.isNotBlank(param)){
+				params.put("timeEnd", DateUtil.parseDateSecondFormat(param));
+			}
+
+			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.CHAT_POINTS_DETAILS_RECORDS_TEMPLATE_PATH)));
 			String pwd=StringUtil.random(6);
 			builder.getHSSFWorkbook().getSheetAt(0).protectSheet(pwd);
 			DataGrid dataGrid = new DataGrid();
@@ -435,7 +564,7 @@ public class ChatPointsController extends BaseController{
 			builder.write(response.getOutputStream());
 			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户积分明细"+start+"~"+end+"条操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
 		} catch (Exception e) {
-			logger.error("<<method:exportRecord()|chat Points>>", e);
+			logger.error("<<method:exportPointsDetailsRecord()|chat Points exportPointsDetailsRecord>>", e);
 		}
 	}
 
