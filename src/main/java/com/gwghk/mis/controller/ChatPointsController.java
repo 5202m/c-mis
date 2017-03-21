@@ -1,5 +1,7 @@
 package com.gwghk.mis.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gwghk.mis.model.BoDict;
 import com.gwghk.mis.model.ChatGroup;
 import com.gwghk.mis.model.ChatPointsConfig;
@@ -237,6 +239,69 @@ public class ChatPointsController extends BaseController{
 	/**
 	 * 导出客户积分明细
 	 * @param request
+	 * @param chatPoints
+	 */
+	@RequestMapping(value = "/chatPointsController/exportRecordCount", method = RequestMethod.GET)
+	@ResponseBody
+	public AjaxJson exportRecordCount(HttpServletRequest request, ChatPoints chatPoints){
+		AjaxJson result = new AjaxJson();
+		DictConstant dict=DictConstant.getInstance();
+		Map<String, Object> params = new HashMap<String, Object>();
+		String type = request.getParameter("type");
+		String item = chatPoints.getJournal().get(0).getItem();
+		params.put("type", type);
+		String param = request.getParameter("pointsStart");
+		if(StringUtils.isNotBlank(param)){
+			params.put("pointsStart", Long.parseLong(param));
+		}
+		param = request.getParameter("pointsEnd");
+		if(StringUtils.isNotBlank(param)){
+			params.put("pointsEnd", Long.parseLong(param));
+		}
+		param = request.getParameter("timeStart");
+		if(StringUtils.isNotBlank(param)){
+			params.put("timeStart", DateUtil.parseDateSecondFormat(param));
+		}
+		param = request.getParameter("timeEnd");
+		if(StringUtils.isNotBlank(param)){
+			params.put("timeEnd", DateUtil.parseDateSecondFormat(param));
+		}
+		DataGrid dataGrid = new DataGrid();
+		dataGrid.setPage(0);
+		dataGrid.setRows(0);
+		dataGrid.setSort("updateDate");
+		dataGrid.setOrder("desc");
+		Page<ChatPoints> page = chatPointsService.getChatPoints(this.createDetachedCriteria(dataGrid, chatPoints), params, true);
+		List<ChatPoints> list = page.getCollection();
+		Integer listCount = 0;
+		JSONArray json = new JSONArray();
+		if (list != null && list.size() > 0) {
+			for(ChatPoints cp : list) {
+				listCount += cp.getJournal().size();
+			}
+			if(listCount > 30000){
+				int len = (int)Math.ceil(listCount/30000);
+				for(int i = 0; i < len; i++){
+					Map<String, Integer> map = new HashMap<String, Integer>();
+					map.put("start", i * 30000 + 1);
+					map.put("end", (i + 1) * 30000);
+					json.add(map);
+				}
+			} else {
+				Map<String, Integer> map = new HashMap<String, Integer>();
+				map.put("start", 1);
+				map.put("end", listCount);
+				json.add(map);
+			}
+			result.setSuccess(true);
+			result.setObj(json);
+		}
+		return result;
+	}
+
+	/**
+	 * 导出客户积分明细
+	 * @param request
 	 * @param response
 	 * @param chatPoints
 	 */
@@ -247,6 +312,8 @@ public class ChatPointsController extends BaseController{
 			Map<String, Object> params = new HashMap<String, Object>();
 			String type = request.getParameter("type");
 			String item = chatPoints.getJournal().get(0).getItem();
+			Integer start = Integer.parseInt(request.getParameter("start"));
+			Integer end = Integer.parseInt(request.getParameter("end"));
 			params.put("type", type);
 			String param = request.getParameter("pointsStart");
 			if(StringUtils.isNotBlank(param)){
@@ -289,6 +356,7 @@ public class ChatPointsController extends BaseController{
       }
 			Page<ChatPointsConfig> pointsConfigPage = chatPointsConfigService.getChatPointsConfigs(this.createDetachedCriteria(dataGrid, chatPointsConfig));
 			List<ChatPointsConfig> pointsConfigList = pointsConfigPage.getCollection();
+			Integer listCountI = 0;
 			if (list != null && list.size() > 0) {
 				DataRowSet dataSet = new DataRowSet();
 				for(ChatPoints cp : list){
@@ -322,35 +390,40 @@ public class ChatPointsController extends BaseController{
 								continue;
 							}
 						}
-						IRow row = dataSet.append();
-						row.set("roomName", roomName);
-						row.set("mobilePhone", cp.getUserId());
-						row.set("accountNo", accountNo);
-						row.set("userId", StringUtils.isNumeric(cp.getUserId())?StringUtil.formatMobileToUserId(cp.getUserId()):cp.getUserId());
-						row.set("pointsGlobal", cp.getPointsGlobal());
-						row.set("points", cp.getPoints());
-            if(StringUtils.isNotBlank(cpj.getRemark())) {
-              row.set("remark", cpj.getRemark());
-            } else {
-              if(pointsConfigList != null && pointsConfigList.size() > 0) {
-                for (ChatPointsConfig cpc : pointsConfigList) {
-                  if(cpc.getItem().equals(cpj.getItem()) && cpc.getGroupType().equals(cp.getGroupType())){
-                    if(StringUtils.isNotBlank(cpc.getTips())) {
-                      row.set("remark", cpc.getTips());
-                    }else{
-                      row.set("remark", cpc.getRemark());
-                    }
-                    break;
-                  }
-                }
-              } else {
-                continue;
-              }
-            }
-						row.set("before", cpj.getBefore());
-						row.set("change", cpj.getChange());
-						row.set("after", cpj.getAfter());
-						row.set("date", cpj.getDate());
+						if(start <= listCountI && end >= listCountI) {
+							IRow row = dataSet.append();
+							row.set("roomName", roomName);
+							row.set("mobilePhone", cp.getUserId());
+							row.set("accountNo", accountNo);
+							row.set("userId", StringUtils.isNumeric(cp.getUserId()) ? StringUtil
+									.formatMobileToUserId(cp.getUserId()) : cp.getUserId());
+							row.set("pointsGlobal", cp.getPointsGlobal());
+							row.set("points", cp.getPoints());
+							if (StringUtils.isNotBlank(cpj.getRemark())) {
+								row.set("remark", cpj.getRemark());
+							} else {
+								if (pointsConfigList != null && pointsConfigList.size() > 0) {
+									for (ChatPointsConfig cpc : pointsConfigList) {
+										if (cpc.getItem().equals(cpj.getItem()) && cpc.getGroupType()
+												.equals(cp.getGroupType())) {
+											if (StringUtils.isNotBlank(cpc.getTips())) {
+												row.set("remark", cpc.getTips());
+											} else {
+												row.set("remark", cpc.getRemark());
+											}
+											break;
+										}
+									}
+								} else {
+									continue;
+								}
+							}
+							row.set("before", cpj.getBefore());
+							row.set("change", cpj.getChange());
+							row.set("after", cpj.getAfter());
+							row.set("date", cpj.getDate());
+						}
+						listCountI++;
 					}
 				}
 				builder.put("rowSet", dataSet);
@@ -358,9 +431,9 @@ public class ChatPointsController extends BaseController{
 				builder.put("rowSet", new DataRowSet());
 			}
 			builder.parse();
-			ExcelUtil.wrapExcelExportResponse("客户积分明细", request, response);
+			ExcelUtil.wrapExcelExportResponse("客户积分明细"+start+"~"+end+"条", request, response);
 			builder.write(response.getOutputStream());
-			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户积分明细操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户积分明细"+start+"~"+end+"条操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
 		} catch (Exception e) {
 			logger.error("<<method:exportRecord()|chat Points>>", e);
 		}

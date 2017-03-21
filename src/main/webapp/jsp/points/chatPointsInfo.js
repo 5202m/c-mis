@@ -366,6 +366,23 @@ var chatPointsInfo = {
 			pageSize : 15,
 			pageList : [15, 30, 50, 100]
 		});
+
+		$('#chatPointsExportPageView_datagrid').datagrid({
+			fit : false,
+			fitColumns : true,
+			columns : [[
+				{title : $.i18n.prop("common.operate"), field:'op', formatter: function(value, rowData, rowIndex){
+					$("#chatPointsExportPageView_datagrid_rowOperation input").val(rowData['start']+','+rowData['end']);
+					return $("#chatPointsExportPageView_datagrid_rowOperation").html();
+				}},
+				{title : "从",field : 'start', formatter : function (value, rowData, rowIndex) {
+					return value;
+				}},
+				{title : "到",field : 'end',formatter : function(value, rowData, rowIndex) {
+					return value;
+				}}
+			]]
+		});
 	},
 	
 	/**
@@ -431,9 +448,9 @@ var chatPointsInfo = {
 		});
 	},
 	/**
-	 * 功能：导出记录
+	 * 导出积分记录分页
 	 */
-	exportRecord : function(){
+	exportRecordPage : function(){
 		var loc_params = $('#'+chatPointsInfo.gridId).datagrid('options').queryParams;
 		var loc_val1 = $("#chatPointsInfo_pointsStart").val() || "";
 		var loc_val2 = $("#chatPointsInfo_pointsEnd").val() || "";
@@ -447,6 +464,55 @@ var chatPointsInfo = {
 		$("#chatPointsInfo_queryForm select,#chatPointsInfo_queryForm input").each(function(){
 			loc_params[$(this).attr("name")] = $(this).val();
 		});
+		var url = formatUrl(basePath + '/chatPointsController/exportRecordCount.do');
+		goldOfficeUtils.ajax({
+			url : url+'&'+$.param(loc_params),
+			type: 'get',
+			success: function(data) {
+				if (data) {
+					var loc_Info = data;
+					goldOfficeUtils.openSimpleDialog({
+						dialogId : "chatPointsExportPageView_win",
+						title : '积分分页导出',
+						width : 300,
+						height : 200,
+						onOpen : function(){
+							$("#chatPointsExportPageView_datagrid").datagrid("loadData", loc_Info.obj);
+						},
+						buttons	 : [{
+							text : '关闭',
+							iconCls : "ope-close",
+							handler : function() {
+								$("#chatPointsExportPageView_win").dialog("close");
+							}
+						}]
+					});
+				}else{
+					$.messager.alert($.i18n.prop("common.operate.tips"),'获取积分分页信息失败!','error');
+				}
+			}
+		});
+	},
+	/**
+	 * 功能：导出记录
+	 */
+	exportRecord : function(item){
+		var loc_params = $('#'+chatPointsInfo.gridId).datagrid('options').queryParams;
+		var loc_val1 = $("#chatPointsInfo_pointsStart").val() || "";
+		var loc_val2 = $("#chatPointsInfo_pointsEnd").val() || "";
+		if(/^\d*$/.test(loc_val1) == false && /^\d*$/.test(loc_val2) == false){
+			alert("积分范围只能输入整数！");
+			$("#chatPointsInfo_pointsStart").val(loc_val1.replace(/[^\d]/g, ""));
+			$("#chatPointsInfo_pointsEnd").val(loc_val2.replace(/[^\d]/g, ""));
+			return;
+		}
+
+		$("#chatPointsInfo_queryForm select,#chatPointsInfo_queryForm input").each(function(){
+			loc_params[$(this).attr("name")] = $(this).val();
+		});
+		var pageValue = $(item).siblings("input").val().split(',');
+		loc_params['start'] = pageValue[0];
+		loc_params['end'] = pageValue[1];
 		var path = basePath+ '/chatPointsController/exportRecord.do?'+$.param(loc_params);
 		window.location.href = path;
 	}
