@@ -237,11 +237,11 @@ var chatSubscribeType = {
 		setAnalystList:function(id, analyst, isEdit){
 			if(!isEdit){
 				$('#'+id).combotree({
-					data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst})
+					data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst, hasOther: true})
 				});
 			} else {
 				$('#'+id).combotree({
-					data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst}),
+					data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst, hasOther: true}),
 					onCheck:function(node,checked){
 						if(checked && $('#'+node.id+'_span').size()==0){
 							var html = [];

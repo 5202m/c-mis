@@ -331,6 +331,8 @@ public class ChatSubscribeController extends BaseController {
 	@RequestMapping(value = "/chatSubscribeController/exportRecord", method = RequestMethod.GET)
 	public void exportRecord(HttpServletRequest request, HttpServletResponse response, ChatSubscribe chatSubscribe){
 		try {
+			String hasOther=request.getParameter("hasOther");
+			boolean isHasOther = StringUtils.isNotBlank(hasOther) && !request.getServerName().contains("hx9999.com");
 			DictConstant dict=DictConstant.getInstance();
 
 			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.CHAT_SUBSCRIBE_RECORDS_TEMPLATE_PATH)));
@@ -357,7 +359,7 @@ public class ChatSubscribeController extends BaseController {
 			memberList = memberService.getMemberByGroupType(chatSubscribe.getGroupType());
 			Page<ChatSubscribeType> chatSubscribeTypePage = chatSubscribeTypeService.getSubscribeTypePage(this.createDetachedCriteria(subscribeTypedataGrid, chatSubscribeType));
 			List<ChatSubscribeType> chatSubscribeTypeList = chatSubscribeTypePage.getCollection();
-			List<BoUser> allAnalysts = getAnalystsList();
+			List<BoUser> allAnalysts = getAnalystsList(isHasOther);
 			if (list != null && list.size() > 0) {
 				DataRowSet dataSet = new DataRowSet();
 				for(ChatSubscribe cs : list){
@@ -448,17 +450,19 @@ public class ChatSubscribeController extends BaseController {
 	 * 获取所有分析师
 	 * @return
 	 */
-	private List<BoUser> getAnalystsList(){
+	private List<BoUser> getAnalystsList(boolean hasOther){
 		List<BoUser> allAnalysts = userService.getUserListByRole("analyst");
-		String[] nameArr={"梁育诗","罗恩•威廉","黃湛铭","赵相宾","周游","刘敏","陈杭霞","金道研究院"};
-		BoUser user=null;
-		for(int i = 0, len = nameArr.length; i < len; i++){
-			user = new BoUser();
-			user.setUserId(nameArr[i]);
-			user.setUserNo(nameArr[i]);
-			user.setUserName(nameArr[i]);
-			user.setPosition("金道研究院");
-			allAnalysts.add(user);
+		if(hasOther) {
+			String[] nameArr = {"梁育诗", "罗恩•威廉", "黃湛铭", "赵相宾", "周游", "刘敏", "陈杭霞", "金道研究院"};
+			BoUser user = null;
+			for (int i = 0, len = nameArr.length; i < len; i++) {
+				user = new BoUser();
+				user.setUserId(nameArr[i]);
+				user.setUserNo(nameArr[i]);
+				user.setUserName(nameArr[i]);
+				user.setPosition("金道研究院");
+				allAnalysts.add(user);
+			}
 		}
 		return allAnalysts;
 	}

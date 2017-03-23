@@ -187,6 +187,8 @@ var chatGroup = {
 					}else{
 						$('#defTemplate').val('');
 					}
+					var logoJson = {'pc':$('#pc_logo').val(),'mb':$('#mb_logo').val()};
+					$('#logo').val(JSON.stringify(logoJson));
 					goldOfficeUtils.ajaxSubmitForm({
 						url : submitUrl,
 						formId : 'chatGroupSubmitForm',
@@ -203,6 +205,9 @@ var chatGroup = {
 						}
 					});
 				}
+			},
+			onLoad :function(){
+				chatGroup.initUploadFile();//初始化上传控件
 			}
 		});
 	},
@@ -236,6 +241,8 @@ var chatGroup = {
 					}else{
 						$('#defTemplate').val('');
 					}
+					var logoJson = {'pc':$('#pc_logo').val(),'mb':$('#mb_logo').val()};
+					$('#logo').val(JSON.stringify(logoJson));
 					goldOfficeUtils.ajaxSubmitForm({
 						url : submitUrl,
 						formId : 'chatGroupSubmitForm',
@@ -251,6 +258,9 @@ var chatGroup = {
 						}
 					});
 				}
+			},
+			onLoad :function(){
+				chatGroup.initUploadFile();//初始化上传控件
 			}
 		});
 	},
@@ -508,6 +518,139 @@ var chatGroup = {
 					}
 				});	
 			}
+		});
+	},
+
+	/**
+	 * 上传文件
+	 */
+	upload:function(){
+		var val=$("#mediaBaseInfoForm input[name=categoryId]").val();
+		if(isBlank(val)){
+			alert("请选择栏目！");
+			return;
+		}
+		if(val.indexOf('advertisement')!=-1 || val=='sysPicture'){
+			$('#mediaFileId').uploadify('settings','formData',{'fileDir' : 'pic'});
+		}else if(val=='student_style'){
+			$('#mediaFileId').uploadify('settings','formData',{'fileDir' : 'pic', 'saveSrc':'1'});
+		}else if(val.indexOf("video")!=-1 || val.indexOf("audio")!=-1){
+			$('#mediaFileId').uploadify('settings','formData',{'fileDir' : 'video'});
+		}else if(val == "download"){
+			$('#mediaFileId').uploadify('settings','formData',{'fileDir' : 'attach'});
+		}else{
+			alert("栏目：" + val + "对应的上传目录不存在！");
+			return ;
+		}
+		$('#mediaFileId').uploadify('upload', '*');
+	},
+	/**
+	 * 初始化上传控件
+	 */
+	initUploadFile : function(){
+		//PC Logo
+		goldOfficeUtils.uploadFile({
+			'fileId' : 'mediaPcLogoFileId',
+			'formData' : {'fileDir' : 'pic'},
+			'fileSizeLimit' : 10*1024*1024,
+			'fileTypeDesc': '只能上传*.jpg;*.gif;*.png;*.jpeg类型的图片',
+			'fileTypeExts' : '*.jpg;*.gif;*.png;*.jpeg',
+			'uploader' : basePath+'/uploadController/upload.do',
+			'onUploadSuccess' : function(file, data, response){
+				var d = eval("("+data+")");			//转换为json对象
+				if(d.success){
+					alert(file.name + ' 上传成功！');
+					if(d.obj != null){
+						$("#pc_logo").val(d.obj);
+						$("#sourcePcLogoPath").val(d.obj);
+						$("#cutedPcLogoPath").val(d.obj);
+					}
+				}else{
+					alert(file.name + d.msg);
+				}
+			}
+		});
+
+		//MB Logo
+		goldOfficeUtils.uploadFile({
+			'fileId' : 'mediaMbLogoFileId',
+			'formData' : {'fileDir' : 'pic'},
+			'fileSizeLimit' : 10*1024*1024,
+			'fileTypeDesc': '只能上传*.jpg;*.gif;*.png;*.jpeg类型的图片',
+			'fileTypeExts' : '*.jpg;*.gif;*.png;*.jpeg',
+			'uploader' : basePath+'/uploadController/upload.do',
+			'onUploadSuccess' : function(file, data, response){
+				var d = eval("("+data+")");			//转换为json对象
+				if(d.success){
+					alert(file.name + ' 上传成功！');
+					if(d.obj != null){
+						$("#mb_logo").val(d.obj);
+						$("#sourceMbLogoPath").val(d.obj);
+						$("#cutedMbLogoPath").val(d.obj);
+					}
+				}else{
+					alert(file.name + d.msg);
+				}
+			}
+		});
+	},
+	setLogoUrl:function(handerObj, target){
+		$("#addMediaUrlHander").bind("click", function(){
+			var loc_targetDom = $("#currentMediaPath");
+			goldOfficeUtils.openSimpleDialog({
+				dialogId : "addMediaUrl",
+				title : '设置链接',
+				height:130,
+				onOpen : function(){
+					var loc_url = loc_targetDom.val();
+					if(isValid(loc_url)){
+						$("#addMediaUrl input:radio").each(function(){
+							if(loc_url.startsWith($(this).val())){
+								$(this).prop("checked", true);
+								var pDom=$(this).parent().next().find("input[pName]"),pName=pDom.attr("pName");
+								var pnVal=loc_url.match(eval('/'+pName+'=([^&]+)/g'));
+								if(isValid(pnVal)){
+									pDom.val(pnVal.toString().replace(pName+'=',""));
+									return false;
+								}
+							}
+						});
+					}
+				},
+				buttons	 : [{
+					text : '清空',
+					iconCls : "ope-close",
+					handler : function() {
+						$("#addMediaUrl form")[0].reset();
+					}
+				},{
+					text : '确定',
+					iconCls : "ope-save",
+					handler : function(){
+						var checkDom=$("#addMediaUrl input:checked"),pDom=checkDom.parent().next().find("input[pName]");
+						var pVal=pDom.val(),pName=pDom.attr("pName");
+						var locUrl = checkDom.val();
+						if(isBlank(pVal)){
+							return false;
+						}
+						if(locUrl.indexOf('&')==-1){
+							locUrl = locUrl + '?'+pName+'='+ pVal;
+						}else{
+							locUrl += (/&$/g.test(locUrl)?"":"&") + pName + "=" +pVal;
+						}
+						loc_targetDom.val(locUrl);
+						$("#addMediaUrl form")[0].reset();
+						$("#addMediaUrl").dialog("close");
+					}
+				},{
+					text : '关闭',
+					iconCls : "ope-close",
+					handler : function() {
+						$("#addMediaUrl form")[0].reset();
+						$("#addMediaUrl").dialog("close");
+					}
+				}]
+			});
 		});
 	}
 };

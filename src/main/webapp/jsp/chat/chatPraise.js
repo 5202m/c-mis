@@ -128,7 +128,7 @@ var chatPraise = {
    */
   setAnalystList:function(id, analyst){
     $('#'+id).combotree({
-      data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst})
+      data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst, hasOther:true})
     });
   },
   /**

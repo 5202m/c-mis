@@ -85,6 +85,12 @@
 			$('#theme').val(defTemplate.theme);
 			$('#style').val(defTemplate.style);
 		}
+		var logoJson = $('#logo').val();
+		if(isValid(logoJson)){
+			logoJson = JSON.parse(logoJson);
+			$('#pc_logo,#sourcePcLogoPath,#cutedPcLogoPath').val(logoJson.pc);
+			$('#mb_logo,#sourceMbLogoPath,#cutedMbLogoPath').val(logoJson.mb);
+		}
 	});
 </script>
 <div style="padding:5px;overflow:hidden;">
@@ -225,6 +231,44 @@
 			<th colspan="2">培训班配置（标记详情页、lp页面的配置信息）</th>
 			<td colspan="2">
 				<input  name="trainConfig" style="width:50%;" value="${chatGroup.trainConfig}">
+			</td>
+		</tr>
+		<tr>
+			<th>房间Logo</th>
+			<td>
+				<input type="hidden" name="logo" id="logo" value='${chatGroup.logo}' />
+				<div id="pc_logo_div">
+					&nbsp;PC：&nbsp;<input type="text" id="pc_logo" style="margin-bottom: 5px;" class="easyui-validatebox"
+											data-options="validType:'url',missingMessage:'请填入一个有效的URL'"/>
+					<!--input type="button" value="设置链接" id="addPcLogoHander"-->
+					<input type="file"  id="mediaPcLogoFileId" style="width:155px" />
+					<!-- 原图片路径 -->
+					<input type="hidden" id="sourcePcLogoPath"/>
+					<!-- 裁剪后图片的路径 -->
+					<input type="hidden" id="cutedPcLogoPath"/>
+					<!-- 表单提交时保存到数据库的字段-->
+					<a class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-upload',disabled:false"  onclick="javascript:$('#mediaPcLogoFileId').uploadify('upload', '*');">上传文件</a>
+					<a class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-cancel',disabled:false"  onclick="javascript:$('#mediaPcLogoFileId').uploadify('cancel', '*');">停止上传</a>
+					<a t="viewImage" class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-view',disabled:false"  onclick="goldOfficeUtils.onViewImage('#cutedPcLogoPath')">预览</a>
+					<a t="cutImage" class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-cut',disabled:false"  onclick="goldOfficeUtils.onCutImage('#sourcePcLogoPath','#cutedPcLogoPath','cut','#pc_logo')">裁剪</a>
+				</div>
+			</td>
+			<td colspan="2">
+				<div>
+					&nbsp;MB：&nbsp;<input type="text" id="mb_logo" style="margin-bottom: 5px;" class="easyui-validatebox"
+											data-options="validType:'url',missingMessage:'请填入一个有效的URL'"/>
+					<!--input type="button" value="设置链接" id="addMbLogoHander"-->
+					<input type="file"  id="mediaMbLogoFileId" style="width:155px" />
+					<!-- 原图片路径 -->
+					<input type="hidden" id="sourceMbLogoPath"/>
+					<!-- 裁剪后图片的路径 -->
+					<input type="hidden" id="cutedMbLogoPath"/>
+					<!-- 表单提交时保存到数据库的字段-->
+					<a class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-upload',disabled:false"  onclick="javascript:$('#mediaMbLogoFileId').uploadify('upload', '*');">上传文件</a>
+					<a class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-cancel',disabled:false"  onclick="javascript:$('#mediaMbLogoFileId').uploadify('cancel', '*');">停止上传</a>
+					<a class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-view',disabled:false"  onclick="goldOfficeUtils.onViewImage('#cutedMbLogoPath')">预览</a>
+					<a class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-cut',disabled:false"  onclick="goldOfficeUtils.onCutImage('#sourceMbLogoPath','#cutedMbLogoPath','cut','#mb_logo')">裁剪</a>
+				</div>
 			</td>
 		</tr>
     </table>

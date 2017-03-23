@@ -134,6 +134,12 @@ public class ChatGroup extends BaseModel{
 	 * 房间简介 在培训班中显示
 	 */
 	private String label;
+
+	/**
+	 * 房间logo
+	 */
+	private String logo;
+
 	public String getDefTemplate() {
 		return defTemplate;
 	}
@@ -352,5 +358,13 @@ public class ChatGroup extends BaseModel{
 
 	public void setDefaultCS(BoUser defaultCS) {
 		this.defaultCS = defaultCS;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 }

@@ -224,7 +224,7 @@ var chatSubscribe = {
 		 */
 		setAnalystList:function(id, analyst){
 			$('#'+id).combotree({
-				data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst})
+				data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst, hasOther: true})
 			});
 		},
 		validate:function(form){
@@ -313,6 +313,7 @@ var chatSubscribe = {
 		var analystArr = $("#analystsSelectId").combo("getValues");
 		queryParams["analyst"] = analystArr && analystArr.length > 0 ? analystArr.join(",") : "";
 
+		queryParams['hasOther'] = true;
 		var path = basePath+ '/chatSubscribeController/exportRecord.do?'+$.param(queryParams);
 		window.location.href = path;
 	}
