@@ -171,6 +171,7 @@ public class UserService{
     				newBoRole.setRoleId(boRole.getRoleId());
     				newBoRole.setRoleNo(boRole.getRoleNo());
     				newBoRole.setRoleName(boRole.getRoleName());
+    				newBoRole.setSystemCategory(boRole.getSystemCategory());
     				boRole = newBoRole;
     			}
         	}
