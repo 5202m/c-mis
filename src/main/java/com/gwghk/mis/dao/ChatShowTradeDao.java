@@ -1,6 +1,7 @@
 package com.gwghk.mis.dao;
 
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -91,6 +92,18 @@ public class ChatShowTradeDao extends MongoDBBaseDao{
 	public boolean modifyTradeStatusByIds(Object[] ids, int status){
 		WriteResult wr = this.mongoTemplate.updateMulti(Query.query(Criteria.where("_id").in(ids))
 				   , Update.update("status", status), ChatShowTrade.class);
+		return wr != null && wr.getN() > 0;
+	}
+
+	/**
+	 * 删除评论
+	 * @param sid
+	 * @param cid
+	 * @return
+	 */
+	public boolean delComment(String sid, String cid){
+		WriteResult wr = this.mongoTemplate.updateMulti(Query.query(Criteria.where("_id").is(sid).and("comments._id").is(new ObjectId(cid)))
+				, new Update().set("comments.$.valid", 0), ChatShowTrade.class);
 		return wr != null && wr.getN() > 0;
 	}
 }

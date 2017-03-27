@@ -2,6 +2,7 @@ package com.gwghk.mis.model;
 
 import java.util.Date;
 
+import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -32,6 +33,7 @@ public class ChatShowTrade extends BaseModel
 	private Integer tradeType;//类别：1 分析师晒单，2 客户晒单
 	private Integer status;//状态：0 待审核， 1 审核通过， -1 审核不通过
 	private Integer praise;//点赞
+	private List<ChatShowTradeComments> comments = null;//评论
 	
 	public Integer getPraise() {
 		return praise;
@@ -111,5 +113,12 @@ public class ChatShowTrade extends BaseModel
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
 	}
-	
+
+	public List<ChatShowTradeComments> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<ChatShowTradeComments> comments) {
+		this.comments = comments;
+	}
 }
