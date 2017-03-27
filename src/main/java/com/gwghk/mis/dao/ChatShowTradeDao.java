@@ -1,6 +1,7 @@
 package com.gwghk.mis.dao;
 
 
+import com.gwghk.mis.model.ChatShowTradeComments;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -102,8 +103,10 @@ public class ChatShowTradeDao extends MongoDBBaseDao{
 	 * @return
 	 */
 	public boolean delComment(String sid, String cid){
-		WriteResult wr = this.mongoTemplate.updateMulti(Query.query(Criteria.where("_id").is(sid).and("comments._id").is(new ObjectId(cid)))
-				, new Update().set("comments.$.valid", 0), ChatShowTrade.class);
+		ChatShowTradeComments comments = new ChatShowTradeComments();
+		comments.setId(cid);
+		WriteResult wr = this.mongoTemplate.updateMulti(Query.query(Criteria.where("_id").is(sid))
+				, new Update().pull("comments", comments), ChatShowTrade.class);
 		return wr != null && wr.getN() > 0;
 	}
 }
