@@ -332,7 +332,8 @@ public class ChatSubscribeController extends BaseController {
 	public void exportRecord(HttpServletRequest request, HttpServletResponse response, ChatSubscribe chatSubscribe){
 		try {
 			String hasOther=request.getParameter("hasOther");
-			boolean isHasOther = StringUtils.isNotBlank(hasOther) && !request.getServerName().contains("hx9999.com");
+			String apiUrl = PropertiesUtil.getInstance().getProperty("pmApiUrl");
+			boolean isHasOther = StringUtils.isNotBlank(hasOther) && !apiUrl.contains("hx9999.com");
 			DictConstant dict=DictConstant.getInstance();
 
 			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.CHAT_SUBSCRIBE_RECORDS_TEMPLATE_PATH)));

@@ -9,6 +9,7 @@
  */
 package com.gwghk.mis.controller;
 
+import com.gwghk.mis.util.PropertiesUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -355,7 +356,8 @@ private static final Logger logger = LoggerFactory.getLogger(ChatSubscribeTypeCo
        	TreeBean tbean=null;
        	List<BoUser> allAnalysts = userService.getUserListByRole("analyst");
 				String hasOther=request.getParameter("hasOther");
-				if(StringUtils.isNotBlank(hasOther) && !request.getServerName().contains("hx9999.com")) {
+				String apiUrl = PropertiesUtil.getInstance().getProperty("pmApiUrl");
+				if(StringUtils.isNotBlank(hasOther) && !apiUrl.contains("hx9999.com")) {
 					String[] nameArr = {"梁育诗", "罗恩•威廉", "黃湛铭", "赵相宾", "周游", "刘敏", "陈杭霞", "金道研究院"};
 					BoUser user = null;
 					for (int i = 0; i < nameArr.length; i++) {
