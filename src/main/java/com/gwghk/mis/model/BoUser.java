@@ -125,6 +125,8 @@ public class BoUser extends BaseModel{
      * 分析师标签
      */
     private String tag;
+
+	private String systemCategory;
     
     public String getIntroductionImgLink() {
 		return introductionImgLink;
@@ -315,5 +317,12 @@ public class BoUser extends BaseModel{
 	public void setTag(String tag) {
 		this.tag = tag;
 	}
-	
+
+	public String getSystemCategory() {
+		return systemCategory;
+	}
+
+	public void setSystemCategory(String systemCategory) {
+		this.systemCategory = systemCategory;
+	}
 }
