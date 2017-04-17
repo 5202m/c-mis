@@ -27,7 +27,7 @@ public class ChatApiService{
 	 * @return
 	 */
 	private String formatUrl(String actionName){
-		return String.format("%s/api/%s/chat",PropertiesUtil.getInstance().getProperty("chatUrl"),actionName);
+		return String.format("%s/api/chat/%s",PropertiesUtil.getInstance().getProperty("chatUrl"),actionName);
 	}
 	
 	/**
