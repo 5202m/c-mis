@@ -1,3 +1,9 @@
 /pm_mis.iml
 /.idea
 /target
+/.classpath
+/.project
+/.settings
+.project
+.settings/*
+.classpath
