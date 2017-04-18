@@ -174,7 +174,6 @@ var chatShowTrade = {
 	 * 功能：增加
 	 */
 	add : function(){
-		
 		var url = formatUrl(basePath + '/chatShowTradeController/add.do?opType=' + chatShowTrade.opType);
 		var submitUrl =  formatUrl(basePath + '/chatShowTradeController/create.do');
 		goldOfficeUtils.openEditorDialog({
@@ -289,6 +288,7 @@ var chatShowTrade = {
 		    idField:'userNo',
 		    textField:'userName',
 		    url:basePath+'/userController/getAnalystList.do',
+				panelWidth: 200,
 		    columns:[[
 		        {field : 'userNo', hidden:true},
 		        {field : 'author_Key_id',hidden:true,formatter : function(value, rowData, rowIndex) {
@@ -308,7 +308,10 @@ var chatShowTrade = {
 			},
 		    onChange:function(val){
 		    	$('#'+id+'Input').val(val);
-		    }
+		    },
+			onLoadSuccess:function(){
+				$('#showTradeAddFrom table tr td span.combo input').width(200);
+			}
 		}); 
 	},
 	setStatus:function(status){

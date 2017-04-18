@@ -1,14 +1,24 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="/jsp/common/common.jsp"%>
+<script type="text/javascript">
+	$(function(){
+		$('#parentId').combotree({
+			panelWidth:200,
+			onLoadSuccess:function(node, checked){
+				$('#categoryViewForm table tr td span.combo input').width(200);
+			}
+		});
+	})
+</script>
 <div style="padding:5px;overflow:hidden;">
   <form id="categoryViewForm" class="yxForm" method="post">
     <table class="tableForm_L" border="0" cellspacing="1" cellpadding="0">
          <tr>
 	          <th width="15%">上级栏目编号<span class="red">*</span></th>
 	          <td width="35%" colspan="4">
-	            <input name="parentId" class="easyui-combotree"  
-           			data-options="url:'<%=request.getContextPath()%>/categoryController/getCategoryTree.do',valueField:'id',textField:'text'" 
-           			value="${parentId}">
+	            <input id="parentId" name="parentId" class="easyui-combotree"
+           			data-options="url:'<%=request.getContextPath()%>/categoryController/getCategoryTree.do',valueField:'id',textField:'text',panelWidth:200"
+           			value="${parentId}" style="width:200px;">
 	          </td>
 	      </tr>
 	      <tr>

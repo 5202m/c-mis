@@ -223,7 +223,11 @@ var chatPointsConfig = {
 				$("#chatPointsConfigAdd_item").val("hand_manual");
 				 $("#chatPointsConfigAdd_groupType").change(function(){
 						$("#chatPointsConfigAdd_clientGroup").combotree({
+							panelWidth: 155,
 							data:getJson(basePath + "/chatClientGroupController/getClientGroupList.do",{filter:'visitor',groupType:this.value}),
+							onLoadSuccess:function(node, checked){
+								$('#chatPointsConfigAdd_Form table tr td span.combo input').width(155);
+							}
 						}); 
 				 }).trigger("change");
 			}
@@ -290,7 +294,11 @@ var chatPointsConfig = {
 				 $("#chatPointsConfigEdit_groupType").change(function(){
 					    var  val=$("#chatPointsConfigEdit_clientGroup").attr("defVal");
 						$("#chatPointsConfigEdit_clientGroup").combotree({
+							panelWidth: 155,
 							data:getJson(basePath+"/chatClientGroupController/getClientGroupList.do",{filter:'visitor',clientGroup:val,groupType:$("#chatPointsConfigEdit_groupType_val").val()}),
+							onLoadSuccess:function(node, checked){
+								$('#chatPointsConfigEdit_Form table tr td span.combo input').width(155);
+							}
 						}); 
 						$("#chatPointsConfigEdit_clientGroup").attr("defVal","");
 				 }).trigger("change");

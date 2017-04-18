@@ -239,11 +239,19 @@ var chatSubscribeType = {
 		setAnalystList:function(id, analyst, isEdit){
 			if(!isEdit){
 				$('#'+id).combotree({
-					data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst})
+					panelWidth: 200,
+					data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst}),
+					onLoadSuccess:function(node, param){
+						$('#subscribeTypeAddFrom table tr td span.combo input').width(200);
+					}
 				});
 			} else {
 				$('#'+id).combotree({
 					data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst}),
+					panelWidth: 200,
+					onLoadSuccess:function(node, param){
+						$('#subscribeTypeAddFrom table tr td span.combo input').width(200);
+					},
 					onCheck:function(node,checked){
 						if(checked && $('#'+node.id+'_span').size()==0){
 							var html = [];
