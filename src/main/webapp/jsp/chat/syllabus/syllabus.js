@@ -127,10 +127,13 @@ var Syllabus = {
         $('#panel_editSyllabus table tr td.main div.lecturerDiv span.combo input').width(225);
       },
       onCheck: function (node, checked) {
-        if (isValid(userId)) {
-          Syllabus.getAnalystLiveLinks(userId, dom, liveLink);
+        if(checked) {
+            if(isValid(userId) && userId != node.id){
+              userId = node.id;
+            }
+            Syllabus.getAnalystLiveLinks(userId, dom, liveLink);
         } else {
-          Syllabus.getAnalystLiveLinks(node.id, dom, liveLink);
+          Syllabus.getAnalystLiveLinks('', dom, liveLink);
         }
       }
     });
@@ -764,13 +767,13 @@ var Syllabus = {
   getAnalystLiveLinks: function (userId, dom, liveLink) {
     if (dom.children('option').length < 2) {
       var liveLinks = getJson(basePath + "/userController/getAnalystLiveLink.do", {userId: userId});
+      var lDomPc = dom.find('select[name="liveLink_pc"]'),
+          lDomMb = dom.find('select[name="liveLink_mb"]'),
+          lDomAMb = dom.find('select[name="liveLinka_mb"]');
+      var pcOptions = ['<option value="" code="">请选择</option>'], mbOptions = ['<option value="" code="">请选择</option>'], mbaOptions = ['<option value="" code="">请选择</option>'];
       if (isValid(liveLinks)) {
-        var lDomPc = dom.find('select[name="liveLink_pc"]'),
-            lDomMb = dom.find('select[name="liveLink_mb"]'),
-            lDomAMb = dom.find('select[name="liveLinka_mb"]');
         lDomPc.attr('userId', userId);
         liveLinks = JSON.parse(liveLinks);
-        var pcOptions = ['<option value="" code="">请选择</option>'], mbOptions = ['<option value="" code="">请选择</option>'], mbaOptions = ['<option value="" code="">请选择</option>'];
         $.each(liveLinks, function (i, row) {
           if (row.code == '1') {
             pcOptions.push('<option value="' + row.url + '" code="' + row.code + '">' + row.name + '</option>');
@@ -794,6 +797,10 @@ var Syllabus = {
             }
           });
         }
+      } else {
+        lDomPc.html(pcOptions.join(''));
+        lDomMb.html(mbOptions.join(''));
+        lDomAMb.html(mbaOptions.join(''));
       }
     }
   }

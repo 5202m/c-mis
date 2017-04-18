@@ -47,21 +47,23 @@
     $(function(){
     	$(".liveSelect,.dictSetSelect").change(function(){
     		var pSelectBox=null;
+			var tn = this.value;
     		if($(this).hasClass("dictSetSelect")){
     			pSelectBox=$(this).prev().prev();
     		}else{
     			pSelectBox=$(this).prev();
     		}
-    		if(isBlank(this.value) || (!$(this).hasClass("dictSetSelect") && this.value.indexOf("X")!=-1) ||isBlank(pSelectBox.val())){
+    		if(isBlank(tn) || (!$(this).hasClass("dictSetSelect") && tn.indexOf("X")!=-1) ||isBlank(pSelectBox.val())){
     			$(this).val("");
     			return false;
     		}
     		var tabNext=$(this).parents(".live_sub_tab").next();
-    		if(tabNext.find(".live-sel-num[tn='"+this.value+"'][tl='"+pSelectBox.val()+"']").length>0){
-    			alert("已选择该编号【"+this.value+"】");
+			var tl = pSelectBox.val().formatStr(tn);
+    		if(tabNext.find(".live-sel-num[tn='"+tn+"'][tl='"+tl+"']").length>0){
+    			alert("已选择该编号【"+tn+"】");
     		}else{
     			var cloneTmp=$(".live-sel-num-tmp").clone();
-    			cloneTmp.removeClass("live-sel-num-tmp").addClass("live-sel-num").attr("tc",$(this).parents(".live-tab-panel").attr("tc")).attr("tn",this.value).attr("tl",pSelectBox.val()).find("label").text(pSelectBox.find("option[value='"+pSelectBox.val()+"']").text()+"："+this.value);
+    			cloneTmp.removeClass("live-sel-num-tmp").addClass("live-sel-num").attr("tc",$(this).parents(".live-tab-panel").attr("tc")).attr("tn",tn).attr("tl",pSelectBox.val()).find("label").text(pSelectBox.find("option[value='"+pSelectBox.val()+"']").text()+"："+tn);
     			tabNext.append(cloneTmp);
     		}
     	});

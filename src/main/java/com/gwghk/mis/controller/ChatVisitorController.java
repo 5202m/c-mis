@@ -334,7 +334,7 @@ public class ChatVisitorController extends BaseController
 		map.put("dayBefore6", DateUtil.formatDate(calendar.getTime(), "yyyy-MM-dd"));
 		
 		if("duration".equals(type)){//在线时长人数
-			return "chat/visitorRepD";
+			return "chat/visitor/visitorRepD";
 		}else if("online".equals(type)){//各类在线人数
 			return "chat/visitor/visitorRepO";
 		}else{//整点在线人数
