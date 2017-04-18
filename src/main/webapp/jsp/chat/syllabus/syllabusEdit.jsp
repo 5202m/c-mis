@@ -48,11 +48,11 @@ Syllabus.studioLink=${studioLinkStr};
 					从&nbsp; <input name="publishStartStr" id="syllabus_publishStart" class="Wdate" value="${publishStartStr }" onFocus="WdatePicker({maxDate:'#F{$dp.$D(\'syllabus_publishEnd\')}',dateFmt:'yyyy-MM-dd'})" style="width:120px"/>
                     &nbsp;&nbsp; 到&nbsp;<input name="publishEndStr" id="syllabus_publishEnd" class="Wdate" value="${publishEndStr }" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'syllabus_publishStart\')}',dateFmt:'yyyy-MM-dd'})" style="width:120px"/>
 				</td>
-				<th><label id="studioLinkLabel">直播地址<a href="javascript:" id="showLinksId">【预览】</a></label>
-				    <div id="showLinksDiv" style="display:none;padding:6px;position:absolute;z-index: 10000000;background-color:#fff;border: 1px solid #B99E63;"></div>
+				<th><!--label id="studioLinkLabel">直播地址<a href="javascript:" id="showLinksId">【预览】</a></label>
+				    <div id="showLinksDiv" style="display:none;padding:6px;position:absolute;z-index: 10000000;background-color:#fff;border: 1px solid #B99E63;"></div-->
 				</th>
 				<td>
-				   <span id="studioLinkSpan">
+				   <!--span id="studioLinkSpan">
 				   	<select id="studioLinkSelect" style="width:103px">
 					   	<option value="1" selected="selected">视频直播(pc)</option>
 					   	<option value="3">视频直播(mb)</option>
@@ -60,11 +60,11 @@ Syllabus.studioLink=${studioLinkStr};
 					   	<option value="4">音频直播(mb)</option>
 				   	</select>
 				   	<select id="studiolinkAddr" style="display:none;width:180px;"></select>
-				    <input  id="studioLink_1" style="width:450px;" t="1" value=""/>
-				    <input  id="studioLink_2" style="display:none;width:400px;" t="2" value="" />
-				    <input  id="studioLink_3" style="display:none;width:400px;" t="3" value=""/>
-				    <input  id="studioLink_4" style="display:none;width:400px;" t="4" value=""/>
-				   </span>
+					<input  id="studioLink_1" style="width:450px;" t="1" value=""/>
+					<input  id="studioLink_2" style="display:none;width:400px;" t="2" value="" />
+					<input  id="studioLink_3" style="display:none;width:400px;" t="3" value=""/>
+					<input  id="studioLink_4" style="display:none;width:400px;" t="4" value=""/>
+				   </span-->
 				</td>
 			</tr>
 		</thead>
@@ -109,8 +109,21 @@ Syllabus.studioLink=${studioLinkStr};
 						   <span><label>类型：</label><select name="courseType"><option value="0">文字直播</option><option value="1" selected="selected">视频直播</option><option value="2">oneTV直播</option><option value="3">汇通视讯</option></select></span>
 						</div>
 						<div class="lecturerDiv">
-							<label>讲师：</label>
-							<select style="width:250px;" name="lecturer" id="select_lecturer0_${status.index}"  class="easyui-validatebox" data-options="cascadeCheck:false" multiple></select>
+							<label>讲师：</label><select style="width:230px;" name="lecturer" id="select_lecturer0_${status.index}" data-options="cascadeCheck:false" multiple></select>
+						</div>
+						<div>
+							<label>讲师直播地址：视频(pc)</label>
+							<select name="liveLink_pc" class="liveLink" id="liveLink_pc_${status.index}" style="width:140px;">
+								<option value="">请选择</option>
+							</select>
+							<label>视频(mb)</label>
+							<select name="liveLink_mb" class="liveLink" id="liveLink_mb_${status.index}" style="width:140px;">
+								<option value="">请选择</option>
+							</select>
+							<label>音频(mb)</label>
+							<select name="liveLinka_mb" class="liveLink" id="liveLinka_mb_${status.index}" style="width:140px;">
+								<option value="">请选择</option>
+							</select>
 						</div>
 						<div>
 							<label>标题：</label><input name="title"/>

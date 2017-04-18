@@ -35,7 +35,7 @@ var goldOfficeUtils = {
 			onLoad : $.noop,
 			onOpen : $.noop
         },config);
-		dialogId = config.dialogId === undefined ? 'myWindow' : config.dialogId;
+		var dialogId = config.dialogId === undefined ? 'myWindow' : config.dialogId;
 		$('#'+dialogId).dialog({
 			title : config.title,
 			width : config.width,
@@ -91,7 +91,7 @@ var goldOfficeUtils = {
 			onLoad : $.noop,
 			onOpen : $.noop
         },config);
-		dialogId = config.dialogId === undefined || config.dialogId === ''? 'myWindow' : config.dialogId;
+		var dialogId = config.dialogId === undefined || config.dialogId === ''? 'myWindow' : config.dialogId;
 		$('#'+dialogId).dialog({
 			title : config.title,
 			width : config.width,
@@ -254,7 +254,7 @@ var goldOfficeUtils = {
 			Event.onResizend(function () {
 				$("div[id$=_datagrid]").each(function(){
 					 var maxWidth=$(this).parents(".datagrid").parent().width();
-					 $(this).parents(".datagrid,datagrid-wrap").width(maxWidth);
+					 $(this).parents(".datagrid,.datagrid-wrap").width(maxWidth);
 					 $(this).datagrid('resize',{width:(maxWidth)});//重新定义datagrid宽度
 			    });
 	        });

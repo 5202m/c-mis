@@ -337,7 +337,7 @@ var chatAnalyst = {
 						$('#setLiveLinks_form .live-tab-panel').each(function(){
 							var tmpLinks=$(this).find(".live-sel-num").map(function(){
 								var tn=$(this).attr('tn'),tl=$(this).attr('tl');
-								return {'code':$(this).attr('tc'),'url':isValid(tn)?tl.formatStr(tn):tl};
+								return {'code':$(this).attr('tc'),'url':isValid(tn)?tl.formatStr(tn):tl,'name':$(this).children('label').text()};
 							}).get();
 							if(tmpLinks){
 								liveLinks=liveLinks.concat(tmpLinks);
