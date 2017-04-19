@@ -144,7 +144,6 @@ public class ChatMessageController extends BaseController{
 	public void exportRecord(HttpServletRequest request, HttpServletResponse response,ChatMessage chatMessage){
 		try{
 			this.setComSearch(request,chatMessage);
-			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.CHAT_RECORDS_TEMPLATE_PATH)));
 			DataGrid dataGrid = new DataGrid();
 			dataGrid.setPage(0);
 			dataGrid.setRows(0);
@@ -161,6 +160,9 @@ public class ChatMessageController extends BaseController{
 			for(ChatClientGroup cg : clientGroups){
 				clientGroupMap.put(cg.getClientGroupId(), cg.getName());
 			}
+			String pwd=StringUtil.random(6);
+			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.CHAT_RECORDS_TEMPLATE_PATH)));
+            builder.getHSSFWorkbook().getSheetAt(0).protectSheet(pwd);
 			if(chatMessageList != null && chatMessageList.size() > 0){
 				DataRowSet dataSet = new DataRowSet();
 				boolean isText = false;
@@ -215,9 +217,9 @@ public class ChatMessageController extends BaseController{
 				builder.put("rowSet",new DataRowSet());
 			}
 			builder.parse();
-			ExcelUtil.wrapExcelExportResponse("聊天记录", request, response);
+			String title=ExcelUtil.wrapExcelExportResponse("聊天记录", request, response);
 			builder.write(response.getOutputStream());
-			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出聊天记录操作成功！", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出聊天记录操作成功!【"+title+"->密码："+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
 		}catch(Exception e){
 			logger.error("<<method:exportRecord()|chat message export error!",e);
 		}
