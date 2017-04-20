@@ -124,7 +124,6 @@ var Syllabus = {
             dt.text(dt.text() + "【" + data[i].id + "】");
           }
         }
-        $('#panel_editSyllabus table tr td.main div.lecturerDiv span.combo input').width(225);
       },
       onCheck: function (node, checked) {
         if(checked) {
@@ -135,6 +134,9 @@ var Syllabus = {
         } else {
           Syllabus.getAnalystLiveLinks('', dom, liveLink);
         }
+      },
+      onBeforeLoad: function (node, param) {
+        $('#panel_editSyllabus table tr td.main div.lecturerDiv span.combo input').width(225);
       }
     });
   },

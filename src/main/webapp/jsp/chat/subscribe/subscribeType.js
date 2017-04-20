@@ -97,7 +97,7 @@ var chatSubscribeType = {
 		},
 		//显示用户列表
 		setUserList:function(){
-		     chatSubscribeType.setAnalystList("analystsSelectId");
+		     chatSubscribeType.setAnalystList("subscribeTypeAnalystsSelectId");
 		},
 		setUserEdit:function(value){
 			var analystArr = JSON.parse(value),analysts = [],analystsHtml=[];
@@ -241,7 +241,7 @@ var chatSubscribeType = {
 				$('#'+id).combotree({
 					panelWidth: 200,
 					data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst}),
-					onLoadSuccess:function(node, param){
+					onBeforeLoad:function(node, param){
 						$('#subscribeTypeAddFrom table tr td span.combo input').width(200);
 					}
 				});
@@ -249,7 +249,7 @@ var chatSubscribeType = {
 				$('#'+id).combotree({
 					data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst}),
 					panelWidth: 200,
-					onLoadSuccess:function(node, param){
+					onBeforeLoad:function(node, param){
 						$('#subscribeTypeAddFrom table tr td span.combo input').width(200);
 					},
 					onCheck:function(node,checked){

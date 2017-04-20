@@ -152,7 +152,11 @@ var ArticleTemplate = {
 		$("#categoryId").combotree({
 		    url:formatUrl(basePath + '/categoryController/getCategoryTree.do?type=1'),
 		    valueField:'id',
-		    textField:'text'
+		    textField:'text',
+				panelWidth:180,
+				onBeforeLoad: function (node, param) {
+					$('#articleBaseInfoForm table tr td span.combo input').width(180);
+				}
 		});
 		
 		//状态
@@ -166,7 +170,11 @@ var ArticleTemplate = {
 		//应用位置
 		$("#platformStr").combotree({
 		    url:formatUrl(basePath + '/commonController/getPlatformList.do'),
-		    cascadeCheck:false
+		    cascadeCheck:false,
+				panelWidth:180,
+				onBeforeLoad: function (node, param) {
+					$('#articleBaseInfoForm table tr td span.combo input').width(180);
+				}
 		});
 		
 		//语言
@@ -282,7 +290,11 @@ var ArticleTemplate = {
 		    			$('#article_detail_'+lang+' form[name=articleDetailForm] input[name=name]').val(val);
 			    	}
 		    	});
-		    }
+		    },
+				panelWidth:180,
+				onBeforeLoad: function (node, param) {
+					$('#articleDetailForm table tr td span.combo input').width(180);
+				}
 		}); 
 	},
 	/**

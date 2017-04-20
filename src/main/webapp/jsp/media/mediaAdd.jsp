@@ -5,7 +5,7 @@
 <div>
    <form id="mediaBaseInfoForm" class="yxForm" method="post">
     <table class="tableForm_L" border="0" cellspacing="1" cellpadding="0">
-     <tr>
+     <tr style="display:none;">
         <th width="100%" colspan="6">
         	<div>
     			<a href="#" class="easyui-linkbutton" style="float:right;" onclick="mediaAdd.back()" data-options="iconCls:'ope-previous'" >返回</a>
@@ -16,7 +16,7 @@
      <tr>
         <th width="15%">栏目<span class="red">*</span></th>
         <td width="35%">
-          <input name="categoryId" class="easyui-combotree" style="width:160px;" data-options="url:'<%=request.getContextPath()%>/categoryController/getCategoryTree.do?type=2',valueField:'id',textField:'text'"/>
+          <input name="categoryId" id="mediaAddCategoryId" class="easyui-combotree" style="width:160px;" data-options="url:'<%=request.getContextPath()%>/categoryController/getCategoryTree.do?type=2',valueField:'id',textField:'text'"/>
 		</td>
         <th width="15%">发布时间<span class="red">*</span></th>
         <td width="35%">
@@ -31,7 +31,7 @@
         </td>
         <th width="15%">应用位置<span class="red">*</span></th>
         <td width="35%">
-           <select class="easyui-combotree" style="width:180px;" name="platformStr" 
+           <select class="easyui-combotree" style="width:180px;" name="platformStr" id="mediaAddPlatform"
 		     data-options="url:'<%=request.getContextPath()%>/commonController/getPlatformList.do',cascadeCheck:false" multiple></select>
         </td>
       </tr>

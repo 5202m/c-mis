@@ -225,7 +225,7 @@ var chatPointsConfig = {
 						$("#chatPointsConfigAdd_clientGroup").combotree({
 							panelWidth: 155,
 							data:getJson(basePath + "/chatClientGroupController/getClientGroupList.do",{filter:'visitor',groupType:this.value}),
-							onLoadSuccess:function(node, checked){
+							onBeforeLoad:function(node, checked){
 								$('#chatPointsConfigAdd_Form table tr td span.combo input').width(155);
 							}
 						}); 
@@ -296,7 +296,7 @@ var chatPointsConfig = {
 						$("#chatPointsConfigEdit_clientGroup").combotree({
 							panelWidth: 155,
 							data:getJson(basePath+"/chatClientGroupController/getClientGroupList.do",{filter:'visitor',clientGroup:val,groupType:$("#chatPointsConfigEdit_groupType_val").val()}),
-							onLoadSuccess:function(node, checked){
+							onBeforeLoad:function(node, param){
 								$('#chatPointsConfigEdit_Form table tr td span.combo input').width(155);
 							}
 						}); 

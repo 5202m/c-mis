@@ -79,6 +79,20 @@ var mediaAdd = {
 				}]
 			});
 		});
+		//设置多选下拉框宽度
+		$('#mediaAddCategoryId').combotree({
+			panelWidth:160,
+			onBeforeLoad: function (node, param) {
+				$('#mediaBaseInfoForm table tr td span.combo input').width(160);
+			}
+		});
+		//设置多选下拉框宽度
+		$('#mediaAddPlatform').combotree({
+			panelWidth:180,
+			onBeforeLoad: function (node, param) {
+				$('#mediaBaseInfoForm table tr td span.combo input').width(180);
+			}
+		});
 	},
 	/**
 	 * 设置作者选择列表
@@ -117,7 +131,11 @@ var mediaAdd = {
 					   $('#media_detail_'+lang+' form[name=mediaDetailForm] input[name=name]').val(val);
 			    	}
 		    	});
-		    }
+		    },
+				panelWidth:180,
+				onBeforeLoad: function (node, param) {
+					$('form[name="mediaDetailForm"] table tr td span.combo input').width(180);
+				}
 		}); 
 	},
 	/**

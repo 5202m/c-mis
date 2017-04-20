@@ -309,7 +309,7 @@ var chatShowTrade = {
 		    onChange:function(val){
 		    	$('#'+id+'Input').val(val);
 		    },
-			onLoadSuccess:function(){
+			onBeforeLoad:function(){
 				$('#showTradeAddFrom table tr td span.combo input').width(200);
 			}
 		}); 

@@ -17,7 +17,7 @@ var articlePlatformStr='${articlePlatformJson}';
           <td width="23%"><input type="text" name="title" style="width:160px"/></td>
           <th width="10%">应用位置</th>
           <td width="23%">
-	          <select class="easyui-combotree" name="platform" style="width:180px;" data-options="url:'<%=request.getContextPath()%>/commonController/getPlatformList.do',cascadeCheck:false" multiple>
+	          <select class="easyui-combotree" id="articlePlatform" name="platform" style="width:180px;" data-options="url:'<%=request.getContextPath()%>/commonController/getPlatformList.do',cascadeCheck:false" multiple>
 	          </select>
           </td>
         </tr>
@@ -28,7 +28,7 @@ var articlePlatformStr='${articlePlatformJson}';
           </td>
           <th width="10%">栏目</th>
           <td width="23%"> 
-            <input name="categoryId" class="easyui-combotree" style="width:160px;" data-options="url:'<%=request.getContextPath()%>/categoryController/getCategoryTree.do?type=1',valueField:'id',textField:'text'"/>
+            <input name="categoryId" id="articleCategoryId" class="easyui-combotree" style="width:160px;" data-options="url:'<%=request.getContextPath()%>/categoryController/getCategoryTree.do?type=1',valueField:'id',textField:'text'"/>
           </td>
           <th width="10%">作者</th>
           <td width="23%"><input type="text" name="author" style="width:160px"/></td>

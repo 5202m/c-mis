@@ -31,6 +31,10 @@ var mediaEdit = {
                 	$('#mediaImageRowTr').show();
                 	$("#media_div a[t=viewImage],#media_div a[t=cutImage]").hide();
 				}
+			},
+			panelWidth:160,
+			onBeforeLoad: function (node, param) {
+				$('form[name="mediaDetailForm"] table tr td span.combo input').width(160);
 			}
 		});
 		
@@ -92,6 +96,20 @@ var mediaEdit = {
 				}]
 			});
 		});
+		//设置多选下拉框宽度
+		$('#mediaEditCategoryId').combotree({
+			panelWidth:160,
+			onBeforeLoad: function (node, param) {
+				$('#mediaBaseInfoForm table tr td span.combo input').width(160);
+			}
+		});
+		//设置多选下拉框宽度
+		$('#mediaEditPlatformStr').combotree({
+			panelWidth:180,
+			onBeforeLoad: function (node, param) {
+				$('#mediaBaseInfoForm table tr td span.combo input').width(180);
+			}
+		});
 	},
 	/**
 	 * 设置作者列表
@@ -132,7 +150,11 @@ var mediaEdit = {
 		    			$('#media_detail_'+lang+' form[name=mediaDetailForm] input[name=name]').val(val);
 			    	}
 		    	});
-		    }
+		    },
+				panelWidth:200,
+				onBeforeLoad: function (node, param) {
+					$('form[name="mediaDetailForm"] table tr td span.combo input').width(200);
+				}
 		}); 
 	},
 	/**
@@ -343,7 +365,7 @@ var mediaEdit = {
 				$.messager.progress('close');
 				if(data.success){
 					alert("更新成功 !");
-					jumpRequestPage(basePath + '/mediaController/index.do');
+					//jumpRequestPage(basePath + '/mediaController/index.do');
 				}else{
 					alert("更新失败，错误信息："+data.msg);
 				}

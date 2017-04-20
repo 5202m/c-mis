@@ -4,7 +4,7 @@
 	$(function(){
 		$('#parentId').combotree({
 			panelWidth:200,
-			onLoadSuccess:function(node, checked){
+			onBeforeLoad:function(node, param){
 				$('#categoryViewForm table tr td span.combo input').width(200);
 			}
 		});

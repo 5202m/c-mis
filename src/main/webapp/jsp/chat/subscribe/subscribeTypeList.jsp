@@ -14,7 +14,7 @@
         	<td><input type="text" name="name" id="name" /></td>        	
           <th width="10%">分析师</th>
           <td>
-            <select class="easyui-combotree" name="analysts" id="analystsSelectId" style="width:250px;" data-options="cascadeCheck:false" multiple>
+            <select class="easyui-combotree" name="analysts" id="subscribeTypeAnalystsSelectId" style="width:250px;" data-options="cascadeCheck:false" multiple>
 	        </select>
           </td>
         </tr>

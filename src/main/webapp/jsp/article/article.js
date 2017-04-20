@@ -139,6 +139,20 @@ var article = {
 		});
 		//列表状态设置
 		goldOfficeUtils.setGridSelectVal(article.gridId,"article_setStatusSelect","status",formatUrl(basePath + '/articleController/setStatus.do'));
+		//设置多选下拉框宽度
+		$('#articlePlatform').combotree({
+				panelWidth:180,
+				onBeforeLoad: function (node, param) {
+					$('#article_queryForm table tr td span.combo input').width(180);
+				}
+		});
+		//设置多选下拉框宽度
+		$('#articleCategoryId').combotree({
+			panelWidth:160,
+			onBeforeLoad: function (node, param) {
+				$('#article_queryForm table tr td span.combo input').width(160);
+			}
+		});
 	},
 	/**
 	 * 清空旧的参数

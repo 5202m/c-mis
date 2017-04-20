@@ -150,6 +150,9 @@ var systemDictionary = {
 						}
 					});
 				}
+			},
+			onLoad:function(){
+				systemDictionary.setComboTreeWidth('systemCategoryStr', 'dictionaryAddForm');
 			}
 		});
 	},
@@ -194,6 +197,9 @@ var systemDictionary = {
 						}
 					});
 				}
+			},
+			onLoad:function(){
+				systemDictionary.setComboTreeWidth('systemCategoryStr', 'dictionaryEditForm');
 			}
 		});
 	},
@@ -235,6 +241,19 @@ var systemDictionary = {
 		}else{
 			$('#'+systemDictionary.gridId).treegrid('reload');
 		}
+	},
+	/**
+	 * 设置多选下拉框宽度
+	 * @param id
+	 * @param formId
+	 */
+	setComboTreeWidth:function(id, formId){
+		$('#'+id).combotree({
+			panelWidth:180,
+			onBeforeLoad: function (node, param) {
+				$('#'+formId+' table tr td span.combo input').width(180);
+			}
+		});
 	}
 };
 		

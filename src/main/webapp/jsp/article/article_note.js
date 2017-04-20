@@ -232,7 +232,11 @@ var ArticleTemplate = {
 		//应用位置
 		$("#platformStr").combotree({
 		    url:formatUrl(basePath + '/commonController/getPlatformList.do'),
-		    cascadeCheck:false
+		    cascadeCheck:false,
+				panelWidth:180,
+			onBeforeLoad: function (node, param) {
+					$('#articleBaseInfoForm table tr td span.combo input').width(180);
+				}
 		});
 		
 		content = content || "";
@@ -346,6 +350,7 @@ var ArticleTemplate = {
 	 */
 	setAuthorList:function(id){
 		$('#'+id).combogrid({
+				panelWidth:200,
 		    idField:'userNo',
 		    textField:'userName',
 		    url:basePath+'/userController/getAnalystList.do?hasOther=true',
@@ -379,7 +384,10 @@ var ArticleTemplate = {
 		    			$('#article_detail_'+lang+' input[name=name]').val(val);
 			    	}
 		    	});
-		    }
+		    },
+				onBeforeLoad: function (node, param) {
+					$('#article_detail_zh table tr td span.combo input').width(200);
+				}
 		}); 
 	},
 	/**

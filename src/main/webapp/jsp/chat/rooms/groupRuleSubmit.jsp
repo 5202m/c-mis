@@ -12,21 +12,21 @@
 		function selectVal(){
 			var val=$("#chatGroupRuleSubmitForm select[name=type]").find("option:selected").val();
 			$("tbody[id^=chatGroupRule_]").hide();
-			if(val.indexOf("_set")!=-1||val.indexOf("_filter")!=-1||val.indexOf("url_")!=-1){
+			if(isValid(val) && (val.indexOf("_set")!=-1||val.indexOf("_filter")!=-1||val.indexOf("url_")!=-1)){
 				$("#chatGroupRule_beforeRule_tbody").show();
 			}
-			if(val.indexOf("_replace")!=-1){
+			if(isValid(val) && val.indexOf("_replace")!=-1){
 				$("#chatGroupRule_beforeRule_tbody").show();
 				$("#chatGroupRule_afterRule_tbody").show();
 			}
-			if(val.indexOf('img')!=-1){
+			if(isValid(val) && val.indexOf('img')!=-1){
 				var loc_groupType = isPlatform("HX") ? "hxstudio" : "studio";
 				$("#clientGroupSelectId").combotree({
 					data:getJson("<%=request.getContextPath()%>/chatClientGroupController/getClientGroupList.do",{clientGroup:"${chatGroupRule.clientGroup}",groupType:loc_groupType}),
 				}); 
 				$('#chatGroupRule_clientGroup_tbody').show();
 			}
-			if(val.indexOf('online_mem')!=-1){
+			if(isValid(val) && val.indexOf('online_mem')!=-1){
 				$("tbody[id^=chatGroupRule_]").hide();
 				$('#chatGroupRule_online_mem_tbody').show();
 			}

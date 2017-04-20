@@ -28,7 +28,7 @@
 	        <tr>
 	          <th>系统类别</th>
 	          <td colspan="3">
-	             <select class="easyui-combotree" name=systemCategoryStr data-options="cascadeCheck:false,url:'<%=request.getContextPath()%>/systemCategoryController/getCategoryTreeList.do'" multiple>
+	             <select class="easyui-combotree" id="systemCategoryStr" name=systemCategoryStr data-options="cascadeCheck:false,url:'<%=request.getContextPath()%>/systemCategoryController/getCategoryTreeList.do'" multiple>
 	             </select>
 	          </td>
 	        </tr>

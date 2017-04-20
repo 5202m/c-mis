@@ -104,7 +104,7 @@ var chatSubscribe = {
 		},
 		//显示用户列表
 		setUserList:function(){
-		     chatSubscribe.setAnalystList("analystsSelectId");
+		     chatSubscribe.setAnalystList("subscribeAnalystsSelectId");
 		},
 		setUserEdit:function(value){
 			chatSubscribe.setAnalystList("chatSubscribeEditAnalyst");
