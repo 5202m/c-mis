@@ -478,7 +478,7 @@ public class ChatUserController extends BaseController{
 		row.set("valueUser", userGroup.getValueUser()!=null&&userGroup.getValueUser()?"是":"否");
 		row.set("createDate", userGroup.getCreateDate());
 		row.set("groupName",groupName);
-		row.set("onlineStatus",(room.getOnlineStatus()==1?"在线":"下线"));
+		row.set("onlineStatus",(room.getOnlineStatus()!=null && 1==room.getOnlineStatus())?"在线":"下线");
 		row.set("onlineDate", room.getOnlineDate());
 		row.set("gagDate", DateUtil.formatDateWeekTime(room.getGagDate()));
 		row.set("gagTimes", userGroup.getGagTimes());
