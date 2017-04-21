@@ -16,8 +16,8 @@ var Syllabus = {
     	obsLabel:{
 			main_sz:{name:'大陆{0},房间:{1}',url:['sz.hhkcdn.com/live']},
 			main_hk:{name:'海外{0},房间:{1}',url:['hk.hhkcdn.com/live']},
-            other_sz:{name:'大陆(备用{0}),房间:{1}',url:['sz.vpcdn.com/live','sz6.yocdn.com/live','ct1.phgsa.cn:1935/live']},
-			other_hk:{name:'海外(备用{0}),房间:{1}',url:['hk.vpcdn.com/live','h6.yocdn.com/live','ct.phgsa.cn:1935/live']}
+            other_sz:{name:'大陆(备用{0}),房间:{1}',url:['sz.vpcdn.com/live',/*'sz6.yocdn.com/live',*/'ct1.phgsa.cn:1935/live']},
+			other_hk:{name:'海外(备用{0}),房间:{1}',url:['hk.vpcdn.com/live',/*'h6.yocdn.com/live',*/'ct.phgsa.cn:1935/live']}
         },
     	studio:{
     		obsCode:["01","02","03","04","05","06"],
