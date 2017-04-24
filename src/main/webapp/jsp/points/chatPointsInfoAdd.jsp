@@ -14,7 +14,7 @@
       <tr>
         <th>手机号</th>
         <td id="chatPointsInfoAdd_userIdTd">
-        	<input type="text" name="userId" class="easyui-validatebox" data-options="required:true,validType:'mobile',missingMessage:'请输入客户手机号'">
+        	<input type="text" name="userId" class="easyui-validatebox" data-options="required:true,missingMessage:'请输入客户手机号'">
 		</td>
       </tr>
       <tr>

@@ -87,7 +87,7 @@ public class BoUser extends BaseUser{
      * 分析师标签
      */
     private String tag;
-    
+
     public String getIntroductionImgLink() {
 		return introductionImgLink;
 	}

@@ -144,7 +144,6 @@ public class ChatMessageController extends BaseController{
 	public void exportRecord(HttpServletRequest request, HttpServletResponse response,ChatMessage chatMessage){
 		try{
 			this.setComSearch(request,chatMessage);
-			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.CHAT_RECORDS_TEMPLATE_PATH)));
 			DataGrid dataGrid = new DataGrid();
 			dataGrid.setPage(0);
 			dataGrid.setRows(0);
@@ -161,6 +160,9 @@ public class ChatMessageController extends BaseController{
 			for(ChatClientGroup cg : clientGroups){
 				clientGroupMap.put(cg.getClientGroupId(), cg.getName());
 			}
+			String pwd=StringUtil.random(6);
+			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.CHAT_RECORDS_TEMPLATE_PATH)));
+            builder.getHSSFWorkbook().getSheetAt(0).protectSheet(pwd);
 			if(chatMessageList != null && chatMessageList.size() > 0){
 				DataRowSet dataSet = new DataRowSet();
 				for(ChatMessage cm : chatMessageList){
@@ -201,8 +203,10 @@ public class ChatMessageController extends BaseController{
 					row.set("status", cm.getStatus()==1?"通过":(cm.getStatus()==2?"拒绝":"等待审批"));//0、等待审批，1、通过 ；2、拒绝
 					row.set("valid", cm.getValid()==1?"正常":"删除");
 					toUser=cm.getToUser();
+					row.set("talkStyle", "公聊");
 					if(toUser!=null && StringUtils.isNotBlank(toUser.getUserId())){
 						toUserName=toUser.getNickname();
+						row.set("talkStyle", toUser.getTalkStyle()==1?"私聊":"@TA");
 					}
 					row.set("toUserName", toUserName);
 				}
@@ -211,7 +215,7 @@ public class ChatMessageController extends BaseController{
 				builder.put("rowSet",new DataRowSet());
 			}
 			builder.parse();
-			ExcelUtil.wrapExcelExportResponse("聊天记录", request, response);
+			String title=ExcelUtil.wrapExcelExportResponse("聊天记录", request, response);
 			builder.write(response.getOutputStream());
 			addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出聊天记录操作成功！", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT);
 		}catch(Exception e){

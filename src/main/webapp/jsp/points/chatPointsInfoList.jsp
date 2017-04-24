@@ -72,6 +72,8 @@
 			<spring:message code="common.buttons.refresh" />
 			<!-- 刷新 -->
 		</a>
+		<a class="easyui-linkbutton export" data-options="plain:true,iconCls:'ope-export',disabled:false"  onclick="chatPointsInfo.exportRecordPage('collect');">导出汇总记录</a>
+		<a class="easyui-linkbutton export" data-options="plain:true,iconCls:'ope-export',disabled:false"  onclick="chatPointsInfo.exportRecordPage('details');">导出明细记录</a>
 	</div>
 
 	<!-- datagrid-操作按钮 -->
@@ -117,5 +119,22 @@
 	<div id="chatPointsInfoView_datagrid_rowOperation" style="display: none;">
 		<input type="hidden" value="">
 		<a class="easyui-linkbutton edit" data-options="plain:true,iconCls:'ope-edit',disabled:false" onclick="chatPointsInfo.reversal(this)">冲正</a>
+	</div>
+
+	<!-- 积分汇总总条数分页 -->
+	<div id="chatPointsExportPageView_win" class="easyui-dialog" closed="true">
+		<div data-options="region:'center'" id="chatPointsExportPageView_panel">
+			<div>
+				<div data-options="region:'center',title:'积分流水分页导出',iconCls:'pag-list'">
+					<div id="chatPointsExportPageView_datagrid" style="display: none"></div>
+					<div id="chatPointsExportPageView_page" class="datagrid-pager pagination"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- exportpage_view_datagrid-操作按钮 -->
+	<div id="chatPointsExportPageView_datagrid_rowOperation" style="display: none;">
+		<input type="hidden" value="" />
+		<a class="easyui-linkbutton edit" data-options="plain:true,iconCls:'ope-edit',disabled:false" onclick="chatPointsInfo.exportRecord(this);">导出</a>
 	</div>
 </div>

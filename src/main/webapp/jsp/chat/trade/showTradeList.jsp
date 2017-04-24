@@ -81,7 +81,26 @@
   <div id="show_trade_datagrid_rowOperation">
 	  <a class="easyui-linkbutton edit" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.edit(this.id)"><spring:message code="common.buttons.edit" /><!-- 修改 --></a>
 	  <a class="easyui-linkbutton" data-options="plain:true,iconCls:'ope-view',disabled:false" onclick="chatShowTrade.view(this.id)"><spring:message code="common.buttons.view" /><!-- 查看 --></a>
+      <a class="easyui-linkbutton review" data-options="plain:true,iconCls:'ope-view',disabled:false" onclick="chatShowTrade.openViewComment(this.id)">管理评论</a>
 	  <a class="easyui-linkbutton delete" data-options="plain:true,iconCls:'ope-remove',disabled:false"  onclick="chatShowTrade.del(this.id)"><spring:message code="common.buttons.delete" /><!-- 删除 --></a>
   </div>
-  
+
+    <!-- 评论数据 -->
+    <div id="showTradeCommentView_win" class="easyui-dialog" closed="true">
+        <div data-options="region:'center'" id="showTradeCommentView_panel">
+            <input type="hidden" name="sid" value="" />
+            <div>
+                <div data-options="region:'center',title:'评论列表',iconCls:'pag-list'">
+                    <div id="showTradeComment_datagrid" style="display: none"></div>
+                    <div id="showTradeComment_page" class="datagrid-pager pagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- showTradeCommentView_datagrid-操作按钮 -->
+    <div id="showTradeComment_datagrid_rowOperation" style="display: none;">
+        <input type="hidden" value="" />
+        <a class="easyui-linkbutton delete" data-options="plain:true,iconCls:'ope-remove',disabled:false" onclick="chatShowTrade.delComment(this);">删除</a>
+    </div>
 </div>

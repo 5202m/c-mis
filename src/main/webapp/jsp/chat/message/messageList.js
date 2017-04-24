@@ -251,6 +251,7 @@ var chatMessage = {
 			alert("目前导出数据暂支持发布时间段为一个月，请检查发布时间段！");
 			return;
 		}
+		loc_params['hasOther'] = true;
 		var path = basePath+ '/chatMessageController/exportRecord.do?'+$.param(loc_params);
 		window.location.href = path;
 	}

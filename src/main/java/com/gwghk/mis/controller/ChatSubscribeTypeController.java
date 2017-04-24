@@ -9,6 +9,7 @@
  */
 package com.gwghk.mis.controller;
 
+import com.gwghk.mis.util.PropertiesUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -343,15 +344,19 @@ private static final Logger logger = LoggerFactory.getLogger(ChatSubscribeTypeCo
        	List<TreeBean> treeList=new ArrayList<TreeBean>();
        	TreeBean tbean=null;
        	List<BoUser> allAnalysts = userService.getUserListByRole(getSystemFlag(),"analyst");
-       	String[] nameArr={"梁育诗","罗恩•威廉","黃湛铭","赵相宾","周游","刘敏","陈杭霞","金道研究院"};
-    	BoUser user=null;
-    	for(int i=0;i<nameArr.length;i++){
-    		user=new BoUser();
-    		user.setUserNo(nameArr[i]);
-    	    user.setUserName(nameArr[i]);
-    	    user.setPosition("金道研究院");
-    		allAnalysts.add(user);
-    	}
+				String hasOther=request.getParameter("hasOther");
+				String apiUrl = PropertiesUtil.getInstance().getProperty("pmApiUrl");
+				if(StringUtils.isNotBlank(hasOther) && !apiUrl.contains("hx9999.com")) {
+					String[] nameArr = {"梁育诗", "罗恩•威廉", "黃湛铭", "赵相宾", "周游", "刘敏", "陈杭霞", "金道研究院"};
+					BoUser user = null;
+					for (int i = 0; i < nameArr.length; i++) {
+						user = new BoUser();
+						user.setUserNo(nameArr[i]);
+						user.setUserName(nameArr[i]);
+						user.setPosition("金道研究院");
+						allAnalysts.add(user);
+					}
+				}
        	analysts=StringUtils.isBlank(analysts)?"":(",".concat(analysts).concat(","));
         if(allAnalysts!=null && allAnalysts.size()>0){
            for(BoUser row:allAnalysts){

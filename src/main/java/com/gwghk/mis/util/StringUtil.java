@@ -301,7 +301,7 @@ public class StringUtil {
 	   }
 	   return result.toString();
    }
-   
+
    /**
     * 提取分割匹配正则
     * @param val
@@ -310,4 +310,22 @@ public class StringUtil {
    public static String getSplitMatchReg(String val){
      return "/^"+val+"|,"+val+"$|,"+val+",/g";
    }
+
+	/**
+	 * 根据手机号返回userId
+	 * @param mobilePhone
+	 * @return
+	 */
+	public static String formatMobileToUserId(String mobilePhone){
+		if(mobilePhone == null){
+			return "";
+		}
+		String[] str = new String[]{"p", "x", "i", "u", "d", "c", "v", "s", "n", "f"};
+		String userId = "";
+		for(int i = 0,length = mobilePhone.length(); i < length; i++){
+			userId = userId.concat(str[Integer.parseInt(mobilePhone.substring(i, i+1))]);
+		}
+		return userId;
+	}
+
 }

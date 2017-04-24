@@ -119,6 +119,7 @@ var chatVisitor = {
 	 */
 	exportRecord : function(){
 		var loc_params = $('#'+chatVisitor.gridId).datagrid('options').queryParams;
+		loc_params['hasOther'] = true;
 		var path = basePath+ '/chatVisitorController/exportRecord.do?'+$.param(loc_params);
 		window.location.href = path;
 	}

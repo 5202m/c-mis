@@ -11,49 +11,49 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date   2015年4月1日
  */
 @Document
-public class ChatGroup extends BaseModelExt{
-	
+public class ChatGroup extends BaseModelExt {
+
 	/**
 	 * 组别编码
 	 */
 	@Id
 	private String id;
-	
+
 	/**
 	 * 组类别
 	 */
 	private String groupType;
-		
+
 	/**
 	 * 组别名
 	 */
 	private String name;
-	
+
 	/**
 	 * 内容状态：0 、禁用 ；1、启动; 2、授权访问
 	 */
 	private Integer status;
-	
+
 	/**
 	 * 聊天规则
 	 */
 	private List<ChatGroupRule> chatRules;
-	
+
 	/**
 	 * 关联tokenAccess的id
 	 */
 	private String tokenAccessId;
-	
+
 	/**
-     * 是否删除
-     */
+	 * 是否删除
+	 */
 	private Integer valid;
-	
+
 	/**
 	 * 序列
 	 */
 	private Integer sequence;
-	
+
 	/**
 	 * 房间等级
 	 */
@@ -67,57 +67,73 @@ public class ChatGroup extends BaseModelExt{
 	 * 私聊角色（对应pm_chat的constant中roleUserType值),多个逗号分隔
 	 */
 	private String whisperRoles;
-	
+
 	/**
 	 * 聊天规则id(用于数据传输）
 	 */
 	private String chatRuleIds;
-	
+
 	/**
 	 * 聊天室路径(用于页面显示）
 	 */
 	private String chatUrl;
-	
+
 	/**
 	 * 开放时间，保存格式{beginDate:yyyy-MM-dd,endDate:yyyy-MM-dd,weekTime:[{week:0..6,beginTime:'HH:mm:ss',endTime:'HH:mm:ss'}]}
 	 */
 	private String openDate;
-	
-	/** 房间最大人数 */
+
+	/**
+	 * 房间最大人数
+	 */
 	private Integer maxCount;
 
-	/** 授权用户列表 */
+	/**
+	 * 授权用户列表
+	 */
 	private String[] authUsers;
-	
-	/** 默认分析师（用户信息） */
+
+	/**
+	 * 默认分析师（用户信息）
+	 */
 	private BoUser defaultAnalyst;
-	
+
+	/**
+	 * 默认客服（用户信息）
+	 */
+	private BoUser defaultCS;
+
 	/**
 	 * 客户组（对应的客户组,多个逗号分隔）
 	 */
 	private String clientGroup;
-	
+
 	/**
 	 * 房间备注/介绍
 	 */
 	private String remark;
-	
+
 	/**
 	 * 房间默认皮肤
 	 */
 	private String defTemplate;
-	
+
 
 	/**
 	 * 培训用户
 	 */
 	private List<TraninClient> traninClient;
-	
+
+	/**
+	 * 培训班配置
+	 */
+	private String trainConfig;
+
 	/**
 	 * 房间类别（普通，vip，培训班）
 	 */
 	private String roomType;
-	
+
 	/**
 	 * 房间积分
 	 */
@@ -126,6 +142,12 @@ public class ChatGroup extends BaseModelExt{
 	 * 房间简介 在培训班中显示
 	 */
 	private String label;
+
+	/**
+	 * 房间logo
+	 */
+	private String logo;
+
 	public String getDefTemplate() {
 		return defTemplate;
 	}
@@ -173,7 +195,7 @@ public class ChatGroup extends BaseModelExt{
 	public void setValid(Integer valid) {
 		this.valid = valid;
 	}
-	
+
 	public List<ChatGroupRule> getChatRules() {
 		return chatRules;
 	}
@@ -197,7 +219,7 @@ public class ChatGroup extends BaseModelExt{
 	public void setChatUrl(String chatUrl) {
 		this.chatUrl = chatUrl;
 	}
-	
+
 	public String getOpenDate() {
 		return openDate;
 	}
@@ -205,7 +227,7 @@ public class ChatGroup extends BaseModelExt{
 	public void setOpenDate(String openDate) {
 		this.openDate = openDate;
 	}
-	
+
 	public Integer getMaxCount() {
 		return maxCount;
 	}
@@ -213,7 +235,7 @@ public class ChatGroup extends BaseModelExt{
 	public void setMaxCount(Integer maxCount) {
 		this.maxCount = maxCount;
 	}
-	
+
 	/**
 	 * @return the authUsers
 	 */
@@ -306,6 +328,14 @@ public class ChatGroup extends BaseModelExt{
 		this.traninClient = traninClient;
 	}
 
+	public String getTrainConfig() {
+		return trainConfig;
+	}
+
+	public void setTrainConfig(String trainConfig) {
+		this.trainConfig = trainConfig;
+	}
+
 	public String getRoomType() {
 		return roomType;
 	}
@@ -322,11 +352,27 @@ public class ChatGroup extends BaseModelExt{
 		this.point = point;
 	}
 
-    public String getLabel() {
-        return label;
-    }
+	public String getLabel() {
+		return label;
+	}
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public BoUser getDefaultCS() {
+		return defaultCS;
+	}
+
+	public void setDefaultCS(BoUser defaultCS) {
+		this.defaultCS = defaultCS;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
 }

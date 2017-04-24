@@ -11,6 +11,7 @@ var chatShowTrade = {
 		this.initGrid();
 		this.setEvent();
 		this.setUserList();
+		this.setCommentEventView();
 	},
 	/**
 	 * 功能：dataGrid初始化
@@ -287,8 +288,8 @@ var chatShowTrade = {
 		$('#'+id).combogrid({
 		    idField:'userNo',
 		    textField:'userName',
-		    url:basePath+'/userController/getAnalystList.do',
 				panelWidth: 200,
+		    url:basePath+'/userController/getAnalystList.do?hasOther=true',
 		    columns:[[
 		        {field : 'userNo', hidden:true},
 		        {field : 'author_Key_id',hidden:true,formatter : function(value, rowData, rowIndex) {
@@ -346,6 +347,130 @@ var chatShowTrade = {
 			}
 		});
 	},
+
+	/**
+	 * 设置评论列表显示
+	 */
+	setCommentEventView : function(){
+		$("#showTradeComment_datagrid").datagrid({
+			fit : false,
+			fitColumns : true,
+			idField : "id",
+			columns : [[
+				{title : $.i18n.prop("common.operate"), field:'op', formatter: function(value, rowData, rowIndex){
+					$("#showTradeComment_datagrid_rowOperation input").val(rowIndex);
+					return $("#showTradeComment_datagrid_rowOperation").html();
+				}},
+				{title : "序号",field : 'id'},
+				{title : "昵称",field : 'userName'},
+				{title : "评论内容",field: 'content'},
+				{title : "评论时间",field: 'dateTime', formatter : function(value, rowData, rowIndex) {
+					return rowData.dateTime ? timeObjectUtil.longMsTimeConvertToDateTime(value) : '';
+				}},
+			]]
+		});
+
+		$("#showTradeComment_page").pagination({
+			pageSize : 15,
+			pageList : [15, 30, 50, 100]
+		});
+	},
+	/**
+	 * 打开点评
+	 * @param item
+	 */
+	openViewComment:function(recordId){
+		var url = formatUrl(basePath + '/chatShowTradeController/review.do');
+		goldOfficeUtils.ajax({
+			url : url,
+			data : {
+				sid : recordId
+			},
+			success: function(data) {
+				if (data) {
+					var loc_dataInfo = data.data;
+					var user = data.user;
+					goldOfficeUtils.openSimpleDialog({
+						dialogId : "showTradeCommentView_win",
+						title : '评论数据',
+						width : 600,
+						height : 400,
+						onOpen : function(){
+							chatShowTrade.viewComments(loc_dataInfo);
+						},
+						buttons	 : [
+							{
+								text : '关闭',
+								iconCls : "ope-close",
+								handler : function() {
+									$("#showTradeCommentView_win").dialog("close");
+								}
+							}]
+					});
+				}else{
+					$.messager.alert($.i18n.prop("common.operate.tips"),'获取评论数据信息失败!','error');
+				}
+			}
+		});
+	},
+	/**
+	 * 显示点评数据
+	 * @param data
+	 */
+	viewComments : function(data){
+		$('#showTradeCommentView_panel input[name="sid"]').val(data.id);
+
+		//点评数据
+		var comments = [];
+		if(isValid(data.comments) && data.comments.length>0) {
+			$.each(data.comments, function (i, row) {
+				if (row.valid == 1) {
+					comments.push(row);
+				}
+			});
+			comments = comments ? comments.reverse() : [];
+		}
+
+		$("#showTradeComment_datagrid").datagrid("loadData", comments.slice(0, 15));
+		$("#showTradeComment_page").pagination('refresh', {
+			total : comments.length,
+			onSelectPage : function(pageNo, pageSize) {
+				var start = (pageNo - 1) * pageSize;
+				var end = start + pageSize;
+				$("#showTradeComment_page").datagrid("loadData", comments.slice(start, end));
+			}
+		});
+	},
+	/**
+	 * 删除点评
+	 * @param item
+	 */
+	delComment : function(item){
+		var rowIndex = $(item).siblings("input").val();
+		var row = $('#showTradeComment_datagrid').datagrid('getData').rows[rowIndex];
+		var url = formatUrl(basePath + '/chatShowTradeController/delComment.do');
+		var message = "您确定要删除记录吗?";
+		var dataId = $('#showTradeCommentView_panel input[name="sid"]').val();
+		$.messager.confirm("操作提示", message , function(r) {
+			if (r) {
+				goldOfficeUtils.ajax({
+					url : url,
+					data : {
+						sid : dataId,
+						cid : row.id
+					},
+					success: function(data) {
+						if (data.success) {
+							$('#showTradeComment_datagrid').datagrid('deleteRow', rowIndex);
+							$.messager.alert($.i18n.prop("common.operate.tips"),'删除成功!','info');
+						}else{
+							$.messager.alert($.i18n.prop("common.operate.tips"),'删除失败，原因：'+data.msg,'error');
+						}
+					}
+				});
+			}
+		});
+	}
 };
 		
 //初始化

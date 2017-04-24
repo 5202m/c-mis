@@ -175,4 +175,19 @@ public class ChatShowTradeService {
     return api.setCode(isSuccess ? ResultCode.OK : ResultCode.FAIL);
   }
 
+	/**
+	 * 删除评论
+	 * @param sid
+	 * @param cid
+	 * @return
+	 */
+	public ApiResult delComment(String sid, String cid){
+		ApiResult result=new ApiResult();
+		if(chatShowTradeDao.delComment(sid, cid)){
+			result.setCode(ResultCode.OK);
+		}else{
+			result.setCode(ResultCode.FAIL);
+		}
+		return result;
+	}
 }

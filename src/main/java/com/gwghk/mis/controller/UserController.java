@@ -319,7 +319,8 @@ public class UserController extends BaseController{
     public String getAnalystList(HttpServletRequest request,ModelMap map) throws Exception {
     	List<BoUser> allAnalysts = userService.getUserListByRole(getSystemFlag(),"analyst");
     	String hasOther=request.getParameter("hasOther");
-    	if(StringUtils.isNotBlank(hasOther) && !request.getServerName().contains("hx9999.com")){
+			String apiUrl = PropertiesUtil.getInstance().getProperty("pmApiUrl");
+    	if(StringUtils.isNotBlank(hasOther) && !apiUrl.contains("hx9999.com")){
     		String path=PropertiesUtil.getInstance().getProperty("pmfilesDomain")+"/upload/pic/header/chat/201508";
         	String[] nameArr={"梁育诗","罗恩•威廉","黃湛铭","赵相宾","周游","刘敏","陈杭霞","金道研究院"};
         	BoUser user=null;

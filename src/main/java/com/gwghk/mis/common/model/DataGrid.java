@@ -75,7 +75,7 @@ public class DataGrid {
 		if(ContextHolderUtils.getRequest()!=null && ResourceUtil.getParameter("rows")!=null){
 			return rows;
 		}
-		return 10000;
+		return 100000;
 	}
 
 	public void setRows(int rows) {

@@ -318,6 +318,7 @@ var chatUser = {
 		groupType = '&groupType='+( groupType == undefined ? '' : groupType);
 		
 		var loc_params = $('#'+chatUser.gridId).datagrid('options').queryParams;
+		loc_params['hasOther'] = true;
 		var path = basePath+ '/chatUserController/exportRecord.do?'+$.param(loc_params) + groupType;
 		window.location.href = path;
 	},

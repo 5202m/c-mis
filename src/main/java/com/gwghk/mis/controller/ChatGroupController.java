@@ -532,7 +532,6 @@ public class ChatGroupController extends BaseController{
 
     /**
      * 跳转到客户导入页面
-     * @param chatGroupId
      * @param map
      * @return
      * @throws Exception
@@ -563,20 +562,18 @@ public class ChatGroupController extends BaseController{
 	@RequestMapping(value = "/chatGroupController/{chatGroupId}/exportUnAuthClient", method = RequestMethod.GET)
 	public void exportUnAuthClient(HttpServletRequest request, HttpServletResponse response,@PathVariable  String chatGroupId){
 		try{
-			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.ROOM_UN_AUTH_CLINET_DATA)));
+			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.ROOM_TRAIN_CLINET_DATA)));
 			//
 			ChatGroup chatGroup = chatGroupService.getChatGroupById(chatGroupId);
 			List<TraninClient>  TraninClientList = chatGroup.getTraninClient();
-			List<String> idList = new ArrayList<>();
+			Map<String, TraninClient> traninClientMap = new HashMap<String, TraninClient>();
 			//获取未授权用户id列表
 			if(null != TraninClientList){
 				for (TraninClient traninClient : TraninClientList) {
-					if(traninClient.getIsAuth() == 0){
-						idList.add(traninClient.getClientId());
-					}
+					traninClientMap.put(traninClient.getClientId(), traninClient);
 				}
 			}
-			String[] ids = idList.toArray(new String[]{});
+			String[] ids = traninClientMap.keySet().toArray(new String[0]);
 			//根据用户id，对应组别查询
 			List<Member> userList = memberService.getMemberByUserIdGroupType(getSystemFlag(),chatGroup.getGroupType(),ids);
 			DataRowSet dataSet = new DataRowSet();
@@ -589,13 +586,18 @@ public class ChatGroupController extends BaseController{
 					row.set("nickName",chatUserGroup.getNickname());
 					row.set("mobilePhone",member.getMobilePhone());
 					row.set("accountNo",chatUserGroup.getAccountNo());
+					TraninClient traninClient = traninClientMap.get(chatUserGroup.getUserId());
+					if(traninClient != null){
+						row.set("isAuth", traninClient.getIsAuth() == 1 ? "通过" : "未通过");
+						row.set("dateTime", traninClient.getDateTime() == null ? "" : DateUtil.formatDate(traninClient.getDateTime(), "yyyy-MM-dd HH:mm:ss"));
+					}
 				}catch (Exception e){
 					logger.error("<--method:exportUnAuthClient()|" + e + ",ErrorMsg:" + e.toString());
 				}
 			}
 			builder.put("dataSet",dataSet);
 			builder.parse();
-			ExcelUtil.wrapExcelExportResponse("未授权用户", request, response);
+			ExcelUtil.wrapExcelExportResponse("报名用户", request, response);
 			builder.write(response.getOutputStream());
 		}catch (Exception e){
 			addLog(e.toString(), WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);

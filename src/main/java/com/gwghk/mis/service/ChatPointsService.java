@@ -46,7 +46,7 @@ public class ChatPointsService {
 	 * @param params
 	 * @return
 	 */
-	public Page<ChatPoints> getChatPoints(DetachedCriteria<ChatPoints> dCriteria, Map<String, Object> params) {
+	public Page<ChatPoints> getChatPoints(DetachedCriteria<ChatPoints> dCriteria, Map<String, Object> params, boolean isExport) {
 		ChatPoints chatPoints = dCriteria.getSearchModel();
 		Query query = new Query();
 		Criteria criteria = Criteria.where("isDeleted").is(0);
@@ -71,29 +71,30 @@ public class ChatPointsService {
 			}
 			
 			Criteria journalCriteria = Criteria.where("isDeleted").is(0);
-			
-			List<ChatPointsJournal> journals = chatPoints.getJournal();
-			if(journals!= null && journals.size() == 1){
-				ChatPointsJournal journal = journals.get(0);
-				Object type = params.get("type");
-				if(StringUtils.isNotBlank(journal.getItem())){
-					journalCriteria.and("item").is(journal.getItem());
-				}else if(type != null && "".equals(type) == false){
-					journalCriteria.and("item").regex(type + ".*");
+
+				List<ChatPointsJournal> journals = chatPoints.getJournal();
+				if (journals != null && journals.size() == 1) {
+					ChatPointsJournal journal = journals.get(0);
+					Object type = params.get("type");
+					if (StringUtils.isNotBlank(journal.getItem())) {
+						journalCriteria.and("item").is(journal.getItem());
+					} else if (type != null && "".equals(type) == false) {
+						journalCriteria.and("item").regex(type + ".*");
+					}
 				}
-			}
-			Object timeStart = params.get("timeStart");
-			Object timeEnd = params.get("timeEnd");
-			if(timeStart != null || timeEnd != null){
-				journalCriteria = journalCriteria.and("date");
-				if(timeStart != null){
-					journalCriteria.gte(timeStart);
+				Object timeStart = params.get("timeStart");
+				Object timeEnd = params.get("timeEnd");
+				if (timeStart != null || timeEnd != null) {
+					journalCriteria = journalCriteria.and("date");
+					if (timeStart != null) {
+						journalCriteria.gte(timeStart);
+					}
+					if (timeEnd != null) {
+						journalCriteria.lte(timeEnd);
+					}
 				}
-				if(timeEnd != null){
-					journalCriteria.lte(timeEnd);
-				}
-			}
-			criteria.and("journal").elemMatch(journalCriteria);
+				criteria.and("journal").elemMatch(journalCriteria);
+
 		}
 		Field field = query.fields();
 		field.include("_id");
@@ -101,7 +102,11 @@ public class ChatPointsService {
 		field.include("userId");
 		field.include("pointsGlobal");
 		field.include("points");
-		field.include("journal.$");
+		if(!isExport) {
+			field.include("journal.$");
+		}else{
+			field.include("journal");
+		}
 		
 		query.addCriteria(criteria);
 		

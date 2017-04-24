@@ -1,5 +1,6 @@
 package com.gwghk.mis.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -317,4 +318,51 @@ public class ChatShowTradeController extends BaseController{
     	}
   		return j;
     }
+
+	/**
+	 * 跳转到评论页面
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/chatShowTradeController/review",method=RequestMethod.POST,produces = "plain/text; charset=UTF-8")
+	@ActionVerification(key="review")
+	@ResponseBody
+	public String preReview(HttpServletRequest request, ModelMap map){
+		String dataId = request.getParameter("sid");
+		if(StringUtils.isEmpty(dataId)){
+			return null;
+		}
+		ChatShowTrade data = chatShowTradeService.getTradeById(dataId);
+		map.put("data", data);
+		return JSONArray.toJSONString(map);
+	}
+
+	/**
+	 * 删除评论
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/chatShowTradeController/delComment",method=RequestMethod.POST)
+	@ActionVerification(key="delete")
+	@ResponseBody
+	public AjaxJson delComment(HttpServletRequest request){
+		String sid = request.getParameter("sid");
+		String cid = request.getParameter("cid");
+		AjaxJson j = new AjaxJson();
+		ApiResult result = chatShowTradeService.delComment(sid, cid);
+		if(result.isOk()){
+			j.setSuccess(true);
+			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除晒单评论成功：" + sid + "!";
+			logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			logger.info("<<delete()|"+message);
+		}else{
+			j.setSuccess(false);
+			j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
+			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除晒单评论失败：" + sid + "!";
+			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			logger.error("<<delete()|"+message+",ErrorMsg:"+result.toString());
+		}
+		return j;
+	}
+
 }
