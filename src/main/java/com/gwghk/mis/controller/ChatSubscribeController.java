@@ -1,5 +1,7 @@
 package com.gwghk.mis.controller;
 
+import com.gwghk.mis.model.BoUser;
+import com.gwghk.mis.model.ChatSubscribeType;
 import com.gwghk.mis.model.ChatUserGroup;
 import com.gwghk.mis.model.Member;
 import com.gwghk.mis.service.MemberService;
@@ -330,7 +332,7 @@ public class ChatSubscribeController extends BaseController {
 			dataGrid.setOrder("desc");
 			Page<ChatSubscribe> page = chatSubscribeService.getSubscribePage(this.createDetachedCriteria(dataGrid, chatSubscribe));
 			List<ChatSubscribe> list = page.getCollection();
-			List<BoDict> boDictList = ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE);
+			List<BoDict> boDictList = ResourceUtil.getSubDictListByParentCode(getSystemFlag(), dict.DICT_CHAT_GROUP_TYPE);
 			DataGrid subscribeTypedataGrid = new DataGrid();
 			subscribeTypedataGrid.setPage(0);
 			subscribeTypedataGrid.setRows(0);
@@ -425,7 +427,7 @@ public class ChatSubscribeController extends BaseController {
 			builder.parse();
 			ExcelUtil.wrapExcelExportResponse("客户订阅服务列表", request, response);
 			builder.write(response.getOutputStream());
-			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户订阅服务操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户订阅服务操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT);
 		} catch (Exception e) {
 			logger.error("<<method:exportRecord()|chat Subscribe>>", e);
 		}
@@ -436,7 +438,7 @@ public class ChatSubscribeController extends BaseController {
 	 * @return
 	 */
 	private List<BoUser> getAnalystsList(boolean hasOther){
-		List<BoUser> allAnalysts = userService.getUserListByRole("analyst");
+		List<BoUser> allAnalysts = userService.getUserListByRole(getSystemFlag(),"analyst");
 		if(hasOther) {
 			String[] nameArr = {"梁育诗", "罗恩•威廉", "黃湛铭", "赵相宾", "周游", "刘敏", "陈杭霞", "金道研究院"};
 			BoUser user = null;

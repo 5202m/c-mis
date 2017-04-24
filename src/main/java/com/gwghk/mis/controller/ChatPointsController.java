@@ -10,6 +10,7 @@ import com.gwghk.mis.model.ChatUserGroup;
 import com.gwghk.mis.model.Member;
 import com.gwghk.mis.service.ChatPointsConfigService;
 import com.gwghk.mis.service.MemberService;
+import com.gwghk.mis.util.BrowserUtils;
 import com.gwghk.mis.util.ExcelUtil;
 import com.gwghk.mis.util.StringUtil;
 import com.sdk.orm.DataRowSet;
@@ -369,7 +370,7 @@ public class ChatPointsController extends BaseController{
 			dataGrid.setOrder("desc");
 			Page<ChatPoints> page = chatPointsService.getChatPoints(this.createDetachedCriteria(dataGrid, chatPoints), params, true);
 			List<ChatPoints> list = page.getCollection();
-			List<BoDict> boDictList = ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE);
+			List<BoDict> boDictList = ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE);
 			DataGrid pointsConfigdataGrid = new DataGrid();
 			pointsConfigdataGrid.setPage(0);
 			pointsConfigdataGrid.setRows(0);
@@ -423,7 +424,7 @@ public class ChatPointsController extends BaseController{
 			builder.parse();
 			ExcelUtil.wrapExcelExportResponse("客户积分汇总"+start+"~"+end+"条", request, response);
 			builder.write(response.getOutputStream());
-			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户积分汇总"+start+"~"+end+"条操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户积分汇总"+start+"~"+end+"条操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT);
 		} catch (Exception e) {
 			logger.error("<<method:exportPointsRecord()|chat Points exportPointsRecord>>", e);
 		}
@@ -472,7 +473,7 @@ public class ChatPointsController extends BaseController{
 			dataGrid.setOrder("desc");
 			Page<ChatPoints> page = chatPointsService.getChatPoints(this.createDetachedCriteria(dataGrid, chatPoints), params, true);
 			List<ChatPoints> list = page.getCollection();
-			List<BoDict> boDictList = ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE);
+			List<BoDict> boDictList = ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE);
 			DataGrid pointsConfigdataGrid = new DataGrid();
 			pointsConfigdataGrid.setPage(0);
 			pointsConfigdataGrid.setRows(0);
@@ -563,7 +564,7 @@ public class ChatPointsController extends BaseController{
 			builder.parse();
 			ExcelUtil.wrapExcelExportResponse("客户积分明细"+start+"~"+end+"条", request, response);
 			builder.write(response.getOutputStream());
-			logService.addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户积分明细"+start+"~"+end+"条操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出客户积分明细"+start+"~"+end+"条操作成功,excel密码【"+pwd+"】", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT);
 		} catch (Exception e) {
 			logger.error("<<method:exportPointsDetailsRecord()|chat Points exportPointsDetailsRecord>>", e);
 		}

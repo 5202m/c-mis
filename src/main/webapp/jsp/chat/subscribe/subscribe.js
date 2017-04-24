@@ -233,6 +233,7 @@ var chatSubscribe = {
 		 */
 		setAnalystList:function(id, analyst){
 			$('#'+id).combotree({
+				panelWidth:200,
 				data:getJson(basePath+"/chatSubscribeTypeController/getMultipleCkAnalystList.do",{analysts:analyst, hasOther: true})
 			});
 		},

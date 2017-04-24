@@ -33,7 +33,7 @@ public class ChatPraiseService {
    * @param dCriteria
    * @return
    */
-  public Page<ChatPraise> getPraisePage(DetachedCriteria<ChatPraise> dCriteria){
+  public Page<ChatPraise> getPraisePage(String systemCategory, DetachedCriteria<ChatPraise> dCriteria){
     Query query=new Query();
     ChatPraise chatPraise = dCriteria.getSearchModel();
     Criteria criteria = Criteria.where("praiseType").is("user");
@@ -41,7 +41,7 @@ public class ChatPraiseService {
       if(StringUtils.isNotBlank(chatPraise.getPraiseId())){
         criteria.and("praiseId").in(chatPraise.getPraiseId().split(","));
       } else {
-        List<BoUser> allAnalysts = userService.getUserListByRole("analyst");
+        List<BoUser> allAnalysts = userService.getUserListByRole(systemCategory, "analyst");
         String analysts = "梁育诗,罗恩•威廉,黃湛铭,赵相宾,周游,刘敏,陈杭霞,金道研究院";
         if(allAnalysts != null && allAnalysts.size() > 0) {
           for (BoUser row : allAnalysts) {

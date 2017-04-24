@@ -60,7 +60,7 @@ public class ChatPraiseController extends BaseController{
   @RequestMapping(value = "/chatPraiseController/index", method = RequestMethod.GET)
   public String index(HttpServletRequest request,ModelMap map){
     DictConstant dict=DictConstant.getInstance();
-    map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(dict.DICT_CHAT_GROUP_TYPE)));
+    map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
     return "chat/chatPraiseList";
   }
 
@@ -106,7 +106,7 @@ public class ChatPraiseController extends BaseController{
     if(StringUtils.isNotBlank(fromPlatform)){
       chatPraise.setFromPlatform(fromPlatform);
     }
-    Page<ChatPraise> page = chatPraiseService.getPraisePage(this.createDetachedCriteria(dataGrid, chatPraise));
+    Page<ChatPraise> page = chatPraiseService.getPraisePage(getSystemFlag(), this.createDetachedCriteria(dataGrid, chatPraise));
     Map<String, Object> result = new HashMap<String, Object>();
     result.put("total",null == page ? 0  : page.getTotalSize());
     result.put("rows", null == page ? new ArrayList<ChatPraise>() : page.getCollection());
@@ -143,15 +143,13 @@ public class ChatPraiseController extends BaseController{
       j.setSuccess(true);
       String message = " 用户: " + userParam.getUserNo() + " "+ DateUtil
           .getDateSecondFormat(new Date()) + " 成功修改点赞："+userParam.getUserNo();
-      logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
-          , BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+      addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
       logger.info("<--method:update()|"+message);
     }else{
       j.setSuccess(false);
       j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
       String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改点赞："+userParam.getUserNo()+" 失败";
-      logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
-          ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+      addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
       logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
     }
     return j;
