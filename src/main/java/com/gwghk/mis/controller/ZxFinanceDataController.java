@@ -321,6 +321,7 @@ public class ZxFinanceDataController extends BaseController{
 		comments.setUserName(userName);
 		comments.setValid(1);
 		comments.setComment(comment);
+		comments.setSystemCategory(getSystemFlag());
 
 		result = dataService.saveComments(data, comments);
 		if(result.isOk()){

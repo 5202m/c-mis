@@ -40,6 +40,11 @@ public class ZxFinanceDataComment extends BaseModel {
      */
     private Integer valid;
 
+    /**
+     * 所属事业部
+     */
+    private String systemCategory;
+
     public String getId() {
         return id;
     }
@@ -88,4 +93,11 @@ public class ZxFinanceDataComment extends BaseModel {
         this.valid = valid;
     }
 
+    public String getSystemCategory() {
+        return systemCategory;
+    }
+
+    public void setSystemCategory(String systemCategory) {
+        this.systemCategory = systemCategory;
+    }
 }
