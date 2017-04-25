@@ -107,6 +107,11 @@ public class Article extends BaseModel{
 	 */
 	private Integer point;
 
+	/**
+	 * 系统标识
+	 */
+	private String systemCategory;
+
 	public String getId() {
 		return id;
 	}
@@ -262,6 +267,12 @@ public class Article extends BaseModel{
 	public void setPoint(Integer point) {
 		this.point = point;
 	}
-	
-	
+
+	public String getSystemCategory() {
+		return systemCategory;
+	}
+
+	public void setSystemCategory(String systemCategory) {
+		this.systemCategory = systemCategory;
+	}
 }

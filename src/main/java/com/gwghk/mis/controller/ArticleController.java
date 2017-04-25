@@ -99,6 +99,7 @@ public class ArticleController extends BaseController{
     	 String publishEndDateStr=request.getParameter("publishEndDateStr");
     	 article.setPublishStartDate(DateUtil.parseDateFormat(publishStartDateStr));
     	 article.setPublishEndDate(DateUtil.parseDateFormat(publishEndDateStr));
+			 article.setSystemCategory(getSystemFlag());
     	 List<ArticleDetail> detailList=new ArrayList<ArticleDetail>();
     	 ArticleDetail detail=new ArticleDetail();
     	 ArticleAuthor author = new ArticleAuthor();
@@ -140,7 +141,6 @@ public class ArticleController extends BaseController{
     /**
      * 设置栏目名称
      * @param categoryId
-     * @param map
      * @return
      */
     private String getCategoryTxt(String categoryId){
@@ -179,6 +179,7 @@ public class ArticleController extends BaseController{
     @ActionVerification(key="add")
     public AjaxJson create(HttpServletRequest request,HttpServletResponse response,Article article){
     	BoUser userParam = ResourceUtil.getSessionUser();
+			article.setSystemCategory(getSystemFlag());
     	setBaseInfo(article,request,false);
     	AjaxJson j = new AjaxJson();
     	try{
@@ -235,6 +236,7 @@ public class ArticleController extends BaseController{
     @ActionVerification(key="edit")
     public AjaxJson update(HttpServletRequest request,HttpServletResponse response,Article article){
     	BoUser userParam = ResourceUtil.getSessionUser();
+			article.setSystemCategory(getSystemFlag());
     	setBaseInfo(article,request,true);
     	AjaxJson j = new AjaxJson();
         try{

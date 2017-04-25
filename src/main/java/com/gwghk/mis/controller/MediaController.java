@@ -91,6 +91,7 @@ public class MediaController extends BaseController{
     	 String publishEndDateStr=request.getParameter("publishEndDateStr");
     	 media.setPublishStartDate(DateUtil.parseDateFormat(publishStartDateStr));
     	 media.setPublishEndDate(DateUtil.parseDateFormat(publishEndDateStr));
+			media.setSystemCategory(getSystemFlag());
     	 List<ArticleDetail> detailList=new ArrayList<ArticleDetail>();
     	 ArticleDetail detail=new ArticleDetail();
     	 ArticleAuthor author = new ArticleAuthor();
@@ -219,6 +220,7 @@ public class MediaController extends BaseController{
     @ActionVerification(key="add")
     public AjaxJson create(HttpServletRequest request,HttpServletResponse response,Article media){
     	BoUser userParam = ResourceUtil.getSessionUser();
+			media.setSystemCategory(getSystemFlag());
     	setBaseInfo(media,request,false);
     	AjaxJson j = new AjaxJson();
     	try{
@@ -276,6 +278,7 @@ public class MediaController extends BaseController{
     @ActionVerification(key="edit")
     public AjaxJson update(HttpServletRequest request,HttpServletResponse response,Article media){
     	BoUser userParam = ResourceUtil.getSessionUser();
+			media.setSystemCategory(getSystemFlag());
     	setBaseInfo(media,request,true);
     	AjaxJson j = new AjaxJson();
         try{

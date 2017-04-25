@@ -49,7 +49,8 @@ public class ArticleService{
 	private ChatApiService chatApiService;
 	/**
 	 * 分页查询文章
-	 * @param detachedCriteria
+	 * @param dCriteria
+	 * @param type
 	 * @return
 	 */
 	public Page<Article> getArticlePage(DetachedCriteria<Article> dCriteria, Integer type) {
@@ -58,6 +59,7 @@ public class ArticleService{
 		if(article!=null){
 			Criteria criteria=new Criteria();
 			criteria.and("valid").is(1);
+			criteria.and("systemCategory").is(article.getSystemCategory());
 			String categoryId=article.getCategoryId();
 			//栏目筛选
 			List<Category> rowList = null;
@@ -224,7 +226,7 @@ public class ArticleService{
 	 * 通过pm_api接口提取交易策略
 	 * @param platform
 	 * @param dateStr
-	 * @param langs
+	 * @param lang
 	 * @param titles
 	 * @param usedByPlatforms 用于那些平台
 	 * @return
