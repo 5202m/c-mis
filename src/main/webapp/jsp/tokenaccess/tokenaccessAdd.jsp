@@ -5,16 +5,17 @@
     <table class="tableForm_L" border="0" cellspacing="1" cellpadding="0">
       <tr>
       	<th width="15%">使用平台<span class="red">*</span></th>
-      	<td width="35%" colspan="3"><input type="text" name="platform" id="platform" style="width: 185px;" class="easyui-validatebox" 
-		          	    data-options="required:true,missingMessage:'请输入使用平台'"/>
+      	<td width="35%" colspan="3">
+      		<input type="hidden" name="platform" id="platform" value="${systemCategory}"/>
+      		${systemFlag}
+      	</td>
       </tr>
       <tr>
         <th width="15%">appId<span class="red">*</span></th>
         <td width="35%"><input type="text" name="appId" id="appId" style="width: 185px;" class="easyui-validatebox" 
 		          	    data-options="required:true,missingMessage:'请输入appId'"/>
 		<th width="15%">appSecret<span class="red">*</span></th>
-        <td width="35%"><input type="text" name="appSecret" id="appSecret" style="width: 185px;" class="easyui-validatebox" 
-		          	    data-options="required:true,missingMessage:'请输入appSecret'"/>
+        <td width="35%"><input type="hidden" name="appSecret" id="appSecret" value="${appSecret}"/>${appSecret}</td>
       </tr>
       <tr>
       	<th width="15%">有效时间</th>

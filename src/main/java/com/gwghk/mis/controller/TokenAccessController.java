@@ -16,6 +16,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.gwghk.mis.authority.ActionVerification;
 import com.gwghk.mis.common.model.AjaxJson;
@@ -28,6 +29,7 @@ import com.gwghk.mis.service.TokenAccessService;
 import com.gwghk.mis.util.DateUtil;
 import com.gwghk.mis.util.IPUtil;
 import com.gwghk.mis.util.ResourceBundleUtil;
+import com.gwghk.mis.util.UUID16Generator;
 
 /**
  * 摘要：token设置controller
@@ -47,9 +49,13 @@ public class TokenAccessController extends BaseController{
 	 * 功能：token设置-首页
 	 */
 	@RequestMapping(value = "/tokenAccessController/index", method = RequestMethod.GET)
-	public  String  index(HttpServletRequest request,ModelMap map){
+	public  ModelAndView  index(HttpServletRequest request,ModelMap map){
 		logger.debug(">>start into tokenAccessController.index() and url is /tokenAccessController/index.do");
-		return "tokenaccess/tokenaccessList";
+		String systemCategory = request.getParameter("systemCategory");
+		map.put("systemCategory", systemCategory);
+		map.put("systemFlag", systemCategory.toUpperCase());
+//		return "tokenaccess/tokenaccessList";
+		return new ModelAndView("tokenaccess/tokenaccessList", map);
 	}
 
 	/**
@@ -74,8 +80,13 @@ public class TokenAccessController extends BaseController{
 	 */
     @RequestMapping(value="/tokenAccessController/add", method = RequestMethod.GET)
     @ActionVerification(key="add")
-    public String add(ModelMap map) throws Exception {
-    	return "tokenaccess/tokenaccessAdd";
+    public ModelAndView add(ModelMap map) throws Exception {
+    	String systemCategory = request.getParameter("systemCategory");
+		map.put("systemCategory", systemCategory);
+		map.put("systemFlag", systemCategory.toUpperCase());
+		map.put("appSecret", UUID16Generator.getRandom8Dights());
+//    	return "tokenaccess/tokenaccessAdd";
+    	return new ModelAndView("tokenaccess/tokenaccessAdd", map);
     }
 	
 	/**

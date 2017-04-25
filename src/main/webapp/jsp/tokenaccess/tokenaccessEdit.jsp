@@ -6,8 +6,7 @@
     <table class="tableForm_L" border="0" cellspacing="1" cellpadding="0">
       <tr>
       	<th width="15%">使用平台<span class="red">*</span></th>
-      	<td width="35%" colspan="3"><input type="text" name="platform" id="platform" style="width: 185px;" class="easyui-validatebox" 
-		          	    data-options="required:true,missingMessage:'请输入使用平台'" value="${tokenAccess.platform}"/>
+      	<td width="35%" colspan="3"><input type="hidden" name="platform" id="platform" value="${tokenAccess.platform}"/>${tokenAccess.platform}</td>
       </tr>
       <tr>
         <th width="15%">appId<span class="red">*</span></th>
@@ -15,8 +14,7 @@
 		          data-options="required:true,missingMessage:'请输入appId'" value="${tokenAccess.appId}"/>
 		</td>
         <th width="15%">appSecret<span class="red">*</span></th>
-        <td width="35%"><input type="text" name="appSecret" id="appSecret" style="width: 185px;" class="easyui-validatebox" 
-		          data-options="required:true,missingMessage:'请输入appSecret'" value="${tokenAccess.appSecret}"/>
+        <td width="35%"><input type="hidden" name="appSecret" id="appSecret" value="${tokenAccess.appSecret}"/>${tokenAccess.appSecret}
 		</td>
       </tr>
       <tr>

@@ -9,7 +9,7 @@
       <table class="tableForm_L" style="margin-top:3px" width="99%" heigth="auto"  border="0" cellpadding="0" cellspacing="1">
         <tr>
           <th width="10%">使用平台</th>
-          <td width="23%"><input type="text" name="platform" id="platform" style="width:185px"/></td>
+          <td width="23%"><input type="hidden" name="platform" id="platform" value="${systemCategory}" style="width:185px"/>${systemFlag}</td>
           <th width="10%">appId</th>
           <td width="23%"><input type="text" name="appId" id="appId" style="width:185px"/></td>
         </tr>
