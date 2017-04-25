@@ -49,13 +49,12 @@ public class TokenAccessController extends BaseController{
 	 * 功能：token设置-首页
 	 */
 	@RequestMapping(value = "/tokenAccessController/index", method = RequestMethod.GET)
-	public  ModelAndView  index(HttpServletRequest request,ModelMap map){
+	public  String  index(HttpServletRequest request,ModelMap map){
 		logger.debug(">>start into tokenAccessController.index() and url is /tokenAccessController/index.do");
 		String systemCategory = request.getParameter("systemCategory");
-		map.put("systemCategory", systemCategory);
-		map.put("systemFlag", systemCategory.toUpperCase());
-//		return "tokenaccess/tokenaccessList";
-		return new ModelAndView("tokenaccess/tokenaccessList", map);
+		map.addAttribute("systemCategory", systemCategory);
+		map.addAttribute("systemFlag", systemCategory.toUpperCase());
+		return "tokenaccess/tokenaccessList";
 	}
 
 	/**
