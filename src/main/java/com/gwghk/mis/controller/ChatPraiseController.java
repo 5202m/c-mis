@@ -61,7 +61,7 @@ public class ChatPraiseController extends BaseController{
   public String index(HttpServletRequest request,ModelMap map){
     DictConstant dict=DictConstant.getInstance();
     map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
-    return "chat/chatPraiseList";
+    return "chat/praise/chatPraiseList";
   }
 
   /**
@@ -126,7 +126,7 @@ public class ChatPraiseController extends BaseController{
   public String edit(@PathVariable String praiseId , ModelMap map, String opType) throws Exception {
     ChatPraise chatPraise = chatPraiseService.getPraiseById(praiseId);
     map.put("chatPraise", chatPraise);
-    return "chat/chatPraiseEdit";
+    return "chat/praise/chatPraiseEdit";
   }
 
   /**
