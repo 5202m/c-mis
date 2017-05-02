@@ -393,7 +393,11 @@ public class UserController extends BaseController{
 	@ResponseBody
 	public String getAnalystLiveLink(HttpServletRequest request , ModelMap map) throws Exception {
 		String userId = request.getParameter("userId");
-		BoUser user=userService.getUserByNo(userId);
-		return JSONArray.toJSONString(user.getLiveLinks());
+		if(StringUtils.isNotBlank(userId)) {
+			BoUser user = userService.getUserByNo(userId);
+			return JSONArray.toJSONString(user.getLiveLinks());
+		}else{
+			return null;
+		}
 	}
 }

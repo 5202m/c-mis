@@ -127,10 +127,11 @@ var Syllabus = {
       },
       onCheck: function (node, checked) {
         if(checked) {
-            if(isValid(userId) && userId != node.id){
-              userId = node.id;
+            if(isValid(userId)){
+              Syllabus.getAnalystLiveLinks(userId, dom, liveLink);
+            }else {
+              Syllabus.getAnalystLiveLinks(node.id, dom, liveLink);
             }
-            Syllabus.getAnalystLiveLinks(userId, dom, liveLink);
         } else {
           Syllabus.getAnalystLiveLinks('', dom, liveLink);
         }
@@ -301,7 +302,6 @@ var Syllabus = {
     Syllabus.setRoomSelect($("#syllabusEdit_groupType_select").val());
     $("#syllabusEdit_groupType_select").change(function () {
       Syllabus.setRoomSelect(this.value);
-      Syllabus.setStudioLink(this.value);
     });
 
     /**
@@ -768,7 +768,10 @@ var Syllabus = {
    */
   getAnalystLiveLinks: function (userId, dom, liveLink) {
     if (dom.children('option').length < 2) {
-      var liveLinks = getJson(basePath + "/userController/getAnalystLiveLink.do", {userId: userId});
+      var liveLinks = null;
+      if(isValid(userId)) {
+        liveLinks = getJson(basePath + "/userController/getAnalystLiveLink.do",{userId: userId});
+      }
       var lDomPc = dom.find('select[name="liveLink_pc"]'),
           lDomMb = dom.find('select[name="liveLink_mb"]'),
           lDomAMb = dom.find('select[name="liveLinka_mb"]');
