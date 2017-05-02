@@ -94,11 +94,12 @@
 	<table class="tableForm_L tag_tab" border="0" cellspacing="1" cellpadding="0" style="display:none;">
 		<thead>
 			<tr>
-				<th>品种</th>
+				<th>产品</th>
 				<th>方向</th>
-				<th>建仓价</th>
-				<th>止盈</th>
-				<th>止损</th>
+				<th>第一支撑</th>
+				<th>第二支撑</th>
+				<th>第一阻力</th>
+				<th>第二阻力</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -155,18 +156,21 @@
 					</select>
 				</td>
 				<td>
-					<input type="text" name="open" />
+					<input type="text" name="open" style="width:130px;" />
 				</td>
 				<td>
-					<input type="text" name="profit" />
+					<input type="text" name="profit" style="width:130px;" />
 				</td>
 				<td>
-					<input type="text" name="loss" />
+					<input type="text" name="loss" style="width:130px;" />
+				</td>
+				<td>
+					<input type="text" name="drag2" style="width:130px;" />
 				</td>
 				<td rowspan="2" style="vertical-align: middle;"><a href="javascript:void(0)" class="ope-add"></a><a href="javascript:void(0)" class="ope-remove" style="display:none;"></a></td>
 			</tr>
 			<tr>
-				<td colspan="5">说明：<input type="text" name="description" style="width:95%;" /></td>
+				<td colspan="6">说明：<input type="text" name="description" style="width:95%;" /></td>
 			</tr>
 		</tbody>
 	</table>

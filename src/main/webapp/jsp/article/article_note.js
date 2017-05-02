@@ -197,17 +197,22 @@ var ArticleTemplate = {
 						return false;
 					}
 					if($(this).attr("name")=="open"){
-						alert("建仓价不能为空！");
+						alert("第一支撑不能为空！");
 						isPass=false;
 						return false;
 					}
 					if($(this).attr("name")=="profit"){
-						alert("止盈不能为空！");
+						alert("第二支撑不能为空！");
 						isPass=false;
 						return false;
 					}
 					if($(this).attr("name")=="loss"){
-						alert("止损不能为空！");
+						alert("第一阻力不能为空！");
+						isPass=false;
+						return false;
+					}
+					if($(this).attr("name")=="drag2"){
+						alert("第二阻力不能为空！");
 						isPass=false;
 						return false;
 					}
