@@ -26,17 +26,17 @@ var ArticleTemplate = {
 			$detailForm.find("#authorList_zh").html("<option>" + (detail.authorInfo ? detail.authorInfo.name : "") + "</option>");
 			$detailForm.find("select[name='tag']").val(detail.tag);
 			$detailForm.find("input[name='remark']").val(detail.remark);
-			var $tagTab = $('#'+detail.tag);
+			var $tagTab = $('.tag_tab');
 			var remarkArr = eval('('+detail.remark+')');
 			if(remarkArr.length>0){
 				$.each(remarkArr, function(i, row){
-					$tagTab.find('tr:first td:last .ope-add').click();
+					$tagTab.find('tbody:first tr:first td:last .ope-add').click();
 					$.each(row, function(key, val){
-						$tagTab.find('tr:eq('+i+') td select[name="'+key+'"]').val(val);
-						$tagTab.find('tr:eq('+i+') td input[name="'+key+'"]').val(val);
+						$tagTab.find('tbody:eq('+i+') tr td select[name="'+key+'"]').val(val);
+						$tagTab.find('tbody:eq('+i+') tr td input[name="'+key+'"]').val(val);
 					});
 				});
-				$tagTab.find('tr:last td:last .ope-remove').click();
+				$tagTab.find('tbody:last tr:first td:last .ope-remove').click();
 			}
 			$detailForm.find("select[name='tag']").trigger('change', "R");
 		}
@@ -75,17 +75,17 @@ var ArticleTemplate = {
 			$detailForm.find("#authorList_zh").combogrid('setValue', detail.authorInfo ? detail.authorInfo.userId : "");
 			$detailForm.find("select[name='tag']").val(detail.tag);
 			$detailForm.find("input[name='remark']").val(detail.remark);
-			var $tagTab = $('#'+detail.tag);
+			var $tagTab = $('.tag_tab');
 			var remarkArr = eval('('+detail.remark+')');
 			if(remarkArr.length>0){
 				$.each(remarkArr, function(i, row){
-					$tagTab.find('tr:first td:last .ope-add').click();
+					$tagTab.find('tbody:first tr:first td:last .ope-add').click();
 					$.each(row, function(key, val){
-						$tagTab.find('tr:eq('+i+') td select[name="'+key+'"]').val(val);
-						$tagTab.find('tr:eq('+i+') td input[name="'+key+'"]').val(val);
+						$tagTab.find('tbody:eq('+i+') tr td select[name="'+key+'"]').val(val);
+						$tagTab.find('tbody:eq('+i+') tr td input[name="'+key+'"]').val(val);
 					});
 				});
-				$tagTab.find('tr:last td:last .ope-remove').click();
+				$tagTab.find('tbody:last tr:first td:last .ope-remove').click();
 			}
 			$detailForm.find("select[name='tag']").trigger('change', "U");
 		}
@@ -100,7 +100,7 @@ var ArticleTemplate = {
 		this.checkClearAuthor();//清除无效的作者值
 		if(isValid($('#article_detail_zh #tag').val())){
 			var remark = [];
-			$('#'+$('#article_detail_zh #tag').val()+' tr').each(function(){
+			$('.tag_tab tbody').each(function(){
 				var row = {};
 				$(this).find('select').each(function(){
 					if(isValid($(this).val())){
@@ -178,8 +178,8 @@ var ArticleTemplate = {
 				}
 			}
 		});
-		if(isValid($('#article_detail_zh #tag').val())){
-			$('#'+$('#tag').val()+' input,#'+$('#tag').val()+' select').each(function(){
+		if(isValid($('#article_detail_zh #tag').val()) && $('#article_detail_zh #tag').val()!='trading_strategy'){
+			$('.tag_tab input,#'+$('#tag').val()+' select').each(function(){
 				if(isBlank($(this).val())){
 					if($(this).attr("name")=="symbol" && $('#tag').val()=='shout_single'){
 						alert("请选择品种！");
@@ -191,23 +191,28 @@ var ArticleTemplate = {
 						isPass=false;
 						return false;
 					}*/
-					if($(this).attr("name")=="longshort"){
+					if($(this).attr("name")=="upordown"){
 						alert("请选择方向！");
 						isPass=false;
 						return false;
 					}
-					if($(this).attr("name")=="point"){
-						alert("进场点位不能为空！");
+					if($(this).attr("name")=="open"){
+						alert("第一支撑不能为空！");
 						isPass=false;
 						return false;
 					}
 					if($(this).attr("name")=="profit"){
-						alert("止盈不能为空！");
+						alert("第二支撑不能为空！");
 						isPass=false;
 						return false;
 					}
 					if($(this).attr("name")=="loss"){
-						alert("止损不能为空！");
+						alert("第一阻力不能为空！");
+						isPass=false;
+						return false;
+					}
+					if($(this).attr("name")=="drag2"){
+						alert("第二阻力不能为空！");
 						isPass=false;
 						return false;
 					}
@@ -288,20 +293,23 @@ var ArticleTemplate = {
 					$("#sendSubscribeBtn").hide();
 				}
 			}
-			$('.tag_tab').hide();
-			$('#'+$(this).val()).show();
+			if(isValid($(this).val())){
+				$('.tag_tab').show();
+			}else{
+				$('.tag_tab').hide();
+			}
 		});
 		
 		
 		$('.tag_tab .ope-add').click(function(){
-			$('#'+$('#tag').val()+' tr:first').clone().appendTo($('#'+$('#tag').val()));
-			$('#'+$('#tag').val()+' tr:last').find('input').val('');
-			$('#'+$('#tag').val()+' tr:last td:last .ope-add').hide();
-			$('#'+$('#tag').val()+' tr:last td:last .ope-remove').show();
+			$('.tag_tab tbody:first').clone().appendTo($('.tag_tab'));
+			$('.tag_tab tbody:last tr').find('input').val('');
+			$('.tag_tab tbody:last tr:first td:last .ope-add').hide();
+			$('.tag_tab tbody:last tr:first td:last .ope-remove').show();
 		});
 		
 		$('.tag_tab .ope-remove').live('click', function(){
-			$(this).parent().parent().remove();
+			$(this).parent().parent().parent().remove();
 		});
 		
 		/**发送订阅通知*/
@@ -320,7 +328,7 @@ var ArticleTemplate = {
 	 * @param groupType
 	 * @param groupId
 	 */
-	getSingleCourse:function(groupType, groupId){
+	getSingleCourse:function(groupType, groupId){console.log(groupType, groupId);
 		if(groupType && groupId){
 			var loc_url = ArticleTemplate.config.pmApiCourseUrl + "?flag=S&groupType=" + groupType + "&groupId=" + groupId;
 			$.getJSON(loc_url,function(data){

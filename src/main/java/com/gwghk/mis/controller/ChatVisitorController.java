@@ -164,7 +164,7 @@ public class ChatVisitorController extends BaseController
 			dataGrid.setOrder("desc");
 			Page<ChatVisitor> page = chatVisitorService.getChatVisitors(this.createDetachedCriteria(dataGrid, chatVisitor));
 			List<ChatVisitor> list = page.getCollection();
-			List<ChatGroup> groupList = chatGroupService.getChatGroupList("id", "name", "groupType");
+			List<ChatGroup> groupList = chatGroupService.getChatGroupList(this.getSystemFlag(), "id", "name", "groupType");
 			int totalOnline = 0, totalLogin = 0, totalNeverLogin = 0, totalRegist = 0, totalHasLogin = 0;
 			String[] strAgentArr={"iphone","ipod","ipad","android","mobile","playbook","bb10","meego"};
 			String agentStr="PC";
