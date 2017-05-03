@@ -126,11 +126,12 @@ var Syllabus = {
         }
       },
       onCheck: function (node, checked) {
-        if(checked) {
-            if(isValid(userId)){
+        var nodes = $(this).tree('getChecked');
+        if(nodes.length > 0) {
+            if(isValid(userId) && nodes[0].id == userId){
               Syllabus.getAnalystLiveLinks(userId, dom, liveLink);
-            }else {
-              Syllabus.getAnalystLiveLinks(node.id, dom, liveLink);
+            } else {
+              Syllabus.getAnalystLiveLinks(nodes[0].id, dom, liveLink);
             }
         } else {
           Syllabus.getAnalystLiveLinks('', dom, liveLink);
@@ -767,7 +768,6 @@ var Syllabus = {
    * @param liveLink
    */
   getAnalystLiveLinks: function (userId, dom, liveLink) {
-    if (dom.children('option').length < 2) {
       var liveLinks = null;
       if(isValid(userId)) {
         liveLinks = getJson(basePath + "/userController/getAnalystLiveLink.do",{userId: userId});
@@ -807,7 +807,6 @@ var Syllabus = {
         lDomMb.html(mbOptions.join(''));
         lDomAMb.html(mbaOptions.join(''));
       }
-    }
   }
 };
 

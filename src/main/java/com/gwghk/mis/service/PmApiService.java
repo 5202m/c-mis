@@ -112,7 +112,7 @@ public class PmApiService{
 	   
 	   /**
 	    * 提取getTokenAccessById
-	    * @param platform
+	    * @param tokenAccessId
 	   */
 	   public TokenAccess getTokenAccessById(String tokenAccessId){
 	   	 Map<String, String> paramMap=new HashMap<String, String>();
@@ -214,9 +214,9 @@ public class PmApiService{
 	}
 	/**
      * 离开房间
-     * @param groupIds 房间ID,如果存在多个，中间用逗号分隔
-     * @param groupIds
-     * @param userIds
+     * @param platform 房间ID,如果存在多个，中间用逗号分隔
+     * @param dateStr
+     * @param lang
      * @return
      */
     public String getBroadStrateList(String platform, String dateStr,String lang){
