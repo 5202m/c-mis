@@ -63,7 +63,7 @@
     			alert("已选择该编号【"+tn+"】");
     		}else{
     			var cloneTmp=$(".live-sel-num-tmp").clone();
-    			cloneTmp.removeClass("live-sel-num-tmp").addClass("live-sel-num").attr("tc",$(this).parents(".live-tab-panel").attr("tc")).attr("tn",tn).attr("tl",pSelectBox.val()).find("label").text(pSelectBox.find("option[value='"+pSelectBox.val()+"']").text()+"："+tn);
+    			cloneTmp.removeClass("live-sel-num-tmp").addClass("live-sel-num").attr("tc",$(this).parents(".live-tab-panel").attr("tc")).attr("tn",tn).attr("tl",tl).find("label").text(pSelectBox.find("option[value='"+pSelectBox.val()+"']").text()+"："+tn);
     			tabNext.append(cloneTmp);
     		}
     	});
