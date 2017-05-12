@@ -100,11 +100,12 @@
     		if(!isNotParamVal && (isBlank(nbxVal) || (!isDictSet && nbxVal.indexOf("X")!=-1))){
     			return false;
     		}
-    		if((isValid(nbxVal) && tabNext.find(".live-sel-num[tn='"+nbxVal+"'][tl='"+this.value+"']").length>0)||(isNotParamVal&& tabNext.find(".live-sel-num[tl='"+this.value+"']").length>0)){
+    		var tl = this.value.formatStr(nbxVal);
+    		if((isValid(nbxVal) && tabNext.find(".live-sel-num[tn='"+nbxVal+"'][tl='"+tl+"']").length>0)||(isNotParamVal&& tabNext.find(".live-sel-num[tl='"+tl+"']").length>0)){
     			alert("已选择该地址");
     		}else{
     			var cloneTmp=$(".live-sel-num-tmp").clone();
-    			cloneTmp.removeClass("live-sel-num-tmp").addClass("live-sel-num").attr("tc",$(this).parents(".live-tab-panel").attr("tc")).attr("tn",nbxVal).attr("tl",this.value).find("label").text($(this).find("option[value='"+this.value+"']").text()+(isValid(nbxVal)?"："+nbxVal:""));
+    			cloneTmp.removeClass("live-sel-num-tmp").addClass("live-sel-num").attr("tc",$(this).parents(".live-tab-panel").attr("tc")).attr("tn",nbxVal).attr("tl",tl).find("label").text($(this).find("option[value='"+this.value+"']").text()+(isValid(nbxVal)?"："+nbxVal:""));
     			tabNext.append(cloneTmp);
     		}
     	});
