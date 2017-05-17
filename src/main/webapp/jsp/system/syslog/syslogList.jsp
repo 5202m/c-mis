@@ -15,7 +15,7 @@
           <select name="operateType" id="operateType" style="width:160px">
               <c:if test="${loginRoleId == 'admin_super'}">
               </c:if>
-              <option value="">请选择</option>
+              <!--option value="">请选择</option>
               <option value="1" class="select_login">登陆</option>
               <option value="2" class="select_exit">退出</option>
               <option value="3" class="select_insert">新增</option>
@@ -28,7 +28,7 @@
               <option value="10" class="select_approve_showtrade">审核客户晒单</option>
               <option value="11" class="select_cancel_approve_showtrade">取消审核客户晒单</option>
               <option value="12" class="select_delete_showtrade_comment">删除晒单评论</option>
-              <option value="A" class="select_gag">禁言</option>
+              <option value="A" class="select_gag">禁言</option-->
           </select>
           </td>
         </tr>

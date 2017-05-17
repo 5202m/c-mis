@@ -178,11 +178,12 @@ var main={
 								var result = getJson(basePath+"/authorityController/getFuns.do",{menuId:node.id},null);
 								var obj = result.obj;
 							    if(validObj(obj)){
+										$('#operateType').empty();
 							       for(var i=0;i<obj.length;i++){
 							    	   $("[class~="+obj[i].code+"]","#"+node.id).show();
-											 /*if(i==0) {
-												 $('option[class~=' + obj[i].code + ']').attr('selected', 'selected');
-											 }*/
+											 if(node.attributes.url == 'sysLogController/index.do'){
+												 $('#operateType').append('<option value="'+obj[i].code+'">'+obj[i].nameCN+'</option>');
+											 }
 							       }
 							    }
 						   }
