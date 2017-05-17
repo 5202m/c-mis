@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,14 +56,20 @@ public class LogController extends BaseController{
 	@RequestMapping(value = "/sysLogController/datagrid", method = RequestMethod.GET)
 	@ResponseBody
 	public  Map<String,Object>  datagrid(HttpServletRequest request, DataGrid dataGrid,BoLog log){
+		Map<String, Object> result = new HashMap<String, Object>();
 		String startDate = request.getParameter("startDate"),endDate = request.getParameter("endDate");
 		log.setOperStartDate(DateUtil.parseDateSecondFormat(startDate));
 		log.setOperEndDate(DateUtil.parseDateSecondFormat(endDate));
-		Page<BoLog> page = logService.getLogPage(this.createDetachedCriteria(dataGrid, log));
-		Map<String, Object> result = new HashMap<String, Object>(); 
-		result.put("total",null == page ? 0  : page.getTotalSize());
-	    result.put("rows", null == page ? new ArrayList<BoLog>() : page.getCollection());
-	    return result;
+		String operateType = request.getParameter("operateType");
+		if(StringUtils.isBlank(operateType)){
+			result.put("total", 0);
+			result.put("rows", new ArrayList<BoLog>());
+		}else {
+			Page<BoLog> page = logService.getLogPage(this.createDetachedCriteria(dataGrid, log));
+			result.put("total", null == page ? 0 : page.getTotalSize());
+			result.put("rows", null == page ? new ArrayList<BoLog>() : page.getCollection());
+		}
+		return result;
 	}
 	
 }

@@ -110,6 +110,11 @@ public class ChatUserGroup {
 	 */
 	private List<ChatRoom> rooms;
 
+	/**
+	 * 邮箱地址
+	 */
+	private String email;
+
 	public String getId() {
 		return id;
 	}
@@ -285,6 +290,12 @@ public class ChatUserGroup {
 	public void setRooms(List<ChatRoom> rooms) {
 		this.rooms = rooms;
 	}
-	
-	
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 }

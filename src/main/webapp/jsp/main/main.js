@@ -184,8 +184,12 @@ var main={
 								var result = getJson(basePath+"/authorityController/getFuns.do",{menuId:node.id},null);
 								var obj = result.obj;
 							    if(validObj(obj)){
+										$('#operateType').empty();
 							       for(var i=0;i<obj.length;i++){
 							    	   $("[class~="+obj[i].code+"]","#"+node.id).show();
+											 if(node.attributes.url == 'sysLogController/index.do'){
+												 $('#operateType').append('<option value="'+obj[i].code+'">'+obj[i].nameCN+'</option>');
+											 }
 							       }
 							    }
 						    	$(".combo-text").each(function(){

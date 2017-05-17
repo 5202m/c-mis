@@ -284,7 +284,7 @@ public class ChatShowTradeController extends BaseController{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改晒单："+userParam.getUserNo()+" 失败";
-    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
+    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE);
     		logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
     	}
    		return j;
@@ -307,13 +307,13 @@ public class ChatShowTradeController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量审核晒单成功";
-    		addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL);
+    		addLog(message, WebConstant.Log_Leavel_INFO, (status == 1 ? WebConstant.Log_Type_APPROVE_ShowTrade : WebConstant.Log_Type_CANCEL_APPROVE_ShowTrade));
     		logger.info("<<method:batchDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量审核晒单失败";
-    		addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL);
+    		addLog(message, WebConstant.Log_Leavel_ERROR, (status == 1 ? WebConstant.Log_Type_APPROVE_ShowTrade : WebConstant.Log_Type_CANCEL_APPROVE_ShowTrade));
     		logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
     	}
   		return j;
@@ -353,13 +353,13 @@ public class ChatShowTradeController extends BaseController{
 		if(result.isOk()){
 			j.setSuccess(true);
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除晒单评论成功：" + sid + "!";
-			addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT);
+			addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL_ShowTrade_Comment);
 			logger.info("<<delete()|"+message);
 		}else{
 			j.setSuccess(false);
 			j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除晒单评论失败：" + sid + "!";
-			addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT);
+			addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL_ShowTrade_Comment);
 			logger.error("<<delete()|"+message+",ErrorMsg:"+result.toString());
 		}
 		return j;

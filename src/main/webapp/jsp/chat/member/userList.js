@@ -140,6 +140,14 @@ var chatUser = {
 							var row=rowData.loginPlatform.chatUserGroup[0];
 							return isBlank(row.accountNo)?'':row.accountNo;
 						}},
+				{title : '电子邮箱',field : 'email',formatter : function(value, rowData, rowIndex) {
+					var row=rowData.loginPlatform.chatUserGroup[0];
+					return isBlank(row.email)?'':row.email;
+				}},
+				{title : '头像',field : 'avatar',formatter : function(value, rowData, rowIndex) {
+					var row=rowData.loginPlatform.chatUserGroup[0];
+					return isBlank(row.avatar)?'':'<img src="'+row.avatar+'" width="50" height="50" />';
+				}},
 						{title : '昵称',field : 'nicknameStr', formatter : function(value, rowData, rowIndex) {
 							var row=rowData.loginPlatform.chatUserGroup[0];
 							var oNickname = row.nickname || "";
