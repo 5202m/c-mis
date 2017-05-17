@@ -12,7 +12,7 @@
         	<th>手机号码</th>
         	<td><input type="text" name="userId"/></td>
 			<th>账号</th>
-			<td><input type="text" name="account" /></td>
+			<td><input type="text" name="accountNo" /></td>
 			<th>昵称</th>
 			<td><input type="text" name="nickname" /></td>
         </tr>

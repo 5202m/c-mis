@@ -95,7 +95,7 @@ public class MemberDao extends MongoDBBaseDao{
     /**
      * 更新用户设置，包括设置用户为价值用户或vip用户, 用户解绑
      * @param memberId
-     * @param groupId
+     * @param groupType
      * @param type 类型：1为价值用户，2为vip用户, 3为用户级别, unbind为用户解绑
      * @param isTrue
      * @return

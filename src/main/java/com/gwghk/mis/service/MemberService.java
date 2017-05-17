@@ -317,4 +317,25 @@ public class MemberService {
     query.addCriteria(criteria);
     return memberDao.findListInclude(Member.class, query, fields, "mobilePhone");
   }
+
+  /**
+   * 根据交易账号或昵称获取用户手机号
+   * @param accountNo
+   * @param nickName
+   * @return
+   */
+  public Member getMemberMobilePhoneByAccountNoOrNickName(String accountNo, String nickName){
+    Criteria criteria = new Criteria();
+    Criteria userGroupCriteria = new Criteria();
+    criteria.and("valid").is(1);
+    if(StringUtils.isNotBlank(accountNo)){
+      criteria.and("loginPlatform.chatUserGroup.accountNo").is(accountNo);
+    }
+    if(StringUtils.isNotBlank(nickName)){
+      criteria.and("loginPlatform.chatUserGroup.nickname").is(nickName);
+    }
+    Query query = new Query();
+    query.addCriteria(criteria);
+    return memberDao.findOneInclude(Member.class, query, "mobilePhone");
+  }
 }

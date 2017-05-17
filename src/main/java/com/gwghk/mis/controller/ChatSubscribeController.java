@@ -130,10 +130,17 @@ public class ChatSubscribeController extends BaseController {
 	@RequestMapping(value = "/chatSubscribeController/datagrid", method = RequestMethod.GET)
 	@ResponseBody
 	public  Map<String,Object>  datagrid(HttpServletRequest request, DataGrid dataGrid, ChatSubscribe subscribe, String opType){
-		
-		Page<ChatSubscribe> page = chatSubscribeService.getSubscribePage(this.createDetachedCriteria(dataGrid, subscribe));
+		String accountNo = request.getParameter("accountNo");
+		String nickName = request.getParameter("nickname");
+		if(StringUtils.isNotBlank(accountNo) || StringUtils.isNotBlank(nickName)) {
+			Member member = memberService.getMemberMobilePhoneByAccountNoOrNickName(accountNo, nickName);
+			if (member != null && StringUtils.isNotBlank(member.getMobilePhone())) {
+				subscribe.setUserId(member.getMobilePhone());
+			}
+		}
 		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("total",null == page ? 0  : page.getTotalSize());
+		Page<ChatSubscribe> page = chatSubscribeService.getSubscribePage(this.createDetachedCriteria(dataGrid, subscribe));
+		result.put("total", null == page ? 0 : page.getTotalSize());
 		result.put("rows", null == page ? new ArrayList<ChatSubscribe>() : page.getCollection());
 		return result;
 	}
