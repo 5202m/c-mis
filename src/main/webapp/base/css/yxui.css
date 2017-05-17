@@ -1071,6 +1071,6 @@ color:#FF0000;
 .noValidAuthority{
 	display: block;
 }
-.modifyName,.add,.delete,.batchDel,.edit,.view,.resetPwd,.assignUser,.assignChatGroup,.assignApp,.setGagTime,.userSetting,.export,.redo,.undo,.recommand,.approve_chat_pass,.approve_chat_reject,.reply,.push,.start,.stop,.exitRoom,.setStatus,.getTradeStrate{
+.select_login,.select_exit,.select_insert,.select_delete,.select_update,.select_other,.select_approve,.select_cancel_approve,.select_approve_showtrade,.select_cancel_approve_showtrade,.select_delete_showtrade_comment,.select_export,.select_gag,.modifyName,.add,.delete,.batchDel,.edit,.view,.resetPwd,.assignUser,.assignChatGroup,.assignApp,.setGagTime,.userSetting,.export,.redo,.undo,.recommand,.approve_chat_pass,.approve_chat_reject,.reply,.push,.start,.stop,.exitRoom,.setStatus,.getTradeStrate{
 	display: none;
 }

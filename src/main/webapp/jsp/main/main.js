@@ -180,6 +180,9 @@ var main={
 							    if(validObj(obj)){
 							       for(var i=0;i<obj.length;i++){
 							    	   $("[class~="+obj[i].code+"]","#"+node.id).show();
+											 /*if(i==0) {
+												 $('option[class~=' + obj[i].code + ']').attr('selected', 'selected');
+											 }*/
 							       }
 							    }
 						   }

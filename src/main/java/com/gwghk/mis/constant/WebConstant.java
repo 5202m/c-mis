@@ -50,7 +50,10 @@ public class WebConstant {
 	 public final static String LOG_TYPE_APPROVE = "7"; //审批
 	 public final static String LOG_TYPE_CANCEL_APPROVE = "8"; //取消审批
 	 public final static String LOG_TYPE_EXPORT = "9"; //导出记录
-	public final static String Log_Type_GAG = "A"; //禁言
+	 public final static String Log_Type_GAG = "A"; //禁言
+	 public final static String Log_Type_APPROVE_ShowTrade = "10";//审核晒单
+	public final static String Log_Type_CANCEL_APPROVE_ShowTrade = "11";//取消审核晒单
+	public final static String Log_Type_DEL_ShowTrade_Comment = "12"; //删除晒单评论
 	 
 	 /**登录用户的session key*/
 	 public final static String SESSION_LOGIN_FLAG_KEY = "SESSION_LOGIN_FLAG_KEY";

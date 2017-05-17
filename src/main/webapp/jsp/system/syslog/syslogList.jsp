@@ -14,17 +14,21 @@
           <td width="23%">
           <select name="operateType" id="operateType" style="width:160px">
               <c:if test="${loginRoleId == 'admin_super'}">
-                  <option value="1">登陆</option>
-                  <option value="2">退出</option>
-                  <option value="3">新增</option>
-                  <option value="4">删除</option>
-                  <option value="5">更新</option>
-                  <option value="6">其他</option>
-                  <option value="7">审批</option>
-                  <option value="8">取消审批</option>
               </c:if>
-              <option value="9">导出记录</option>
-              <option value="A">禁言</option>
+              <option value="">请选择</option>
+              <option value="1" class="select_login">登陆</option>
+              <option value="2" class="select_exit">退出</option>
+              <option value="3" class="select_insert">新增</option>
+              <option value="4" class="select_delete">删除</option>
+              <option value="5" class="select_update">更新</option>
+              <option value="6" class="select_other">其他</option>
+              <option value="7" class="select_approve">审批</option>
+              <option value="8" class="select_cancel_approve">取消审批</option>
+              <option value="9" class="select_export">导出记录</option>
+              <option value="10" class="select_approve_showtrade">审核客户晒单</option>
+              <option value="11" class="select_cancel_approve_showtrade">取消审核客户晒单</option>
+              <option value="12" class="select_delete_showtrade_comment">删除晒单评论</option>
+              <option value="A" class="select_gag">禁言</option>
           </select>
           </td>
         </tr>

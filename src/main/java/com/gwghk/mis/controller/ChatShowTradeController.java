@@ -296,7 +296,7 @@ public class ChatShowTradeController extends BaseController{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 修改晒单："+userParam.getUserNo()+" 失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT
+    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE
     						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
     		logger.error("<--method:update()|"+message+",ErrorMsg:"+result.toString());
     	}
@@ -321,14 +321,13 @@ public class ChatShowTradeController extends BaseController{
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量审核晒单成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
-    						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+    		logService.addLog(message, WebConstant.Log_Leavel_INFO, (status == 1 ? WebConstant.Log_Type_APPROVE_ShowTrade : WebConstant.Log_Type_CANCEL_APPROVE_ShowTrade) ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
     		logger.info("<<method:batchDel()|"+message);
     	}else{
     		j.setSuccess(false);
     		j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量审核晒单失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
+    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, (status == 1 ? WebConstant.Log_Type_APPROVE_ShowTrade : WebConstant.Log_Type_CANCEL_APPROVE_ShowTrade)
     						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
     		logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
     	}
@@ -369,13 +368,13 @@ public class ChatShowTradeController extends BaseController{
 		if(result.isOk()){
 			j.setSuccess(true);
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除晒单评论成功：" + sid + "!";
-			logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL_ShowTrade_Comment,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
 			logger.info("<<delete()|"+message);
 		}else{
 			j.setSuccess(false);
 			j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除晒单评论失败：" + sid + "!";
-			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_INSERT,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+			logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL_ShowTrade_Comment,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
 			logger.error("<<delete()|"+message+",ErrorMsg:"+result.toString());
 		}
 		return j;
