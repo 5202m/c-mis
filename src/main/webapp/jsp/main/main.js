@@ -191,6 +191,9 @@ var main={
 												 $('#operateType').append('<option value="'+obj[i].code+'">'+obj[i].nameCN+'</option>');
 											 }
 							       }
+							       if(node.attributes.url == 'sysLogController/index.do'){
+											 systemLog.initGrid();
+										}
 							    }
 						    	$(".combo-text").each(function(){
 						    		var ctpw=$(this).parent().prev("select").width();
