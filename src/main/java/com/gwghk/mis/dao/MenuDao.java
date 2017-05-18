@@ -3,6 +3,7 @@ package com.gwghk.mis.dao;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -102,7 +103,7 @@ public class MenuDao extends MongoDBBaseDao{
 		criteria.and("type").is(1);
 		criteria.and("parentMenuId").is(menuId);
 		criteria.and("roleList.roleId").is(roleId);
-		return this.findList(BoMenu.class, Query.query(criteria));
+		return this.findList(BoMenu.class, Query.query(criteria).with(new Sort(new Order(Direction.ASC, "sort"))));
 	}
 	
 	/**
