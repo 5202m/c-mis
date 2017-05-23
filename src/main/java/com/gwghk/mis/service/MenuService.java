@@ -90,7 +90,7 @@ public class MenuService{
 			String langText="";
 			List<BoRole> roleList=null;
 			if(loginRoleId!=null){//登录角色不为空的公司超级用户，只显示登录角色中授权的菜单
-				menulist.removeIf(e->e.getRoleList()!=null && e.getRoleList().stream().allMatch(b->!b.getRoleId().equals(loginRoleId)));
+				menulist.removeIf(e->(e.getRoleList()==null||e.getRoleList().size()==0)||(e.getRoleList()!=null && e.getRoleList().stream().allMatch(b->!b.getRoleId().equals(loginRoleId))));
 			}
 			for(BoMenu row:menulist){
 				hasRole=false;
