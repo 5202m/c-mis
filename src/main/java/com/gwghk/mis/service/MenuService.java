@@ -47,14 +47,14 @@ public class MenuService{
 	/**
 	 * 功能：提取树形菜单
 	 */
-	public String getMenuTreeJson(String lang){
+	public String getMenuTreeJson(String lang,boolean isSuper){
 		List<TreeBean> menuBeanList=new ArrayList<TreeBean>();
 		List<BoMenu> menuList=menuDao.getAllMenuList();
 		if(menuList!=null&&menuList.size()>0){
 			TreeBean menuBean=null;
 			JSONObject jsonObj=null;
 			for(BoMenu row:menuList){
-				if("system_category".equals(row.getCode())){
+				if(!isSuper && "system_category".equals(row.getCode())){
 					continue;
 				}
 				menuBean=new TreeBean();
