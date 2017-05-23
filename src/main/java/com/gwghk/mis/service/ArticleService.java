@@ -156,7 +156,7 @@ public class ArticleService{
 	/**
 	 * 新增文章记录
 	 * @param article
-	 * @param syncArticle
+	 * @param isSendSubscribe
 	 * @return
 	 */
 	public ApiResult addArticle(Article article, boolean isSendSubscribe) {
@@ -183,7 +183,6 @@ public class ArticleService{
 	/**
 	 * 更新文章记录
 	 * @param articleParam
-	 * @param b
 	 * @return
 	 */
 	public ApiResult updateArticle(Article articleParam) {
@@ -219,7 +218,7 @@ public class ArticleService{
 	 * @return
 	 */
 	public ApiResult setArticleStatus(String[] ids,String status) {
-		return new ApiResult().setCode(articleDao.batchSetFieldVal(Article.class, ids,"status",status)?ResultCode.OK:ResultCode.FAIL);
+		return new ApiResult().setCode(articleDao.batchSetFieldVal(Article.class, ids,"status",Integer.parseInt(status))?ResultCode.OK:ResultCode.FAIL);
 	}
 
 	/**
