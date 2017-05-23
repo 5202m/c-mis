@@ -375,7 +375,7 @@ public class ArticleController extends BaseController{
 	private List<ChatGroup> formatTreeList(List<BoDict> dictList)
 	{
 		List<ChatGroup> nodeList = new ArrayList<ChatGroup>();
-		List<ChatGroup> groupList = chatGroupService.getChatGroupList("id", "name", "groupType");
+		List<ChatGroup> groupList = chatGroupService.getChatGroupList(getSystemFlag(), "id", "name", "groupType");
 		ChatGroup tbean = null;
 		for (BoDict dict : dictList)
 		{

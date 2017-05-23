@@ -126,13 +126,16 @@ var Syllabus = {
         }
       },
       onCheck: function (node, checked) {
-        if(checked) {
-            if(isValid(userId)){
+        var nodes = $(this).tree('getChecked');
+        if(nodes.length > 0 && checked) {
+            if(isValid(userId) && nodes[0].id == userId){
               Syllabus.getAnalystLiveLinks(userId, dom, liveLink);
-            }else {
-              Syllabus.getAnalystLiveLinks(node.id, dom, liveLink);
+            } else {
+              liveLink = [];
+              Syllabus.getAnalystLiveLinks(nodes[0].id, dom, liveLink);
             }
         } else {
+          liveLink = [];
           Syllabus.getAnalystLiveLinks('', dom, liveLink);
         }
       },
@@ -555,7 +558,7 @@ var Syllabus = {
           var liveLinks = [];
           $(this).find('select.liveLink').each(function(){
             if(isValid($(this).val())){
-              liveLinks.push({'code':$(this).find('option:selected').attr('code'),'url':$(this).find('option:selected').val()});
+              liveLinks.push({'code':$(this).find('option:selected').attr('code'),'url':$(this).find('option:selected').val(),'name':$(this).find('option:selected').text()});
             }
           });
           return {
@@ -761,52 +764,101 @@ var Syllabus = {
     return loc_html.join("");
   },
   /**
-   * 加载分析师直播地址
+   * 通过下拉框点击事件加载分析师直播地址
    * @param userId
    * @param dom
    * @param liveLink
    */
   getAnalystLiveLinks: function (userId, dom, liveLink) {
-    if (dom.children('option').length < 2) {
       var liveLinks = null;
-      if(isValid(userId)) {
-        liveLinks = getJson(basePath + "/userController/getAnalystLiveLink.do",{userId: userId});
-      }
       var lDomPc = dom.find('select[name="liveLink_pc"]'),
           lDomMb = dom.find('select[name="liveLink_mb"]'),
-          lDomAMb = dom.find('select[name="liveLinka_mb"]');
+          lDomAMb = dom.find('select[name="liveLinka_mb"]'),
+          hideDom = lDomPc.parent().children('input');
       var pcOptions = ['<option value="" code="">请选择</option>'], mbOptions = ['<option value="" code="">请选择</option>'], mbaOptions = ['<option value="" code="">请选择</option>'];
-      if (isValid(liveLinks)) {
-        lDomPc.attr('userId', userId);
-        liveLinks = JSON.parse(liveLinks);
-        $.each(liveLinks, function (i, row) {
+      if(liveLink.length > 0){
+        hideDom.val(JSON.stringify(liveLink));
+        $.each(liveLink, function (i, row) {
           if (row.code == '1') {
-            pcOptions.push('<option value="' + row.url + '" code="' + row.code + '">' + row.name + '</option>');
+            pcOptions.push('<option value="' + row.url + '" code="' + row.code + '" selected="selected">' + row.name + '</option>');
           } else if (row.code == '3') {
-            mbOptions.push('<option value="' + row.url + '" code="' + row.code + '">' + row.name + '</option>');
+            mbOptions.push('<option value="' + row.url + '" code="' + row.code + '" selected="selected">' + row.name + '</option>');
           } else if (row.code == '4') {
-            mbaOptions.push('<option value="' + row.url + '" code="' + row.code + '">' + row.name + '</option>');
+            mbaOptions.push('<option value="' + row.url + '" code="' + row.code + '" selected="selected">' + row.name + '</option>');
           }
         });
         lDomPc.html(pcOptions.join(''));
         lDomMb.html(mbOptions.join(''));
         lDomAMb.html(mbaOptions.join(''));
-        if (liveLink) {
-          $.each(liveLink, function (i, row) {
-            if (row.code == '1') {
-              lDomPc.val(row.url);
-            } else if (row.code == '3') {
-              lDomMb.val(row.url);
-            } else if (row.code == '4') {
-              lDomAMb.val(row.url);
-            }
-          });
-        }
-      } else {
-        lDomPc.html(pcOptions.join(''));
-        lDomMb.html(mbOptions.join(''));
-        lDomAMb.html(mbaOptions.join(''));
       }
+      lDomPc.one('click',function() {
+        Syllabus.setLiveLinkOption(userId, dom);
+        lDomPc.unbind('click');
+        lDomMb.unbind('click');
+        lDomAMb.unbind('click');
+        return false;
+      });
+      lDomMb.one('click',function() {
+        Syllabus.setLiveLinkOption(userId, dom);
+        lDomPc.unbind('click');
+        lDomMb.unbind('click');
+        lDomAMb.unbind('click');
+        return false;
+      });
+      lDomAMb.one('click',function() {
+        Syllabus.setLiveLinkOption(userId, dom);
+        lDomPc.unbind('click');
+        lDomMb.unbind('click');
+        lDomAMb.unbind('click');
+        return false;
+      });
+  },
+  /**
+   * 设置直播地址下拉框选项
+   * @param userId
+   * @param dom
+   */
+  setLiveLinkOption:function(userId, dom){
+    var liveLinks = null;
+    var lDomPc = dom.find('select[name="liveLink_pc"]'),
+        lDomMb = dom.find('select[name="liveLink_mb"]'),
+        lDomAMb = dom.find('select[name="liveLinka_mb"]'),
+        hideDom = lDomPc.parent().children('input');
+    var pcOptions = ['<option value="" code="">请选择</option>'], mbOptions = ['<option value="" code="">请选择</option>'], mbaOptions = ['<option value="" code="">请选择</option>'];
+    if (isValid(userId)) {
+      liveLinks = getJson(basePath + "/userController/getAnalystLiveLink.do", {userId: userId});
+    }
+    if (isValid(liveLinks)) {
+      lDomPc.attr('userId', userId);
+      liveLinks = JSON.parse(liveLinks);
+      $.each(liveLinks, function (i, row) {
+        if (row.code == '1') {
+          pcOptions.push('<option value="' + row.url + '" code="' + row.code + '">' + row.name + '</option>');
+        } else if (row.code == '3') {
+          mbOptions.push('<option value="' + row.url + '" code="' + row.code + '">' + row.name + '</option>');
+        } else if (row.code == '4') {
+          mbaOptions.push('<option value="' + row.url + '" code="' + row.code + '">' + row.name + '</option>');
+        }
+      });
+      lDomPc.empty().html(pcOptions.join(''));
+      lDomMb.empty().html(mbOptions.join(''));
+      lDomAMb.empty().html(mbaOptions.join(''));
+      if (isValid(hideDom.val())) {
+        var selectLiveLink = JSON.parse(hideDom.val());
+        $.each(selectLiveLink, function (i, row) {
+          if (row.code == '1') {
+            lDomPc.val(row.url);
+          } else if (row.code == '3') {
+            lDomMb.val(row.url);
+          } else if (row.code == '4') {
+            lDomAMb.val(row.url);
+          }
+        });
+      }
+    } else {
+      lDomPc.empty().html(pcOptions.join(''));
+      lDomMb.empty().html(mbOptions.join(''));
+      lDomAMb.empty().html(mbaOptions.join(''));
     }
   }
 };

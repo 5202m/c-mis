@@ -432,6 +432,7 @@ var ZxData = {
 			idField:'userNo',
 			textField:'userName',
 			url:basePath+'/userController/getAnalystList.do?hasOther=true',
+			panelWidth:200,
 			columns:[[
 				{field : 'userNo',hidden:true},
 				{field : 'author_Key_id',hidden:true,formatter : function(value, rowData, rowIndex) {
@@ -450,6 +451,9 @@ var ZxData = {
 				$('#zxDataReview_Form input[name=userId]').val(rowData.userNo);
 				$('#zxDataReview_Form input[name=name]').val(rowData.userName);
 				$('#zxDataReview_Form input[name=avatar]').val(rowData.avatar);
+			},
+			onBeforeLoad: function (node, param) {
+				$('#zxDataReview_Form table tr td span.combo input').width(200);
 			}
 		});
 	},

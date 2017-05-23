@@ -237,7 +237,7 @@ public class ChatGroupService{
 	 * 提取列表数据
 	 * @return
 	 */
-	public List<ChatGroup> getChatGroupList(String systemCategory,String...selectField) {
+	public List<ChatGroup> getChatGroupList(String systemCategory, String...selectField) {
 		Query query = Query.query(Criteria.where("valid").is(1).and("status").in(1, 2).and("systemCategory").is(systemCategory));
 		query.with(new Sort(new Order(Direction.ASC, "groupType"), new Order(Direction.ASC, "level")));
 		if(selectField!=null){

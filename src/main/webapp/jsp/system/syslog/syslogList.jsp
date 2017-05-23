@@ -14,7 +14,8 @@
           <td width="23%">
           <select name="operateType" id="operateType" style="width:160px">
               <c:if test="${loginRoleId == 'admin_super'}">
-                  <option value="1">登陆</option>
+              </c:if>
+                  <!--option value="1">登陆</option>
                   <option value="2">退出</option>
                   <option value="3">新增</option>
                   <option value="4">删除</option>
@@ -22,9 +23,8 @@
                   <option value="6">其他</option>
                   <option value="7">审批</option>
                   <option value="8">取消审批</option>
-              </c:if>
               <option value="9">导出记录</option>
-              <option value="A">禁言</option>
+              <option value="A">禁言</option-->
           </select>
           </td>
         </tr>

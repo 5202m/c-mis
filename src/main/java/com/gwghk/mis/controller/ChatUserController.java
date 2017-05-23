@@ -1,5 +1,6 @@
 package com.gwghk.mis.controller;
 
+import com.gwghk.mis.util.JSONHelper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -148,7 +149,8 @@ public class ChatUserController extends BaseController{
 	@RequestMapping(value = "/chatUserController/index", method = RequestMethod.GET)
 	public  String  index(HttpServletRequest request,ModelMap map){
 		DictConstant dict=DictConstant.getInstance();
-    	map.put("clientGroupList", chatClientGroupService.getClientGroupList(getSystemFlag(),null));
+		List<ChatClientGroup> chatClientGroupList = chatClientGroupService.getClientGroupList(null,getSystemFlag());
+    	map.put("clientGroupList", chatClientGroupList);
 		List<BoDict> dictList=ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_USE_STATUS);
     	map.put("statusList", dictList);
     	map.put("chatGroupList",this.formatTreeList(ResourceUtil.getSubDictListByParentCode(getSystemFlag(),dict.DICT_CHAT_GROUP_TYPE)));
@@ -160,7 +162,7 @@ public class ChatUserController extends BaseController{
 	 * 获取datagrid列表
 	 * @param request
 	 * @param dataGrid  分页查询参数对象
-	 * @param chatOnlineUser   实体查询参数对象
+	 * @param member   实体查询参数对象
 	 * @return Map<String,Object> datagrid需要的数据
 	 */
 	@RequestMapping(value = "/chatUserController/datagrid", method = RequestMethod.GET)
@@ -423,7 +425,7 @@ public class ChatUserController extends BaseController{
 	/**
 	 * 设置导出数据
 	 * @param index
-	 * @param row
+	 * @param dataSet
 	 * @param mobilePhone
 	 * @param userGroup
 	 * @param room
