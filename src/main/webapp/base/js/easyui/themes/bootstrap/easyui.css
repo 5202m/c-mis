@@ -128,7 +128,7 @@
 .panel-title {
   font-size: 12px;
   font-weight: bold;
-  color: #777;
+  color: #444;
   height: 16px;
   line-height: 16px;
 }
@@ -176,7 +176,7 @@
   filter: none;
 }
 .accordion .accordion-header-selected {
-  background: #0081c2;
+  background: rgb(0,155,219);
 }
 .accordion .accordion-header-selected .panel-title {
   color: #fff;
@@ -1287,7 +1287,7 @@
 }
 .tabs li.tabs-selected a.tabs-inner {
   background-color: #ffffff;
-  color: #777;
+  color: #444;
   background: -webkit-linear-gradient(top,#ffffff 0,#ffffff 100%);
   background: -moz-linear-gradient(top,#ffffff 0,#ffffff 100%);
   background: -o-linear-gradient(top,#ffffff 0,#ffffff 100%);
@@ -1651,8 +1651,8 @@
   cursor: default;
 }
 .datagrid-row-selected {
-  background: #0081c2;
-  color: #fff;
+  background: #d6d6d6;
+  color: #000;
 }
 .datagrid-row-editing .textbox,
 .datagrid-row-editing .textbox-text {
@@ -2768,8 +2768,8 @@
   color: #00438a;
 }
 .tree-node-selected {
-  background: #0081c2;
-  color: #fff;
+  background: #d6d6d6;
+  color: #444;
 }
 .tree-node-hidden {
   display: none;
