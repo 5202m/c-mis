@@ -118,7 +118,6 @@ public class ChatShowTradeController extends BaseController{
 		 Map<String, Object> result = new HashMap<String, Object>();
 		 result.put("total",null == page ? 0  : page.getTotalSize());
 	     result.put("rows", null == page ? new ArrayList<ChatShowTrade>() : page.getCollection());
-	     System.out.println(page);
 	     return result;
 	}
 	/**

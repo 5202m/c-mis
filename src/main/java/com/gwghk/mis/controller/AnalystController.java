@@ -107,7 +107,7 @@ public class AnalystController extends BaseController{
 		 if(roleIds==null||roleIds.length==0){
 			 page=new Page<BoUser>();
 		 }else{
-			 page = userService.getUserPage(this.createDetachedCriteria(dataGrid, mngUser), roleIds); 
+			 page = userService.getUserPage(this.createDetachedCriteria(dataGrid, mngUser), roleIds,"liveLinks"); 
 		 }
 		 Map<String, Object> result = new HashMap<String, Object>();
 		 result.put("total",null == page ? 0  : page.getTotalSize());

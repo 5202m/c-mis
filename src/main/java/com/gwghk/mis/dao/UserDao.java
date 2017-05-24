@@ -43,8 +43,8 @@ public class UserDao extends MongoDBBaseDao{
 	/**
 	 * 功能:根据不同的参数 -->查询用户信息
 	 */
-	public List<BoUser> getUserList(Query query){
-		return this.findList(BoUser.class, query);
+	public List<BoUser> getUserList(Query query,String ...fieldName){
+		return this.findListInclude(BoUser.class, query,fieldName);
 	}
 	
 	/**
@@ -134,8 +134,8 @@ public class UserDao extends MongoDBBaseDao{
 	 * @param pageSize
 	 * @return
 	 */
-	public Page<BoUser> getUserPage(Query query,DetachedCriteria<BoUser> dCriteria){
-		return super.findPage(BoUser.class, query, dCriteria);
+	public Page<BoUser> getUserPage(Query query,DetachedCriteria<BoUser> dCriteria,String ...excludeFields){
+		return super.findPageExclude(BoUser.class, query, dCriteria,excludeFields);
 	}
 	
 	/**
