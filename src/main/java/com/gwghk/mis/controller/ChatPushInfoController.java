@@ -81,7 +81,7 @@ public class ChatPushInfoController extends BaseController{
 	 * 获取datagrid列表
 	 * @param request
 	 * @param dataGrid  分页查询参数对象
-	 * @param chatGroup   实体查询参数对象
+	 * @param pushInfo   实体查询参数对象
 	 * @return Map<String,Object> datagrid需要的数据
 	 */
 	@RequestMapping(value = "/chatPushInfoController/datagrid", method = RequestMethod.GET)
@@ -130,7 +130,7 @@ public class ChatPushInfoController extends BaseController{
     	setBaseInfo(chatPushInfo,request,false);
     	AjaxJson j = new AjaxJson();
     	chatPushInfo.setId(null);
-    	ApiResult result =chatPushInfoService.save(chatPushInfo, false);
+    	ApiResult result =chatPushInfoService.save(chatPushInfo, false, getSystemFlag());
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + chatPushInfo.getCreateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 新增推送信息成功";
@@ -155,7 +155,7 @@ public class ChatPushInfoController extends BaseController{
     public AjaxJson update(HttpServletRequest request,HttpServletResponse response,ChatPushInfo chatPushInfo){
     	AjaxJson j = new AjaxJson();
     	setBaseInfo(chatPushInfo,request,true);
-    	ApiResult result =chatPushInfoService.save(chatPushInfo, true);
+    	ApiResult result =chatPushInfoService.save(chatPushInfo, true, getSystemFlag());
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + chatPushInfo.getUpdateUser() + " "+DateUtil.getDateSecondFormat(new Date()) + " 成功修改推送信息："+chatPushInfo.getId();
@@ -183,7 +183,7 @@ public class ChatPushInfoController extends BaseController{
     		delIds = request.getParameter("id");
     	}
     	AjaxJson j = new AjaxJson();
-    	ApiResult result =chatPushInfoService.delete(delIds.split(","));
+    	ApiResult result =chatPushInfoService.delete(delIds.split(","), getSystemFlag());
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除推送信息成功";

@@ -90,7 +90,7 @@ public class SmsController extends BaseController{
    	@ResponseBody
     public AjaxJson resend(HttpServletRequest request,@Param("smsId")String smsId){
         AjaxJson j = new AjaxJson();
-        ApiResult result = smsInfoService.resend(smsId);
+        ApiResult result = smsInfoService.resend(smsId, getSystemFlag());
     	if(result.isOk()){
 	    	j.setSuccess(true);
 	    	String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 重发短信成功smsId=" + smsId + "!";
@@ -123,7 +123,6 @@ public class SmsController extends BaseController{
 
 	/**
 	 * 重新发送短信
-	 * @param smsId
 	 * @return
 	 */
 	@RequestMapping(value="/sms/reset",method=RequestMethod.POST)

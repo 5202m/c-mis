@@ -168,11 +168,11 @@ public class ArticleService{
 			//chat socket通知
 			if("class_note".equals(article.getCategoryId()) ||
 					"trade_strategy_article".equals(article.getCategoryId())){
-				chatApiService.noticeArticle(article, "C");
+				chatApiService.noticeArticle(article, "C", article.getSystemCategory());
 			}
 			//api 订阅通知
 			if(isSendSubscribe && "class_note".equals(article.getCategoryId())){
-				pmApiService.subscribeArticle(article.getId());
+				pmApiService.subscribeArticle(article.getId(), article.getSystemCategory());
 			}
 		} catch (Exception e) {
 			return result.setCode(ResultCode.FAIL);
@@ -194,7 +194,7 @@ public class ArticleService{
 			articleDao.update(article);
 			if("class_note".equals(article.getCategoryId()) ||
 					"trade_strategy_article".equals(article.getCategoryId())){
-				chatApiService.noticeArticle(article, "U");
+				chatApiService.noticeArticle(article, "U", article.getSystemCategory());
 			}
 		} catch (Exception e) {
 			return new ApiResult().setCode(ResultCode.FAIL);
@@ -349,7 +349,7 @@ public class ArticleService{
 	 * @param articleId
 	 * @return
 	 */
-	public boolean sendSubscribe(String articleId){
-		return pmApiService.subscribeArticle(articleId);
+	public boolean sendSubscribe(String articleId, String systemCategory){
+		return pmApiService.subscribeArticle(articleId, systemCategory);
 	}
 }

@@ -635,11 +635,11 @@ public class ZxFinanceDataService {
 	 * @param data
 	 * @return
 	 */
-	public ApiResult saveComments(ZxFinanceData data, ZxFinanceDataComment comment) {
+	public ApiResult saveComments(ZxFinanceData data, ZxFinanceDataComment comment, String systemCategory) {
 		ApiResult result=new ApiResult();
 		if(dataDao.saveComment(data, comment)){
 			ZxFinanceData zxData = dataDao.findById(ZxFinanceData.class, data.getDataId());
-			chatApiService.zxFinanceReviewNotice(JSON.toJSONString(zxData),JSON.toJSONString(comment));
+			chatApiService.zxFinanceReviewNotice(JSON.toJSONString(zxData),JSON.toJSONString(comment), systemCategory);
 			result.setCode(ResultCode.OK);
 		}else{
 			result.setCode(ResultCode.FAIL);

@@ -54,7 +54,7 @@ public class ChatPushInfoService{
 	 * @param isUpdate
 	 * @return
 	 */
-	public ApiResult save(ChatPushInfo pushInfoParam, boolean isUpdate) {
+	public ApiResult save(ChatPushInfo pushInfoParam, boolean isUpdate, String systemCategory) {
 		ApiResult result=new ApiResult();
 		pushInfoParam.setValid(1);
 		if(isUpdate && StringUtils.isBlank(pushInfoParam.getId())){
@@ -71,7 +71,7 @@ public class ChatPushInfoService{
     		chatPushInfoDao.update(pushInfo);
     		if(pushInfo.getPushType().equals(1) && pushInfo.getPosition().equals(4)){
     			boolean isPushDate = DateUtil.dateTimeWeekCheck(pushInfo.getPushDate(), true) && pushInfo.getStatus().equals(1);
-    			chatApiService.submitPushInfo(JSON.toJSONString(pushInfo),isPushDate);//视频通知到客服端
+    			chatApiService.submitPushInfo(JSON.toJSONString(pushInfo),isPushDate, systemCategory);//视频通知到客服端
     		}
     	}else{
     		if(pushInfo!=null){
@@ -81,7 +81,7 @@ public class ChatPushInfoService{
     		if(pushInfoParam.getPushType().equals(1) && pushInfoParam.getPosition().equals(4) && pushInfoParam.getValid().equals(1) && pushInfoParam.getStatus().equals(1)){
     			boolean isPushDate = DateUtil.dateTimeWeekCheck(pushInfoParam.getPushDate(), true);
     			if(isPushDate){
-    				chatApiService.submitPushInfo(JSON.toJSONString(pushInfoParam),true);//视频通知到客服端
+    				chatApiService.submitPushInfo(JSON.toJSONString(pushInfoParam),true, systemCategory);//视频通知到客服端
     			}
     		}
     	}
@@ -93,7 +93,7 @@ public class ChatPushInfoService{
 	 * @param ids
 	 * @return
 	 */
-	public ApiResult delete(String[] ids) {
+	public ApiResult delete(String[] ids, String systemCategory) {
 		ApiResult api=new ApiResult();
     	boolean isSuccess = chatPushInfoDao.softDelete(ChatPushInfo.class,ids);
     	if(isSuccess){
@@ -112,7 +112,7 @@ public class ChatPushInfoService{
 	    		}
 	    		//通知聊天室客户端移除对应记录
 	    		if(strRmIdArr.length>0 && strIdArr.length>0){
-	    			chatApiService.removePushInfo(position,StringUtils.join(strRmIdArr, "|") ,StringUtils.join(strIdArr, "|"));
+	    			chatApiService.removePushInfo(position,StringUtils.join(strRmIdArr, "|") ,StringUtils.join(strIdArr, "|"), systemCategory);
 	    		}
 		    }
     	}

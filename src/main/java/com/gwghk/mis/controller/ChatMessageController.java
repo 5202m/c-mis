@@ -241,7 +241,7 @@ public class ChatMessageController extends BaseController{
     		j.setMsg("参数有误，请检查！");
     		return j;
     	}
-    	ApiResult result =chatMessageService.approvalMsg(boUser.getUserNo(),publishTimeArr,fUserIdArr,status,groupId);
+    	ApiResult result =chatMessageService.approvalMsg(boUser.getUserNo(),publishTimeArr,fUserIdArr,status,groupId, getSystemFlag());
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + boUser.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 审核聊天室信息成功";
@@ -276,7 +276,7 @@ public class ChatMessageController extends BaseController{
     	if(StringUtils.isBlank(delIds)){
     		delIds = request.getParameter("id");
     	}
-    	ApiResult result =chatMessageService.deleteChatMessage(delIds.split(","),Integer.parseInt(year));
+    	ApiResult result =chatMessageService.deleteChatMessage(delIds.split(","),Integer.parseInt(year), getSystemFlag());
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + boUser.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除聊天信息成功";

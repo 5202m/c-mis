@@ -391,7 +391,7 @@ public class ChatGroupController extends BaseController{
     		delIds = request.getParameter("id");
     	}
     	AjaxJson j = new AjaxJson();
-    	ApiResult result =chatGroupService.deleteChatGroup(delIds.split(","));
+    	ApiResult result =chatGroupService.deleteChatGroup(delIds.split(","), getSystemFlag());
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除聊天室房间成功";

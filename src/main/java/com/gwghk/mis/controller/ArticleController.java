@@ -469,7 +469,7 @@ public class ArticleController extends BaseController{
     		j.setSuccess(false);
     		j.setMsg("文章编号不能为空！");
     	}else{
-    		articleService.sendSubscribe(articleId);
+    		articleService.sendSubscribe(articleId, getSystemFlag());
     		j.setSuccess(true);
     		j.setMsg("发送订阅通知成功！");
     	}

@@ -323,7 +323,7 @@ public class ZxFinanceDataController extends BaseController{
 		comments.setComment(comment);
 		comments.setSystemCategory(getSystemFlag());
 
-		result = dataService.saveComments(data, comments);
+		result = dataService.saveComments(data, comments, getSystemFlag());
 		if(result.isOk()){
 			j.setSuccess(true);
 			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 保存财经日历点评成功：[" + data.getDataId() + "-" + data.getDescription() + "-" + data.getDataType() + "]!";
