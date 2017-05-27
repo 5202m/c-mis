@@ -131,7 +131,7 @@ var Syllabus = {
             if(isValid(userId) && nodes[0].id == userId){
               Syllabus.getAnalystLiveLinks(userId, dom, liveLink);
             } else {
-              liveLink = [];
+              //liveLink = [];
               Syllabus.getAnalystLiveLinks(nodes[0].id, dom, liveLink);
             }
         } else {
@@ -156,6 +156,7 @@ var Syllabus = {
       dom.find("select[name=courseType]").val(course.courseType);
       dom.find("input[name=title]").val(course.title);
       dom.find("textarea[name=context]").val(course.context);
+      dom.find("input[name=hideLiveLink]").val(course.liveLink?JSON.stringify(course.liveLink):'');
       if (isValid(course.lecturerId)) {
         var tmpList = JSON.parse(JSON.stringify(this.lecturerList));
         for (var i in tmpList) {
@@ -774,7 +775,7 @@ var Syllabus = {
       var lDomPc = dom.find('select[name="liveLink_pc"]'),
           lDomMb = dom.find('select[name="liveLink_mb"]'),
           lDomAMb = dom.find('select[name="liveLinka_mb"]'),
-          hideDom = lDomPc.parent().children('input');
+          hideDom = lDomPc.parent().children('input[name="hideLiveLink"]');
       var pcOptions = ['<option value="" code="">请选择</option>'], mbOptions = ['<option value="" code="">请选择</option>'], mbaOptions = ['<option value="" code="">请选择</option>'];
       if(liveLink.length > 0){
         hideDom.val(JSON.stringify(liveLink));

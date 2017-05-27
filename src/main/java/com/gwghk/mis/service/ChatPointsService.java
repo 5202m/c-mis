@@ -156,8 +156,8 @@ public class ChatPointsService {
 		Long pointsTmp = journal.getChange().longValue();
 		
 		ChatPoints pointsDb = null;
-		if(StringUtils.isNotBlank(chatPoints.getPointsId())){
-			pointsDb = this.findById(chatPoints.getPointsId());
+		if(StringUtils.isNotBlank(chatPoints.getId())){
+			pointsDb = this.findById(chatPoints.getId());
 			if(pointsDb == null){
 				result.setCode(ResultCode.FAIL);
 				result.setErrorMsg("积分信息不存在！");

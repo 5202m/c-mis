@@ -23,11 +23,11 @@ public class APIAuth {
 
   private static final int expiredGap = 10000;
 
-  private APIToken apiToken = null;
+  private static APIToken apiToken = null;
 
   private String appId;
 
-  private  String appSecret;
+  private String appSecret;
 
   /**
    * 格式请求url
@@ -38,7 +38,7 @@ public class APIAuth {
   }
 
   public APIAuth(String appId, String appSecret){
-    this.apiToken = null;
+    //this.apiToken = null;
     this.appId = appId;
     this.appSecret = appSecret;
   }
