@@ -1,5 +1,7 @@
 package com.gwghk.mis.service;
 
+import com.gwghk.mis.util.APIAuth;
+import com.gwghk.mis.util.APIToken;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +34,23 @@ public class PmApiService{
 	private String formatUrl(ApiDir apiDir,String actionName){
 		return String.format("%s/%s/%s",PropertiesUtil.getInstance().getProperty("pmApiUrl"),apiDir.getValue(),actionName);
 	}
-	
+
+	/**
+	 * 根据token获取headerValues
+	 * @param systemCategory
+	 * @return
+	 */
+	private Map<String, String> getHeaderValues(String systemCategory){
+		String appId = PropertiesUtil.getInstance().getProperty(systemCategory+"AppId");
+		String appSecret = PropertiesUtil.getInstance().getProperty(systemCategory+"AppSecret");
+		APIAuth apiAuth = new APIAuth(appId, appSecret);
+		String token = apiAuth.getToken();
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("apptoken", token);
+		result.put("appsecret", appSecret);
+		return result;
+	}
+
 	/**
 	 * 设置tokenAcccess
 	 * @param 
@@ -163,7 +181,7 @@ public class PmApiService{
 	 * @param validTime
 	 * @return
 	 */
-	public boolean sendMsg(String type, String useType, String mobilePhone, String content, String ip, long validTime) {
+	public boolean sendMsg(String type, String useType, String mobilePhone, String content, String ip, long validTime, String systemCategory) {
 		Map<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("mobile", mobilePhone);
 		paramMap.put("type", type);
@@ -171,8 +189,9 @@ public class PmApiService{
 		paramMap.put("content", content);
 		paramMap.put("deviceKey", ip);
 		paramMap.put("validTime", String.valueOf(validTime));
+		Map<String, String> headerValues = getHeaderValues(systemCategory);
 		try {
-			String str = HttpClientUtils.httpPostString(formatUrl(ApiDir.sms, "send"), paramMap);
+			String str = HttpClientUtils.httpPostString(formatUrl(ApiDir.sms, "send"), paramMap, headerValues, "UTF-8");
 			logger.info("<<API-sendMsg() : " + str);
 			if (StringUtils.isNotBlank(str)) {
 				JSONObject obj = JSON.parseObject(str);
@@ -193,11 +212,12 @@ public class PmApiService{
 	 * @param smsId
 	 * @return
 	 */
-	public boolean resend(String smsId){
+	public boolean resend(String smsId, String systemCategory){
 		Map<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("smsId", smsId);
+		Map<String, String> headerValues = getHeaderValues(systemCategory);
 		try {
-			String str = HttpClientUtils.httpPostString(formatUrl(ApiDir.sms, "resend"), paramMap);
+			String str = HttpClientUtils.httpPostString(formatUrl(ApiDir.sms, "resend"), paramMap, headerValues, "UTF-8");
 			logger.info("<<API-resend() : " + str);
 			if (StringUtils.isNotBlank(str)) {
 				JSONObject obj = JSON.parseObject(str);
@@ -237,12 +257,13 @@ public class PmApiService{
 	 * @param articleId
 	 * @return
 	 */
-	public boolean subscribeArticle(String articleId){
+	public boolean subscribeArticle(String articleId, String systemCategory){
 		Map<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("type", "ARTICLE");
 		paramMap.put("dataId", articleId);
+		Map<String, String> headerValues = getHeaderValues(systemCategory);
 		try {
-			String str = HttpClientUtils.httpPostString(formatUrl(ApiDir.subscribe, "notice"), paramMap);
+			String str = HttpClientUtils.httpPostString(formatUrl(ApiDir.subscribe, "notice"), paramMap, headerValues, "UTF-8");
 			logger.info("<<API-subscribeArticle() : " + str);
 			if (StringUtils.isNotBlank(str)) {
 				JSONObject obj = JSON.parseObject(str);

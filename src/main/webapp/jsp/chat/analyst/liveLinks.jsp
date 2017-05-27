@@ -2,7 +2,7 @@
 <%@ include file="/jsp/common/common.jsp"%>
 <style type="text/css">
     .live-tab-panel{
-      overflow-y: auto;height:460px;border: 1px solid #B89E61;padding: 5px;
+      height:460px;border: 1px solid #B89E61;padding: 5px;
     }
     .live_sub_tab{
        height: 20px;
@@ -18,6 +18,8 @@
       display: none;
     }
     .live-next-labdev{
+      overflow-y: auto;
+      height:430px;
       margin-top: 4px;padding:5px;
     }
     .liveMainSelect,.liveSelect,.dictSetSelect{
@@ -77,25 +79,25 @@
     				}
     			});
     		}
-    		$(".liveSelect").show();
+    		$(this).nextAll(".liveSelect").show();
     		var nSelectBox=null;
     		var isDictSet=this.value && this.value.indexOf(";")!=-1;//数据字典设置有默认值的项
     		var isNotParamVal=!/\{0\}/g.test(this.value);//数据字典设置没有带参数的项，如{0}
     		var nbxVal="";
     		if(isDictSet){
-    			$(".liveSelect").val("").hide();
-    			$(".dictSetSelect").show().html('<option value="">--请选择--</option>');
+    			$(this).nextAll(".liveSelect").val("").hide();
+    			$(this).nextAll(".dictSetSelect").show().html('<option value="">--请选择--</option>');
     			var lval=this.value.split(";");
     			if(isValid(lval)){
     				lval=lval[1].split(",");
     				for(var i in lval){
-    					$(".dictSetSelect").append('<option value="'+lval[i]+'">'+lval[i]+'</option>');
+    					$(this).nextAll(".dictSetSelect").append('<option value="'+lval[i]+'">'+lval[i]+'</option>');
     				}
     			}
     			nbxVal=$(this).next().next().val();
     		}else{
     			nbxVal=isNotParamVal?"":$(this).next().val();
-    			$(".dictSetSelect").val("").hide();
+    			$(this).nextAll(".dictSetSelect").val("").hide();
     		}
     		if(!isNotParamVal && (isBlank(nbxVal) || (!isDictSet && nbxVal.indexOf("X")!=-1))){
     			return false;
@@ -116,7 +118,7 @@
     <form id="setLiveLinks_form" method="post">
         <input type="hidden" name="userId" id = "userId" value="${mngUser.userId}">
          <c:forEach var="row" items="${liveList}">
-              <div style='width: 255px;height:490px;float:left;'>
+              <div style='width: 265px;height:490px;float:left;'>
                 <strong>${row.nameCN}</strong>
                 <div class="live-tab-panel" tc="${row.value}">
                      <div class="live_sub_tab">

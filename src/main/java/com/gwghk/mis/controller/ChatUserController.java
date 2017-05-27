@@ -128,7 +128,7 @@ public class ChatUserController extends BaseController{
 				chatUserRoomId=StringUtils.join(roomIdList, ",");
 			}
 		}
-		ApiResult apiResult = chatApiService.leaveRoom(chatUserRoomId,userIds);
+		ApiResult apiResult = chatApiService.leaveRoom(chatUserRoomId,userIds, getSystemFlag());
 		if(apiResult.isOk()){
 			j.setSuccess(true);
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置退出房间成功";

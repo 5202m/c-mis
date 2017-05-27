@@ -17,7 +17,7 @@ public class ChatPoints extends BaseModelExt{
 	 * 主键
 	 */
 	@Id
-	private String pointsId;
+	private String id;
 	
 	/**
 	 * 房间组别
@@ -54,18 +54,12 @@ public class ChatPoints extends BaseModelExt{
 	 */
 	private Integer isDeleted;
 
-	/**
-	 * @return the pointsId
-	 */
-	public String getPointsId() {
-		return pointsId;
+	public String getId() {
+		return id;
 	}
 
-	/**
-	 * @param pointsId the pointsId to set
-	 */
-	public void setPointsId(String pointsId) {
-		this.pointsId = pointsId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/**

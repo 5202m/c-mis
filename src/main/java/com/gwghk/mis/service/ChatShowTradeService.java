@@ -79,7 +79,7 @@ public class ChatShowTradeService {
             chatShowTradeDao.findList(ChatShowTrade.class,
                 Query.query(Criteria.where("_id").in(showTrade.getId())));
         String tradeInfo = JSONHelper.toJSONString(ChatShowTradeList);
-        chatApiService.showTradeNotice(tradeInfo);
+        chatApiService.showTradeNotice(tradeInfo, trade.getSystemCategory());
       }
     } else {
       showTrade.setId(null);
@@ -162,7 +162,7 @@ public class ChatShowTradeService {
    * @param status
    * @return
    */
-  public ApiResult modifyTradeStatusByIds(String[] tradeIds, int status) {
+  public ApiResult modifyTradeStatusByIds(String[] tradeIds, int status, String systemCategory) {
     ApiResult api = new ApiResult();
     boolean isSuccess = chatShowTradeDao.modifyTradeStatusByIds(tradeIds, status);
     if (isSuccess && status == 1) {
@@ -170,7 +170,7 @@ public class ChatShowTradeService {
           chatShowTradeDao.findList(ChatShowTrade.class,
               Query.query(Criteria.where("_id").in((Object[]) tradeIds)));
       String tradeInfo = JSONHelper.toJSONString(ChatShowTradeList);
-      chatApiService.showTradeNotice(tradeInfo);
+      chatApiService.showTradeNotice(tradeInfo, systemCategory);
     }
     return api.setCode(isSuccess ? ResultCode.OK : ResultCode.FAIL);
   }

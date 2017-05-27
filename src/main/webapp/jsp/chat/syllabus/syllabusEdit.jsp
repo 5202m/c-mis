@@ -112,7 +112,7 @@ Syllabus.studioLink=${studioLinkStr};
 							<label>讲师：</label><select style="width:230px;" name="lecturer" id="select_lecturer0_${status.index}" data-options="cascadeCheck:false" multiple></select>
 						</div>
 						<div>
-							<input type="hidden" />
+							<input type="hidden" name="hideLiveLink" />
 							<label>直播地址：视频(pc)</label>
 							<select name="liveLink_pc" class="liveLink" id="liveLink_pc_${status.index}" style="width:140px;">
 								<option value="">请选择</option>

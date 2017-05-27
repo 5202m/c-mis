@@ -72,7 +72,7 @@ public class UserService{
 	/**
 	 * 功能：分页查询用户数据
 	 */
-	public Page<BoUser> getUserPage(DetachedCriteria<BoUser> dCriteria, String[] roleIds){
+	public Page<BoUser> getUserPage(DetachedCriteria<BoUser> dCriteria, String[] roleIds,String ...excludeFields){
 		Query query=new Query();
 		BoUser boUser=dCriteria.getSearchModel();
 		Criteria criteria = Criteria.where("valid").is(1);
@@ -98,7 +98,7 @@ public class UserService{
 			}
 		}
 		query.addCriteria(criteria);
-		return userDao.getUserPage(query,dCriteria);
+		return userDao.getUserPage(query,dCriteria,excludeFields);
 	}
 	
 	/**
@@ -140,14 +140,14 @@ public class UserService{
 	 * @param roleNo
 	 * @return
 	 */
-	public List<BoUser> getUserListByRole(String systemCategory,String roleNo){
+	public List<BoUser> getUserListByRole(String systemCategory,String roleNo,String ...fieldName){
 		Query query=new Query();
 		Criteria criteria = Criteria.where("valid").is(1).and("systemCategory").is(systemCategory);
 		if(StringUtils.isNotBlank(roleNo)){
 			criteria.and("role.roleNo").regex(StringUtil.toFuzzyMatch(roleNo));
 		}
 		query.addCriteria(criteria);
-		return userDao.getUserList(query);
+		return userDao.getUserList(query,fieldName);
 	}
 	
 	/**

@@ -52,7 +52,7 @@ public class ChatMessgeService{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public ApiResult deleteChatMessage(String[] ids,int year) {
+	public ApiResult deleteChatMessage(String[] ids,int year, String systemCategory) {
 		ApiResult api=new ApiResult();
 		if(year<2005){
 			return api.setCode(ResultCode.FAIL);
@@ -77,7 +77,7 @@ public class ChatMessgeService{
 		    	}
 	    		if(buffer.length()>0){
 	    			//通知聊天室客户端移除对应记录
-	        		chatApiService.removeMsg(buffer.toString(),groupId);
+	        		chatApiService.removeMsg(buffer.toString(),groupId,systemCategory);
 	    		}
 	    	}
 	    }
@@ -92,8 +92,8 @@ public class ChatMessgeService{
      * @param groupId
      * @return
      */
-    public ApiResult approvalMsg(String approvalUserNo,String publishTimeArr,String fUserIdArr,String status,String groupId){
-    	return chatApiService.approvalMsg(approvalUserNo,publishTimeArr,fUserIdArr,status,groupId);
+    public ApiResult approvalMsg(String approvalUserNo,String publishTimeArr,String fUserIdArr,String status,String groupId, String systemCategory){
+    	return chatApiService.approvalMsg(approvalUserNo,publishTimeArr,fUserIdArr,status,groupId, systemCategory);
     }
 	/**
 	 * 分页查询内容

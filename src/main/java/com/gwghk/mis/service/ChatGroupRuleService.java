@@ -77,7 +77,7 @@ public class ChatGroupRuleService{
     			jsonObj.put("periodDate", chatGroupRuleParam.getPeriodDate());
         		jsonObj.put("afterRuleTips", chatGroupRuleParam.getAfterRuleTips());
         		jsonObj.put("beforeRuleVal", chatGroupRuleParam.getBeforeRuleVal());
-        		chatApiService.modifyRuleNotice(StringUtils.join(strList, ","),jsonObj.toJSONString());
+        		chatApiService.modifyRuleNotice(StringUtils.join(strList, ","),jsonObj.toJSONString(), chatGroupRuleParam.getSystemCategory());
     		}
     	}
     	return result.setCode(ResultCode.OK);

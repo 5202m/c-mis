@@ -47,14 +47,14 @@ public class MenuService{
 	/**
 	 * 功能：提取树形菜单
 	 */
-	public String getMenuTreeJson(String lang){
+	public String getMenuTreeJson(String lang,boolean isSuper){
 		List<TreeBean> menuBeanList=new ArrayList<TreeBean>();
 		List<BoMenu> menuList=menuDao.getAllMenuList();
 		if(menuList!=null&&menuList.size()>0){
 			TreeBean menuBean=null;
 			JSONObject jsonObj=null;
 			for(BoMenu row:menuList){
-				if("system_category".equals(row.getCode())){
+				if(!isSuper && "system_category".equals(row.getCode())){
 					continue;
 				}
 				menuBean=new TreeBean();
@@ -90,7 +90,7 @@ public class MenuService{
 			String langText="";
 			List<BoRole> roleList=null;
 			if(loginRoleId!=null){//登录角色不为空的公司超级用户，只显示登录角色中授权的菜单
-				menulist.removeIf(e->e.getRoleList()!=null && e.getRoleList().stream().allMatch(b->!b.getRoleId().equals(loginRoleId)));
+				menulist.removeIf(e->(e.getRoleList()==null||e.getRoleList().size()==0)||(e.getRoleList()!=null && e.getRoleList().stream().allMatch(b->!b.getRoleId().equals(loginRoleId))));
 			}
 			for(BoMenu row:menulist){
 				hasRole=false;

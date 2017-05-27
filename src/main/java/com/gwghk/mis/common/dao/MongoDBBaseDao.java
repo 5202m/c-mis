@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.poi.hssf.record.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
@@ -160,7 +159,7 @@ public class MongoDBBaseDao implements IBaseDao{
     public <T> List<T> findListInclude(Class<T> entityClass, Query query,String ...includeFields) {
     	 org.springframework.data.mongodb.core.query.Field field=query.fields();
     	 for(String fieldKey:includeFields){
-    		 field.include(fieldKey);
+    		field.include(fieldKey);
     	 }
         return this.mongoTemplate.find(query, entityClass);
     } 
@@ -400,6 +399,26 @@ public class MongoDBBaseDao implements IBaseDao{
     	Page<T> page=new Page<T>();
     	page.setTotalSize(this.count(entityClass,query).intValue());
     	page.addAll(this.findList(entityClass,query,dCriteria));
+        return page;  
+    }
+    
+    /**
+     * 分页查询
+     * @param entityClass
+     * @param query
+     * @param dCriteria
+     * @param includeFields
+     * @return
+     */
+    @SuppressWarnings("hiding")
+    public <T> Page<T> findPageExclude(Class<T> entityClass, Query query, DetachedCriteria<T> dCriteria,String ...excludeFields) {  
+        Page<T> page=new Page<T>();
+        org.springframework.data.mongodb.core.query.Field field=query.fields();
+        for(String fieldKey:excludeFields){
+             field.exclude(fieldKey);
+        }
+        page.setTotalSize(this.count(entityClass,query).intValue());
+        page.addAll(this.findList(entityClass,query,dCriteria));
         return page;  
     }
     

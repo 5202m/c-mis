@@ -288,7 +288,7 @@ var chatShowTrade = {
 		$('#'+id).combogrid({
 		    idField:'userNo',
 		    textField:'userName',
-				panelWidth: 200,
+			panelWidth: 200,
 		    url:basePath+'/userController/getAnalystList.do?hasOther=true',
 		    columns:[[
 		        {field : 'userNo', hidden:true},
@@ -311,7 +311,7 @@ var chatShowTrade = {
 		    	$('#'+id+'Input').val(val);
 		    },
 			onBeforeLoad:function(){
-				$('#showTradeAddFrom table tr td span.combo input').width(200);
+				$('#'+id).next('span.combo').find('input').width(200);
 			}
 		}); 
 	},

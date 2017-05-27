@@ -60,8 +60,11 @@ public class MenuController extends BaseController{
 	 */
 	@RequestMapping(value = "/menuController/loadMenuTree", method = RequestMethod.POST,produces = "plain/text; charset=UTF-8")
 	@ResponseBody
-	public String loadMenuTree(){
-		return menuService.getMenuTreeJson(ResourceUtil.getSessionLocale());
+	public String loadMenuTree(HttpServletRequest request){
+	    HttpSession session=request.getSession();
+	    Object obj = session.getAttribute(WebConstant.SESSION_MENU_KEY);
+        Object superFlag = session.getAttribute(WebConstant.SESSION_SUPER_FLAG);
+		return menuService.getMenuTreeJson(ResourceUtil.getSessionLocale(),superFlag!=null && (boolean)superFlag);
 	}
 	
 	/**

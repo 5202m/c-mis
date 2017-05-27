@@ -6,7 +6,7 @@
 var systemLog = {
 	gridId : 'system_log_datagrid',
 	init : function(){
-		this.initGrid();
+		//this.initGrid();
 		this.setEvent();
 	},
 	/**
@@ -17,6 +17,7 @@ var systemLog = {
 			gridId : systemLog.gridId,
 			singleSelect : true,
 			url : basePath+'/sysLogController/datagrid.do',
+			queryParams :{operateType : $("#operateType").val()},
 			columns : [[
 			    {title : 'id',field : 'id',hidden:true,width:100},
 	            {title : $.i18n.prop("syslog.no"),field : 'userNo',width:100},				/**账户*/

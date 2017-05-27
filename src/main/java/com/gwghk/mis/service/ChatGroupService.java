@@ -85,7 +85,7 @@ public class ChatGroupService{
     		//有效-->无效、在开放时间-->不在开放时间的情况，需要通知API leaveRoom
     		if((new Integer(1).equals(group.getStatus()) && new Integer(0).equals(chatGroupParam.getStatus()))
     				|| (DateUtil.dateTimeWeekCheck(group.getOpenDate(), true) && DateUtil.dateTimeWeekCheck(chatGroupParam.getOpenDate(), true) == false)){
-    			chatApiService.leaveRoom(chatGroupParam.getId(),"");
+    			chatApiService.leaveRoom(chatGroupParam.getId(),"", chatGroupParam.getSystemCategory());
     		}
     		BeanUtils.copyExceptNull(group, chatGroupParam);
     		if(isUpdateDefaultAnalyst){
@@ -154,12 +154,12 @@ public class ChatGroupService{
 	 * @param ids
 	 * @return
 	 */
-	public ApiResult deleteChatGroup(String[] ids) {
+	public ApiResult deleteChatGroup(String[] ids, String systemCategory) {
 		ApiResult api=new ApiResult();
     	boolean isSuccess = chatGroupDao.softDelete(ChatGroup.class,ids);
     	if(isSuccess){
     		roleDao.deleteRoleChatGroup(ids);
-    		chatApiService.leaveRoom(StringUtils.join(ids, ","),"");
+    		chatApiService.leaveRoom(StringUtils.join(ids, ","),"", systemCategory);
     	}
     	return api.setCode(isSuccess?ResultCode.OK:ResultCode.FAIL);
 	}

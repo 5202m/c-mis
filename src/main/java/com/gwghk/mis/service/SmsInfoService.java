@@ -91,9 +91,9 @@ public class SmsInfoService {
 	 * @param smsId
 	 * @return
 	 */
-	public ApiResult resend(String smsId){
+	public ApiResult resend(String smsId, String systemCategory){
 		ApiResult result = new ApiResult();
-		boolean isOk = pmApiService.resend(smsId);
+		boolean isOk = pmApiService.resend(smsId, systemCategory);
 		result.setCode(isOk ? ResultCode.OK : ResultCode.FAIL);
 		return result;
 	}

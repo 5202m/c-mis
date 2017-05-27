@@ -118,7 +118,6 @@ public class ChatShowTradeController extends BaseController{
 		 Map<String, Object> result = new HashMap<String, Object>();
 		 result.put("total",null == page ? 0  : page.getTotalSize());
 	     result.put("rows", null == page ? new ArrayList<ChatShowTrade>() : page.getCollection());
-	     System.out.println(page);
 	     return result;
 	}
 	/**
@@ -303,7 +302,7 @@ public class ChatShowTradeController extends BaseController{
     	String tradeIds = request.getParameter("tradeIds");
     	int status = StringUtils.stringToInteger(request.getParameter("status"));
     	AjaxJson j = new AjaxJson();
-    	ApiResult result = chatShowTradeService.modifyTradeStatusByIds(tradeIds.contains(",")?tradeIds.split(","):new String[]{tradeIds}, status);
+    	ApiResult result = chatShowTradeService.modifyTradeStatusByIds(tradeIds.contains(",")?tradeIds.split(","):new String[]{tradeIds}, status, getSystemFlag());
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量审核晒单成功";
