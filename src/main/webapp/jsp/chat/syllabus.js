@@ -29,8 +29,13 @@ var Syllabus = {
     	fxstudio:{
     		obsCode:["20","21","22","23","24","25"],
     	    yyLink:[
-    	    	{name:'yy:92628431/2537339360',url:'http://yy.com/s/92628431/2537339360/yyscene.swf'},
-        		{name:'yy:92628431/2559592756',url:'http://yy.com/s/92628431/2559592756/yyscene.swf'}
+    	    	//{name:'yy:92628431/2537339360',url:'http://yy.com/s/92628431/2537339360/yyscene.swf'},
+        		//{name:'yy:92628431/2559592756',url:'http://yy.com/s/92628431/2559592756/yyscene.swf'},
+						{name:'(大厅)yy:49443247/49443247',url:'http://yy.com/s/49443247/49443247/yyscene.swf'},
+						{name:'(专场)yy:49443247/2560245160',url:'http://yy.com/s/49443247/2560245160/yyscene.swf'},
+						{name:'(VIP)yy:49443247/2610793696',url:'http://yy.com/s/49443247/2610793696/yyscene.swf'},
+						{name:'(培训班)yy:49443247/2610793808',url:'http://yy.com/s/49443247/2610793808/yyscene.swf'},
+						{name:'(测试)yy:49443247/2560246647',url:'http://yy.com/s/49443247/2560246647/yyscene.swf'}
     	    ],
     	    smcbLink:[
   	    	    {name:'烧麦财播:200',url:(window.location.href.indexOf('gwfx')<0?'http://113.28.105.97:9081/webui_gts2_fx_chat-sit':'https://ui.gwfx.com')+'/client.action?roomId=200'},
