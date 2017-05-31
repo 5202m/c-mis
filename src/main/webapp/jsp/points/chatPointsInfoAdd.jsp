@@ -7,6 +7,7 @@
       <tr>
         <th width="30%">组别</th>
         <td width="70%" id="chatPointsInfoAdd_groupTypeTd">
+            <span></span>
         	<select name="groupType" id="chatPointsInfoAdd_groupType" style="width: 155px;">
         	</select>
 		</td>
@@ -14,6 +15,7 @@
       <tr>
         <th>手机号</th>
         <td id="chatPointsInfoAdd_userIdTd">
+            <span></span>
         	<input type="text" name="userId" class="easyui-validatebox" data-options="required:true,missingMessage:'请输入客户手机号'">
 		</td>
       </tr>
