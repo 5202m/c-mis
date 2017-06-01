@@ -164,7 +164,7 @@ public class ChatUserController extends BaseController{
 	 * 获取datagrid列表
 	 * @param request
 	 * @param dataGrid  分页查询参数对象
-	 * @param chatOnlineUser   实体查询参数对象
+	 * @param member   实体查询参数对象
 	 * @return Map<String,Object> datagrid需要的数据
 	 */
 	@RequestMapping(value = "/chatUserController/datagrid", method = RequestMethod.GET)
@@ -297,7 +297,7 @@ public class ChatUserController extends BaseController{
     }
     
     /**
-	 * 功能：设置用户禁言
+	 * 功能：设置用户
 	 */
 	@RequestMapping(value="/chatUserController/userSetting",method=RequestMethod.POST)
     @ResponseBody
@@ -312,17 +312,24 @@ public class ChatUserController extends BaseController{
 				clientGroup=request.getParameter("clientGroup"),
 				accountNo=request.getParameter("accountNo");
 		ApiResult apiResult = memberService.saveUserSetting(memberId, groupType, type,Boolean.valueOf(value), remark, clientGroup, accountNo);
+		if(type.equals("1")){
+			remark += "  价值用户状态";
+		}else if(type.equals("2")){
+			remark += "  VIP用户状态";
+		}else if(type.equals("3")){
+			remark += "  用户级别状态："+clientGroup+"，用户账号："+accountNo;
+		}
 		if(apiResult.isOk()){
 			j.setSuccess(true);
-    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户成功";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
+    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户："+memberId+"  "+remark+"成功";
+    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
     						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
     		logger.info("<<method:userSetting()|"+message);
 		}else{
 			j.setSuccess(false);
 			j.setMsg(ResourceBundleUtil.getByMessage(apiResult.getCode()));
-    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户失败";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
+    		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 设置用户："+memberId+"  "+remark+"失败";
+    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE
     						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
     		logger.error("<<method:userSetting()|"+message+",ErrorMsg:"+apiResult.toString());
 		}
@@ -356,14 +363,14 @@ public class ChatUserController extends BaseController{
 			j.setSuccess(true);
 			j.setObj(nickname);
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 操作成功提示:把客户("+mobile+")的昵称【"+oldname+"】改成【"+nickname+"】";
-    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_DEL
+    		logService.addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE
     						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
     		logger.info("<<method:userSetting()|"+message);
 		}else{
 			j.setSuccess(false);
 			j.setMsg(apiResult.getErrorMsg());
     		String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 操作失败提示:把客户("+mobile+")的昵称【"+oldname+"】改成【"+nickname+"】";
-    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_DEL
+    		logService.addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE
     						 ,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
     		logger.error("<<method:userSetting()|"+message+",ErrorMsg:"+apiResult.toString());
 		}
@@ -435,7 +442,7 @@ public class ChatUserController extends BaseController{
 	/**
 	 * 设置导出数据
 	 * @param index
-	 * @param row
+	 * @param dataSet
 	 * @param mobilePhone
 	 * @param userGroup
 	 * @param room
