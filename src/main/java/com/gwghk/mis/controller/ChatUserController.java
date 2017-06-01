@@ -286,7 +286,7 @@ public class ChatUserController extends BaseController{
     	 map.put("vipUserRemark", vipUserRemark);
     	 map.put("clientGroup", clientGroup);
     	 map.put("accountNo", accountNo);
-     	 map.put("clientGroupList", chatClientGroupService.getClientGroupList(getSystemFlag(),groupType));
+     	 map.put("clientGroupList", chatClientGroupService.getClientGroupList(groupType, getSystemFlag()));
     	 return "chat/member/userSetting";
     }
     
