@@ -105,10 +105,10 @@ var chatAnalyst = {
 			$.messager.alert("操作提示", "请选择一行记录!"); 
 			return;
 		}
-		var url = formatUrl(basePath + '/chatanalystController/toExitRoom.do?userIds='+ids.join(','));
-		var submitUrl =  formatUrl(basePath + '/chatanalystController/exitRoom.do');
+		var url = formatUrl(basePath + '/chatUserController/toExitRoom.do?userIds='+ids.join(','));
+		var submitUrl =  formatUrl(basePath + '/chatUserController/exitRoom.do');
 		goldOfficeUtils.openEditorDialog({
-			dialogId : "editWindow",
+			//dialogId : "editWindow",
 			title : '退出房间',			/**添加记录*/
 			width : 280,
 			height : 120,
@@ -118,21 +118,21 @@ var chatAnalyst = {
 				if($("#aystExitForm").form('validate')){
 					$.messager.confirm("操作提示", "你确定要强制让这些用户退出对应的房间吗？", function(r) {
 						if(r){
-							   goldOfficeUtils.ajaxSubmitForm({
-									url : submitUrl,
-									formId : 'aystExitForm',
-									onSuccess : function(data){  //提交成功后处理
-										var d = $.parseJSON(data);
-										if(d.success) {
-											$("#editWindow").dialog("close");
-											$.messager.alert($.i18n.prop("common.operate.tips"),'操作已执行','info');
-										}else{
-											$.messager.alert($.i18n.prop("common.operate.tips"),'操作失败：'+d.msg,'error');
-										}
+							goldOfficeUtils.ajaxSubmitForm({
+								url : submitUrl,
+								formId : 'aystExitForm',
+								onSuccess : function(data){  //提交成功后处理
+									var d = $.parseJSON(data);
+									if(d.success) {
+										$("#editWindow").dialog("close");
+										$.messager.alert($.i18n.prop("common.operate.tips"),'操作已执行','info');
+									}else{
+										$.messager.alert($.i18n.prop("common.operate.tips"),'操作失败：'+d.msg,'error');
 									}
-								});
-							}
-						});
+								}
+							});
+						}
+					});
 				}
 			}
 		});
