@@ -328,9 +328,9 @@ var ArticleTemplate = {
 	 * @param groupType
 	 * @param groupId
 	 */
-	getSingleCourse:function(groupType, groupId){console.log(groupType, groupId);
+	getSingleCourse:function(groupType, groupId){
 		if(groupType && groupId){
-			var loc_url = ArticleTemplate.config.pmApiCourseUrl + "?flag=S&groupType=" + groupType + "&groupId=" + groupId;
+			var loc_url = ArticleTemplate.config.pmApiCourseUrl + "?flag=S&groupType=" + groupType + "&groupId=" + groupId + "&systemCategory=" + $('#yxui_main_sysfag_select').val();
 			$.getJSON(loc_url,function(data){
 				if(data && data.result == "0" && data.data && data.data.length > 0){
 					var course = data.data[0];
