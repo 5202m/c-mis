@@ -52,7 +52,7 @@ public class UserService{
 		criatira.and("valid").is(1);
 		criatira.and("userNo").is(userParam.getUserNo());
 		criatira.and("password").is(MD5.getMd5(WebConstant.MD5_KEY+userParam.getPassword()));
-		BaseUser bu = userDao.getBaseUserRow(new Query(criatira),isSuper);
+		BoUser bu = userDao.getBoUserRow(new Query(criatira),isSuper);
 		if(bu == null){      //先是否通过用户名和密码的验证
 			result.setMsg(ResultCode.Error1006);
 		}else{

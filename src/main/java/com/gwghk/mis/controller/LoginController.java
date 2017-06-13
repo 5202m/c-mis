@@ -1,13 +1,26 @@
 package com.gwghk.mis.controller;
 
+import com.gwghk.mis.common.model.AjaxJson;
+import com.gwghk.mis.common.model.ApiResult;
+import com.gwghk.mis.constant.WebConstant;
+import com.gwghk.mis.model.BaseUser;
+import com.gwghk.mis.model.BoSystemCategory;
+import com.gwghk.mis.model.BoUser;
+import com.gwghk.mis.service.DictService;
+import com.gwghk.mis.service.SystemCategoryService;
+import com.gwghk.mis.service.UserService;
+import com.gwghk.mis.util.ContextHolderUtils;
+import com.gwghk.mis.util.DateUtil;
+import com.gwghk.mis.util.IPUtil;
+import com.gwghk.mis.util.JSONHelper;
+import com.gwghk.mis.util.ResourceBundleUtil;
+import com.gwghk.mis.util.ResourceUtil;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +32,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-
-import com.gwghk.mis.common.model.AjaxJson;
-import com.gwghk.mis.common.model.ApiResult;
-import com.gwghk.mis.constant.WebConstant;
-import com.gwghk.mis.model.BaseUser;
-import com.gwghk.mis.model.BoSystemCategory;
-import com.gwghk.mis.service.DictService;
-import com.gwghk.mis.service.SystemCategoryService;
-import com.gwghk.mis.service.UserService;
-import com.gwghk.mis.util.ContextHolderUtils;
-import com.gwghk.mis.util.DateUtil;
-import com.gwghk.mis.util.IPUtil;
-import com.gwghk.mis.util.ResourceBundleUtil;
-import com.gwghk.mis.util.ResourceUtil;
 
 /**
  * 摘要：登录
@@ -123,7 +122,7 @@ public class LoginController extends BaseController{
 	*/
 	@RequestMapping(value="/loginController/checkLogin",method=RequestMethod.POST)
 	@ResponseBody
-	public AjaxJson checkLogin(BaseUser mngUser, HttpServletRequest req){
+	public AjaxJson checkLogin(BoUser mngUser, HttpServletRequest req){
 		logger.info(">>method:checkLogin()|"+mngUser.getUserNo()+" try to login！");
 		AjaxJson ajaxResult = new AjaxJson();
 		String captcha = req.getParameter("code");
@@ -137,16 +136,17 @@ public class LoginController extends BaseController{
 		ApiResult result = userService.login(mngUser,false);
 		if(result != null && result.isOk()){
 			// 更新用户信息(如IP、登录时间、登录次数)，保存当前登录用户,并写入登录日志
-			mngUser = (BaseUser)result.getReturnObj()[0];
+			mngUser = (BoUser)result.getReturnObj()[0];
 			String message = "用户: " + mngUser.getUserNo() + ",IP:"+IPUtil.getClientIP(req)+","+ DateUtil.getDateSecondFormat(new Date()) + " 登录成功";
             //将账户放入session中
 			HttpSession session=ContextHolderUtils.getSession();
 			session.setAttribute(ContextHolderUtils.getSessionId(), mngUser.getUserNo());
 			session.setAttribute(WebConstant.SESSION_SUPER_FLAG, false);
+			userParam = mngUser;
 			addLog(message, WebConstant.Log_Leavel_INFO,WebConstant.Log_Type_LOGIN);
-        	logger.info(message);
-            ajaxResult.setSuccess(true);
-            return ajaxResult;
+			logger.info(message);
+			ajaxResult.setSuccess(true);
+			return ajaxResult;
 		}else{
 			logger.error("<<method:checkLogin()|"+mngUser.getUserNo()+" login fail,[IP]:"+IPUtil.getClientIP(req)+",userService.login()"+",[ErrorMsg]:"+result.toString());
 			ajaxResult.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));

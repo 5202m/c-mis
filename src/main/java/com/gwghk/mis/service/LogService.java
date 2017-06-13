@@ -58,7 +58,7 @@ public class LogService {
 	
 	/**
 	 * 功能：添加日志
-	 * @param   systemCategory系统类别
+	 * @param   systemCategory 系统类别
 	 * @param   logcontent   日志内容
 	 * @param   loglevel     日志级别
 	 * @param   operatetype  操作类型

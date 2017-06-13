@@ -114,7 +114,6 @@ public	class BaseController{
 	
 	/**
 	 * 返回系统标记
-	 * @param request
 	 * @return
 	 */
 	protected String getSystemFlag(){
@@ -134,7 +133,6 @@ public	class BaseController{
 	/**
 	 * 设置系统标志
 	 * @param obj
-	 * @param request
 	 */
 	protected  void setSystemFlag(Object obj){
 		if(obj instanceof BaseModelExt){
@@ -148,11 +146,10 @@ public	class BaseController{
 	 * @param   logcontent   日志内容
 	 * @param   loglevel     日志级别
 	 * @param   operatetype  操作类型
-	 * @param   browserType  浏览器类型
-	 * @param   ip           IP
 	 */
-	protected void addLog(String logcontent,Integer loglevel, String operatetype) {
-		logService.addLog(getSystemFlag(),logcontent,loglevel,operatetype,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+	protected void addLog(String logcontent, Integer loglevel, String operatetype) {
+		String systemCategory = StringUtils.isNotBlank(getSystemFlag()) ? getSystemFlag() : userParam.getSystemCategory();
+		logService.addLog(systemCategory,logcontent,loglevel,operatetype,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
 	}
 }
 

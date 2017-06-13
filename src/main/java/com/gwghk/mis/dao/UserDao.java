@@ -209,6 +209,13 @@ public class UserDao extends MongoDBBaseDao{
 	public BaseUser getBaseUserRow(Query query,boolean isSuper){
 		return BeanUtils.clone(this.mongoTemplate.findOne(query,getUserClass(isSuper)), BaseUser.class);
 	}
+
+	/**
+	 * 功能:根据不同的参数 -->查询用户基本信息
+	 */
+	public BoUser getBoUserRow(Query query,boolean isSuper){
+		return BeanUtils.clone(this.mongoTemplate.findOne(query,getUserClass(isSuper)), BoUser.class);
+	}
 	
 	/**
 	 * 修改用户登录信息
