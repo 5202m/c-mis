@@ -148,8 +148,7 @@ public	class BaseController{
 	 * @param   operatetype  操作类型
 	 */
 	protected void addLog(String logcontent, Integer loglevel, String operatetype) {
-		String systemCategory = StringUtils.isNotBlank(getSystemFlag()) ? getSystemFlag() : userParam.getSystemCategory();
-		logService.addLog(systemCategory,logcontent,loglevel,operatetype,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
+		logService.addLog(getSystemFlag(),logcontent,loglevel,operatetype,BrowserUtils.checkBrowse(request),IPUtil.getClientIP(request));
 	}
 }
 
