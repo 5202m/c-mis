@@ -277,4 +277,25 @@ public class PmApiService{
 			return false;
 		}
 	}
+
+	/**
+	 * 获取课程信息
+	 * @param flag
+	 * @param groupType
+	 * @param groupId
+	 * @param systemCategory
+	 * @return
+	 */
+	public String getCourse(String flag, String groupType, String groupId, String systemCategory){
+		Map<String, String> paramMap=new HashMap<String, String>();
+		paramMap.put("flag", flag);
+		paramMap.put("groupType", groupType);
+		paramMap.put("groupId", groupId);
+		paramMap.put("systemCategory", systemCategory);
+		try {
+			return HttpClientUtils.httpGetString(formatUrl(ApiDir.common,"getCourse"), paramMap);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 } 
