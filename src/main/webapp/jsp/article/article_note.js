@@ -326,8 +326,11 @@ var ArticleTemplate = {
 	 */
 	getSingleCourse:function(groupType, groupId){
 		if(groupType && groupId){
-			var loc_url = ArticleTemplate.config.pmApiCourseUrl + "?flag=S&groupType=" + groupType + "&groupId=" + groupId;
+			var loc_url = basePath + "/articleController/getCourse.do?flag=S&groupType=" + groupType + "&groupId=" + groupId;//ArticleTemplate.config.pmApiCourseUrl + "?flag=S&groupType=" + groupType + "&groupId=" + groupId;
 			$.getJSON(loc_url,function(data){
+				if(isValid(data.msg)){
+					data = JSON.parse(data.msg);
+				}
 				if(data && data.result == "0" && data.data && data.data.length > 0){
 					var course = data.data[0];
 					var $form = $("#articleBaseInfoForm");

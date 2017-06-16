@@ -351,4 +351,15 @@ public class ArticleService{
 	public boolean sendSubscribe(String articleId){
 		return pmApiService.subscribeArticle(articleId);
 	}
+
+	/**
+	 * 获取课程信息
+	 * @param flag
+	 * @param groupType
+	 * @param groupId
+	 * @return
+	 */
+	public String getCourse(String flag, String groupType, String groupId){
+		return pmApiService.getCourse(flag, groupType, groupId);
+	}
 }
