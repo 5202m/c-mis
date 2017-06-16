@@ -50,7 +50,8 @@
     	$(".liveSelect,.dictSetSelect").change(function(){
     		var pSelectBox=null;
 			var tn = this.value;
-    		if($(this).hasClass("dictSetSelect")){
+			var isDict = $(this).hasClass("dictSetSelect");
+    		if(isDict){
     			pSelectBox=$(this).prev().prev();
     		}else{
     			pSelectBox=$(this).prev();
@@ -60,7 +61,8 @@
     			return false;
     		}
     		var tabNext=$(this).parents(".live_sub_tab").next();
-			var tl = pSelectBox.val().formatStr(tn);
+			var pSelectBoxVal = isDict ? pSelectBox.val().split(';')[0] : pSelectBox.val();
+			var tl = pSelectBoxVal.formatStr(tn);
     		if(tabNext.find(".live-sel-num[tn='"+tn+"'][tl='"+tl+"']").length>0){
     			alert("已选择该编号【"+tn+"】");
     		}else{

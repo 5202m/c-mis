@@ -777,7 +777,7 @@ var Syllabus = {
           lDomAMb = dom.find('select[name="liveLinka_mb"]'),
           hideDom = lDomPc.parent().children('input[name="hideLiveLink"]');
       var pcOptions = ['<option value="" code="">请选择</option>'], mbOptions = ['<option value="" code="">请选择</option>'], mbaOptions = ['<option value="" code="">请选择</option>'];
-      if(liveLink.length > 0){
+      if(liveLink && liveLink.length > 0){
         hideDom.val(JSON.stringify(liveLink));
         $.each(liveLink, function (i, row) {
           if (row.code == '1') {

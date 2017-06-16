@@ -21,10 +21,10 @@ public class LogDao extends MongoDBBaseDao{
 	 * 功能：新增日志
 	 */
     public boolean addLog(BoLog log){
-    	log.setId(this.getNextSeqId(IdSeq.Log));
-    	log.setValid(1);
-		this.add(log);
-		return true;
+			log.setId(this.getNextSeqId(IdSeq.Log));
+			log.setValid(1);
+			this.add(log);
+			return true;
 	}
     
     /**

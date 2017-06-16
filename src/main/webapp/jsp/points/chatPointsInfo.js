@@ -32,41 +32,42 @@ var chatPointsInfo = {
 			sortOrder : "desc",
 			url : basePath+'/chatPointsInfo/datagrid.do',
 			columns : [[
-			    {title : $.i18n.prop("common.operate"), field:'pointsId', formatter: function(value, rowData, rowIndex){
+			    {title : $.i18n.prop("common.operate"), field:'id', formatter: function(value, rowData, rowIndex){
+						$("#chatPointsInfo_datagrid_rowOperation a.edit").attr({'mobilePhone': rowData.userId, 'groupType':rowData.groupType});
 			    	$("#chatPointsInfo_datagrid_rowOperation input").val(value);
 			    	return $("#chatPointsInfo_datagrid_rowOperation").html();
 			    }},
-	            {title : "组别",field : 'groupType',formatter : function(value, rowData, rowIndex) {
-	            	return chatPointsInfo.formatByDicts("groupType", value);
-				}},
-				{title : "用户编号",field : 'userId',formatter : function(value, rowData, rowIndex) {
-					return formatMobileToUserId(value);
-				}},
-				{title : "总积分",field : 'pointsGlobal'},
-				{title : "有效积分",field : 'points'},
-				{title : "类别",field : 'type',formatter : function(value, rowData, rowIndex) {
-					var item = rowData.journal[0].item;
-						item = item.replace(/_.*$/g, "");
-					return chatPointsInfo.formatByDicts("type", item);
-				}},
-				{title : "项目",field : 'item',formatter : function(value, rowData, rowIndex) {
-					var item = rowData.journal[0].item;
-					return chatPointsInfo.formatByDicts("journal[0].item", item);
-				}},
-				{title : "积分",field : 'change',formatter : function(value, rowData, rowIndex) {
-					var change = rowData.journal[0].change;
-					return change;
-				}},
-				{title : "时间",field : 'date',formatter : function(value, rowData, rowIndex){
-					var date = rowData.journal[0].date;
-					return timeObjectUtil.formatterDateTime(date);
-				}},
-				{title : "积分备注",field : 'remark',formatter : function(value, rowData, rowIndex) {
-					var remark = rowData.journal[0].remark;
-					return remark;
-				}}
-			]],
-			toolbar : '#chatPointsInfo_datagrid_toolbar'
+					{title : "组别",field : 'groupType',formatter : function(value, rowData, rowIndex) {
+						return chatPointsInfo.formatByDicts("groupType", value);
+					}},
+					{title : "用户编号",field : 'userId',formatter : function(value, rowData, rowIndex) {
+						return formatMobileToUserId(value);
+					}},
+					{title : "总积分",field : 'pointsGlobal'},
+					{title : "有效积分",field : 'points'},
+					{title : "类别",field : 'type',formatter : function(value, rowData, rowIndex) {
+						var item = rowData.journal[0].item;
+							item = item.replace(/_.*$/g, "");
+						return chatPointsInfo.formatByDicts("type", item);
+					}},
+					{title : "项目",field : 'item',formatter : function(value, rowData, rowIndex) {
+						var item = rowData.journal[0].item;
+						return chatPointsInfo.formatByDicts("journal[0].item", item);
+					}},
+					{title : "积分",field : 'change',formatter : function(value, rowData, rowIndex) {
+						var change = rowData.journal[0].change;
+						return change;
+					}},
+					{title : "时间",field : 'date',formatter : function(value, rowData, rowIndex){
+						var date = rowData.journal[0].date;
+						return timeObjectUtil.formatterDateTime(date);
+					}},
+					{title : "积分备注",field : 'remark',formatter : function(value, rowData, rowIndex) {
+						var remark = rowData.journal[0].remark;
+						return remark;
+					}}
+				]],
+				toolbar : '#chatPointsInfo_datagrid_toolbar'
 		});
 	},
 	
@@ -228,10 +229,11 @@ var chatPointsInfo = {
 	edit : function(item){
 		var $tr = $(item).parents("tr");
 		var pointsInfo = {
-			pointsId : $(item).siblings("input").val(),
+			id : $(item).siblings("input").val(),
 			groupType : $tr.find("td[field='groupType']").text(),
-			userId : $tr.find("td[field='userId']").text()
-		}
+			userId : $tr.find("td[field='userId']").text(),
+			mobilePhone: $(item).attr('mobilePhone')
+		};
 		var url = formatUrl(basePath + '/chatPointsInfo/preAdd.do');
 		var submitUrl = formatUrl(basePath + '/chatPointsInfo/save.do');
 		goldOfficeUtils.openEditorDialog({
@@ -263,9 +265,11 @@ var chatPointsInfo = {
 				}
 			},
 			onLoad : function(){
-				$("#chatPointsInfoAdd_pointsId").val(pointsInfo.pointsId);
-				$("#chatPointsInfoAdd_groupTypeTd").html(pointsInfo.groupType);
-				$("#chatPointsInfoAdd_userIdTd").html(pointsInfo.userId);
+				$("#chatPointsInfoAdd_groupTypeTd select").hide();
+				$("#chatPointsInfoAdd_userIdTd input").val(pointsInfo.mobilePhone).hide();
+				$("#chatPointsInfoAdd_pointsId").val(pointsInfo.id);
+				$("#chatPointsInfoAdd_groupTypeTd span").html(pointsInfo.groupType);
+				$("#chatPointsInfoAdd_userIdTd span").html(pointsInfo.userId);
 				$("#chatPointsInfoAdd_userIdTd").prev().html("用户编号");
 				
 				chatPointsInfo.initSelect($("#chatPointsInfo_queryForm"), $("#chatPointsInfoAdd_Form"), false);
