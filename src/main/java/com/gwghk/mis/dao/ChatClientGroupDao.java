@@ -31,7 +31,7 @@ public class ChatClientGroupDao extends MongoDBBaseDao{
 	public List<ChatClientGroup> getList(String groupType,String sysFlag) {
 		Criteria criteria=new Criteria().and("valid").is(1).and("systemCategory").is(sysFlag);
 		if(StringUtils.isNotBlank(groupType)){
-			criteria.and("groupType").is(groupType);
+			//criteria.and("groupType").is(groupType);
 		}
 		return this.findList(ChatClientGroup.class, Query.query(criteria));
 	}

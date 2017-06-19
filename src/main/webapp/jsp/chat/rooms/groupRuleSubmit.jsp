@@ -22,7 +22,11 @@
 			if(isValid(val) && val.indexOf('img')!=-1){
 				var loc_groupType = isPlatform("HX") ? "hxstudio" : "studio";
 				$("#clientGroupSelectId").combotree({
+					panelWidth: 200,
 					data:getJson("<%=request.getContextPath()%>/chatClientGroupController/getClientGroupList.do",{clientGroup:"${chatGroupRule.clientGroup}",groupType:loc_groupType}),
+					onBeforeLoad:function(node, param){
+						$('#chatGroupRuleSubmitForm table tr td span.combo input').width(200);
+					}
 				}); 
 				$('#chatGroupRule_clientGroup_tbody').show();
 			}
