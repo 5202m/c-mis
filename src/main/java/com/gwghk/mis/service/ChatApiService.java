@@ -121,7 +121,7 @@ public class ChatApiService{
     		String str=HttpClientUtils.httpPostString(formatUrl("leaveRoom"),paramMap, headerValues, "UTF-8");
     		if(StringUtils.isNotBlank(str)){
     			JSONObject obj=JSON.parseObject(str);
-    			return api.setCode(obj.getBoolean("isOK")?ResultCode.OK:ResultCode.FAIL).setErrorMsg(obj.getString("error"));
+					return api.setCode(obj.getJSONObject("data").getBoolean("isOK")?ResultCode.OK:ResultCode.FAIL).setErrorMsg(obj.getString("msg"));
     		}else{
     			return api.setCode(ResultCode.FAIL);
     		}
