@@ -32,7 +32,7 @@ public class ChatApiService{
 	
 	/**
 	 * 通知移除聊天内容
-	 * @param msgId
+	 * @param msgIds
 	 */
     public boolean removeMsg(String msgIds,String groupId){
     	 Map<String, String> paramMap=new HashMap<String, String>();
@@ -53,7 +53,7 @@ public class ChatApiService{
     
     /**
 	 * 通知审核聊天内容
-	 * @param msgId
+	 * @param approvalUserNo
 	 */
     public ApiResult approvalMsg(String approvalUserNo,String publishTimeArr,String fUserIdArr,String status,String groupId){
     	 Map<String, String> paramMap=new HashMap<String, String>();
@@ -92,7 +92,7 @@ public class ChatApiService{
     		String str=HttpClientUtils.httpPostString(formatUrl("leaveRoom"),paramMap);
     		if(StringUtils.isNotBlank(str)){
     			JSONObject obj=JSON.parseObject(str);
-    			return api.setCode(obj.getBoolean("isOK")?ResultCode.OK:ResultCode.FAIL).setErrorMsg(obj.getString("error"));
+    			return api.setCode(obj.getJSONObject("data").getBoolean("isOK")?ResultCode.OK:ResultCode.FAIL).setErrorMsg(obj.getString("msg"));
     		}else{
     			return api.setCode(ResultCode.FAIL);
     		}
@@ -102,7 +102,7 @@ public class ChatApiService{
     }
     /**
      * 新增或修改字幕通知
-     * @param ids
+     * @param infoStr
      * @return
      */
 	public boolean submitPushInfo(String infoStr,boolean isValid){
