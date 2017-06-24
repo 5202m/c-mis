@@ -77,9 +77,9 @@ var chatSubscribe = {
 				}
 				var groupType = $("#subscribe_queryForm #subscribe_groupType_select").val();  
 				var status = $('#subscribe_queryForm #subscribe_status_select').val();
-				var queryParams = $('#'+chatSubscribe.gridId).datagrid('options').queryParams;
-				var userId = $('#subscribe_queryForm #userName').val();
+				var userId = $('#subscribe_queryForm #mobilePhone').val();
 				var type = $('#subscribe_queryForm #type').val();
+				var queryParams = $('#'+chatSubscribe.gridId).datagrid('options').queryParams;
 				queryParams['analyst'] = userNo;
 				queryParams['groupType'] = groupType;
 				queryParams['status'] = status;

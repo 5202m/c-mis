@@ -15,7 +15,7 @@
         <td width="35%"><input type="text" name="appId" id="appId" style="width: 185px;" class="easyui-validatebox" 
 		          	    data-options="required:true,missingMessage:'请输入appId'"/>
 		<th width="15%">appSecret<span class="red">*</span></th>
-        <td width="35%"><input type="hidden" name="appSecret" id="appSecret" value="${appSecret}"/>${appSecret}</td>
+        <td width="35%"><input type="text" name="appSecret" id="appSecret" value="${appSecret}"/></td>
       </tr>
       <tr>
       	<th width="15%">有效时间</th>

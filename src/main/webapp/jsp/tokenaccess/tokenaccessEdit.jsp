@@ -14,7 +14,7 @@
 		          data-options="required:true,missingMessage:'请输入appId'" value="${tokenAccess.appId}"/>
 		</td>
         <th width="15%">appSecret<span class="red">*</span></th>
-        <td width="35%"><input type="hidden" name="appSecret" id="appSecret" value="${tokenAccess.appSecret}"/>${tokenAccess.appSecret}
+        <td width="35%"><input type="text" name="appSecret" id="appSecret" value="${tokenAccess.appSecret}"/>
 		</td>
       </tr>
       <tr>

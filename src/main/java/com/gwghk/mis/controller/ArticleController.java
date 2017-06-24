@@ -475,4 +475,31 @@ public class ArticleController extends BaseController{
     	}
     	return j;
     }
+
+	/**
+	 * 功能：获取课程信息
+	 */
+	@RequestMapping(value="/articleController/getCourse",method=RequestMethod.GET)
+	@ResponseBody
+	public AjaxJson getCourse(HttpServletRequest request, HttpServletResponse response){
+		String flag = request.getParameter("flag");
+		String groupType = request.getParameter("groupType");
+		String groupId = request.getParameter("groupId");
+		AjaxJson j = new AjaxJson();
+		if(StringUtils.isBlank(flag)){
+			j.setSuccess(false);
+			j.setMsg("课程安排标识不能为空！");
+		} else if(StringUtils.isBlank(groupType)){
+			j.setSuccess(false);
+			j.setMsg("房间组别不能为空！");
+		} else if(StringUtils.isBlank(groupId)){
+			j.setSuccess(false);
+			j.setMsg("房间ID不能为空！");
+		}else{
+			String result = articleService.getCourse(flag, groupType, groupId, getSystemFlag());
+			j.setSuccess(true);
+			j.setMsg(result);
+		}
+		return j;
+	}
 }

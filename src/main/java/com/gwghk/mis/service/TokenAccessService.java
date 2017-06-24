@@ -28,7 +28,7 @@ public class TokenAccessService{
 	public Page<TokenAccess> getTokenAccessPage(DetachedCriteria<TokenAccess> dCriteria) {
 		TokenAccess tokenAccess = dCriteria.getSearchModel();
 		Page<TokenAccess> page=new Page<TokenAccess>();
-		List<TokenAccess> list=pmApiService.getTokenAccessList(tokenAccess);
+		List<TokenAccess> list = pmApiService.getTokenAccessList(tokenAccess);
 		if(list!=null){
 			page.addAll(list);
 		}

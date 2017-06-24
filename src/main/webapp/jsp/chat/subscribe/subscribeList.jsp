@@ -10,7 +10,7 @@
       <table class="tableForm_L" style="margin-top:3px" width="99%" heigth="auto"  border="0" cellpadding="0" cellspacing="1">
 		  <tr>
 			  <th>手机号码</th>
-			  <td><input type="text" name="userId"/></td>
+			  <td><input type="text" id="mobilePhone" name="userId"/></td>
 			  <th>账号</th>
 			  <td><input type="text" name="accountNo" /></td>
 			  <th>昵称</th>

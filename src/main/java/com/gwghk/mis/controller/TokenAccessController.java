@@ -67,6 +67,7 @@ public class TokenAccessController extends BaseController{
 	@RequestMapping(value = "/tokenAccessController/datagrid", method = RequestMethod.GET)
 	@ResponseBody
 	public  Map<String,Object>  appDatagrid(HttpServletRequest request, DataGrid dataGrid,TokenAccess tokenAccess){
+		tokenAccess.setPlatform(getSystemFlag());
 		Page<TokenAccess> page = tokenAccessService.getTokenAccessPage(this.createDetachedCriteria(dataGrid,tokenAccess));
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("total",null == page ? 0  : page.getTotalSize());
