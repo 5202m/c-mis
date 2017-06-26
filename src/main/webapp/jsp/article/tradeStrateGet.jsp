@@ -23,6 +23,13 @@ $(function() {
     	 }
 	 });
      $("#addStrateTitleId").click();
+	//设置多选下拉框宽度
+	$('#trade_strategy_platform').combotree({
+		panelWidth:180,
+		onBeforeLoad: function (node, param) {
+			$('#tradeStrateGetForm table tr td span.combo input').width(180);
+		}
+	});
 });
 </script>
 <div style="padding:5px;overflow:hidden;">
@@ -62,7 +69,7 @@ $(function() {
 	     <tr>
 	      <th width="10%">策略应用位置<span class="red">*</span></th>
           <td width="23%">
-	          <select class="easyui-combotree easyui-validatebox" name="platform" style="width:180px;" data-options="required:true,missingMessage:'请输入应用位置',url:'<%=request.getContextPath()%>/commonController/getPlatformList.do',cascadeCheck:false" multiple>
+	          <select class="easyui-combotree easyui-validatebox" id="trade_strategy_platform" name="platform" style="width:180px;" data-options="required:true,missingMessage:'请输入应用位置',url:'<%=request.getContextPath()%>/commonController/getPlatformList.do',cascadeCheck:false" multiple>
 	          </select>
           </td>
         </tr>
