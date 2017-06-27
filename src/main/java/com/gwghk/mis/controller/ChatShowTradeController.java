@@ -222,6 +222,7 @@ public class ChatShowTradeController extends BaseController{
     public AjaxJson create(HttpServletRequest request,ChatShowTrade chatShowTrade){
     	chatShowTrade.setCreateUser(userParam.getUserNo());
     	chatShowTrade.setCreateIp(IPUtil.getClientIP(request));
+			chatShowTrade.setSystemCategory(getSystemFlag());
     	AjaxJson j = new AjaxJson();
     	String userNo = request.getParameter("userNo");
 		 if(userNo != null){
