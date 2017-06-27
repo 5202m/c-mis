@@ -404,7 +404,7 @@ public class ChatUserController extends BaseController{
 			Page<Member> page = memberService.getChatUserPage(this.createDetachedCriteria(dataGrid, member),onlineStartDate,onlineEndDate,createDateStart,createDateEnd);
 			List<Member>  memberList = page.getCollection();
 			List<ChatGroup> chatGroupList=chatGroupService.getChatGroupAllList(getSystemFlag(),"id","name");
-			List<ChatClientGroup> clientGroupList=chatClientGroupService.getClientGroupList(getSystemFlag(),groupType);
+			List<ChatClientGroup> clientGroupList=chatClientGroupService.getClientGroupList(groupType,getSystemFlag());
 			ChatUserGroup userGroup=null;
 			Member cm=null;
 			if(memberList != null && memberList.size() > 0){
