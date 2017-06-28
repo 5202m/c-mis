@@ -82,6 +82,17 @@ var chatShowTrade = {
 								}
 							}
 						}},
+						{title: "晒单盖楼", field:'isAccord' ,formatter : function(value, rowData, rowIndex) {
+							if(rowData.tradeType==1){
+								return '';
+							}else{
+								if(rowData.isAccord==1){
+									return '是';
+								}else{
+									return '否';
+								}
+							}
+						}},
 						{title : "备注", field : 'remark'}
 						
 			]],
@@ -100,11 +111,13 @@ var chatShowTrade = {
 			var queryParams = $('#'+chatShowTrade.gridId).datagrid('options').queryParams;
 			var userName = $('#userName').val();
 			var tradeType = $('#tradeType').val();
+			var isAccord = $('#isAccord').val();
 			queryParams['userNo'] = userNo;
 			queryParams['groupType'] = groupType;
 			queryParams['status'] = status;
 			queryParams['tradeType'] = tradeType;
 			queryParams['userName'] = userName;
+			queryParams['isAccord'] = isAccord;
 			$('#'+chatShowTrade.gridId).datagrid({
 				url : basePath+'/chatShowTradeController/datagrid.do?opType=' + chatShowTrade.opType,
 				pageNumber : 1
@@ -465,6 +478,38 @@ var chatShowTrade = {
 							$.messager.alert($.i18n.prop("common.operate.tips"),'删除成功!','info');
 						}else{
 							$.messager.alert($.i18n.prop("common.operate.tips"),'删除失败，原因：'+data.msg,'error');
+						}
+					}
+				});
+			}
+		});
+	},
+	setIsAccord:function(isAccord){
+		var url = formatUrl(basePath + '/chatShowTradeController/batchSetIsAccord.do');
+		var rows = $("#"+chatShowTrade.gridId).datagrid('getSelections');
+		if(!rows || rows.length == 0) {
+			$.messager.alert($.i18n.prop("common.operate.tips"), '请选择记录进行操作!', 'warning');
+			return;
+		}
+		var message = '您确定要审核通过选中的晒单为晒单盖楼吗？';
+		if(isAccord==0){
+			message = '您确定要审核不通过选中的晒单为晒单盖楼吗？' ;
+		}
+		$.messager.confirm("操作提示", message, function(r) {
+			if (r) {
+				var tradeIds = [];
+				for(var i = 0; i < rows.length; i++) {
+					tradeIds.push(rows[i].id);
+				}
+				goldOfficeUtils.ajax({
+					url : url,
+					data: {tradeIds : tradeIds.join(','),isAccord : isAccord},
+					success : function(data){
+						if (data.success) {
+							$('#'+chatShowTrade.gridId).datagrid('reload');
+							$.messager.alert("操作提示","审核晒单盖楼成功!",'info');
+						}else{
+							$.messager.alert($.i18n.prop("common.operate.tips"),'审核晒单盖楼失败','error');  /**操作提示  修改失败!*/
 						}
 					}
 				});

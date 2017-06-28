@@ -63,6 +63,10 @@
     		var tabNext=$(this).parents(".live_sub_tab").next();
 			var pSelectBoxVal = isDict ? pSelectBox.val().split(';')[0] : pSelectBox.val();
 			var tl = pSelectBoxVal.formatStr(tn);
+			if(tn.indexOf('_') != -1){
+				var tns = tn.split('_');
+				tl = pSelectBoxVal.formatStr(tns[0], tns[1]);
+			}
     		if(tabNext.find(".live-sel-num[tn='"+tn+"'][tl='"+tl+"']").length>0){
     			alert("已选择该编号【"+tn+"】");
     		}else{
@@ -89,17 +93,24 @@
     		if(isDictSet){
     			$(this).nextAll(".liveSelect").val("").hide();
     			$(this).nextAll(".dictSetSelect").show().html('<option value="">--请选择--</option>');
+				//$(this).nextAll(".qqCloudLiveDictSetSelect").show().html('<option value="">--请选择--</option>');
     			var lval=this.value.split(";");
     			if(isValid(lval)){
     				lval=lval[1].split(",");
     				for(var i in lval){
-    					$(this).nextAll(".dictSetSelect").append('<option value="'+lval[i]+'">'+lval[i]+'</option>');
+						//var isQCloudLive = lval[i].indexOf('_') != -1;
+						//if(isQCloudLive){
+
+						//}else {
+							$(this).nextAll(".dictSetSelect").append('<option value="' + lval[i] + '">' + lval[i] + '</option>');
+						//}
     				}
     			}
     			nbxVal=$(this).next().next().val();
     		}else{
     			nbxVal=isNotParamVal?"":$(this).next().val();
     			$(this).nextAll(".dictSetSelect").val("").hide();
+				//$(this).nextAll(".qqCloudLiveDictSetSelect").val("").hide();
     		}
     		if(!isNotParamVal && (isBlank(nbxVal) || (!isDictSet && nbxVal.indexOf("X")!=-1))){
     			return false;
@@ -150,6 +161,7 @@
 				                          </c:forEach>
                        		     </select>
                        		     <select class="dictSetSelect" style="display:none;"></select>
+						 		 <select class="qqCloudLiveDictSetSelect" style="display:none;"></select>
                        </div>
                        <div class="live-next-labdev">
                             <p>已选地址:</p>

@@ -365,4 +365,33 @@ public class ChatShowTradeController extends BaseController{
 		return j;
 	}
 
+	/**
+	 * 批量审核晒单盖楼状态
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value="/chatShowTradeController/batchSetIsAccord",method=RequestMethod.POST)
+	@ResponseBody
+	@ActionVerification(key="setIsAccord")
+	public AjaxJson modifyTradeIsAccord(HttpServletRequest request, HttpServletResponse response){
+		String tradeIds = request.getParameter("tradeIds");
+		int isAccord = StringUtils.stringToInteger(request.getParameter("isAccord"));
+		AjaxJson j = new AjaxJson();
+		ApiResult result = chatShowTradeService.modifyTradeIsAccordByIds(tradeIds.contains(",")?tradeIds.split(","):new String[]{tradeIds}, isAccord);
+		if(result.isOk()){
+			j.setSuccess(true);
+			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量审核晒单盖楼成功";
+			addLog(message, WebConstant.Log_Leavel_INFO, (isAccord == 1 ? WebConstant.Log_Type_APPROVE_ShowTrade : WebConstant.Log_Type_CANCEL_APPROVE_ShowTrade));
+			logger.info("<<method:batchDel()|"+message);
+		}else{
+			j.setSuccess(false);
+			j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
+			String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量审核晒单盖楼失败";
+			addLog(message, WebConstant.Log_Leavel_ERROR, (isAccord == 1 ? WebConstant.Log_Type_APPROVE_ShowTrade : WebConstant.Log_Type_CANCEL_APPROVE_ShowTrade));
+			logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
+		}
+		return j;
+	}
+
 }
