@@ -1,6 +1,15 @@
 package com.gwghk.mis.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.gwghk.mis.util.ExcelUtil;
+import com.gwghk.mis.util.HttpClientUtils;
+import com.sdk.orm.DataRowSet;
+import com.sdk.orm.IRow;
+import com.sdk.poi.POIExcelBuilder;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +19,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -392,6 +408,103 @@ public class ChatShowTradeController extends BaseController{
 			logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
 		}
 		return j;
+	}
+
+	/**
+	 * 功能：导出晒单(以模板的方式导出)
+	 */
+	@RequestMapping(value = "/chatShowTradeController/exportRecord", method = RequestMethod.GET)
+	@ActionVerification(key="export")
+	public void exportRecord(HttpServletRequest request, HttpServletResponse response,ChatShowTrade chatShowTrade){
+		try{
+			String userNo = request.getParameter("userNo");
+			String userName = request.getParameter("userName");
+			BoUser user=new BoUser();
+			if(userNo != null){
+				user.setUserNo(userNo);
+			}
+			if(userName != null){
+				user.setUserName(userName);
+			}
+			chatShowTrade.setBoUser(user);
+			setSystemFlag(chatShowTrade);
+			chatShowTrade.setTradeType(2);
+			DataGrid dataGrid = new DataGrid();
+			dataGrid.setPage(0);
+			dataGrid.setRows(0);
+			dataGrid.setSort("updateDate");
+			dataGrid.setOrder("desc");
+			Page<ChatShowTrade> page = chatShowTradeService.getShowTradePage(this.createDetachedCriteria(dataGrid, chatShowTrade));
+			List<ChatShowTrade> chatShowTradeList = page.getCollection();
+			//创建HSSFWorkbook对象(excel的文档对象)
+			HSSFWorkbook wb = new HSSFWorkbook();
+			//建立新的sheet对象（excel的表单）
+			HSSFSheet sheet = wb.createSheet("客户晒单记录");
+			//在sheet里创建第一行，参数为行索引(excel的行)，可以是0～65535之间的任何一个
+			HSSFRow row1=sheet.createRow(0);
+			//创建单元格（excel的单元格，参数为列索引，可以是0～255之间的任何一个
+			HSSFCell cell=row1.createCell(0);
+			//设置单元格内容
+			cell.setCellValue("客户晒单记录");
+
+			//合并单元格CellRangeAddress构造参数依次表示起始行，截至行，起始列， 截至列
+			sheet.addMergedRegion(new CellRangeAddress(0,0,0,7));
+			//在sheet里创建第二行
+			HSSFRow row2=sheet.createRow(1);
+			//创建单元格并设置单元格内容
+			row2.createCell(0).setCellValue("序号");
+			row2.createCell(1).setCellValue("晒单人ID");
+			row2.createCell(2).setCellValue("手机号");
+			row2.createCell(3).setCellValue("昵称");
+			row2.createCell(4).setCellValue("晒单时间");
+			row2.createCell(5).setCellValue("审核时间");
+			row2.createCell(6).setCellValue("备注");
+			row2.createCell(7).setCellValue("晒单图片");
+
+			if(chatShowTradeList != null && chatShowTradeList.size() > 0){
+				//一定要放在循环外,只能声明一次
+				HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+				int rowIndex = 2, rowNum = 1;
+				for(ChatShowTrade cst : chatShowTradeList){
+					//在sheet里创建第三行
+					HSSFRow dataRow = sheet.createRow(rowIndex);
+					//dataRow.setHeight((short)50);
+					dataRow.createCell(0).setCellValue(rowNum);
+					dataRow.createCell(1).setCellValue(cst.getBoUser().getUserNo());
+					dataRow.createCell(2).setCellValue(cst.getBoUser().getTelephone());
+					dataRow.createCell(3).setCellValue(cst.getBoUser().getUserName());
+					dataRow.createCell(4).setCellValue(cst.getShowDate());
+					dataRow.createCell(5).setCellValue(cst.getUpdateDate());
+					dataRow.createCell(6).setCellValue(cst.getRemark());
+					drawPictureInfoExcel(wb, patriarch, rowIndex, cst.getTradeImg());//i+1代表当前的行
+					rowIndex++;
+					rowNum++;
+				}
+			}
+			ExcelUtil.wrapExcelExportResponse("晒单", request, response);
+			wb.write(response.getOutputStream());
+			addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出晒单操作成功！", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT);
+		}catch(Exception e){
+			logger.error("<<method:exportRecord()|chat message export error!",e);
+		}
+	}
+
+	private void drawPictureInfoExcel(HSSFWorkbook wb,HSSFPatriarch patriarch,int rowIndex,String pictureUrl)
+	{
+		try {
+			if(!StringUtils.isEmpty(pictureUrl)) {
+				//得到图片的二进制数据，以二进制封装得到数据，具有通用性
+				byte[] data = HttpClientUtils.httpGetBytes(pictureUrl);
+				//anchor主要用于设置图片的属性
+				HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 1023, 250,(short) 7, rowIndex, (short) 7, rowIndex);
+				anchor.setAnchorType(0);
+				patriarch.createPicture(anchor, wb.addPicture(data, HSSFWorkbook.PICTURE_TYPE_JPEG));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

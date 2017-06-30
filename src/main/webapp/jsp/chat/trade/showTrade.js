@@ -484,6 +484,10 @@ var chatShowTrade = {
 			}
 		});
 	},
+  /**
+   * 审核晒单盖楼
+   * @param isAccord
+   */
 	setIsAccord:function(isAccord){
 		var url = formatUrl(basePath + '/chatShowTradeController/batchSetIsAccord.do');
 		var rows = $("#"+chatShowTrade.gridId).datagrid('getSelections');
@@ -515,7 +519,26 @@ var chatShowTrade = {
 				});
 			}
 		});
-	}
+	},
+  /**
+   * 功能：导出记录
+   */
+  exportRecord : function(){
+    var groupType = $("#showTrade_groupType_select").val();
+    var status = $('#showTrade_status_select').val();
+    var queryParams = $('#'+chatShowTrade.gridId).datagrid('options').queryParams;
+    var userName = $('#userName').val();
+    //var tradeType = $('#tradeType').val();
+    var isAccord = $('#isAccord').val();
+    queryParams['groupType'] = groupType;
+    queryParams['status'] = status;
+    //queryParams['tradeType'] = tradeType;
+    queryParams['userName'] = userName;
+    queryParams['isAccord'] = isAccord;
+    
+    var path = basePath+ '/chatShowTradeController/exportRecord.do?'+$.param(queryParams);
+    window.location.href = path;
+  }
 };
 		
 //初始化

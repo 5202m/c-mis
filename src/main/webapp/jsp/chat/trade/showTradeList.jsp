@@ -85,7 +85,7 @@
     <a class="easyui-linkbutton setStatus" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.setStatus(-1);">审核不通过 </a>
     <a class="easyui-linkbutton setIsAccord" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.setIsAccord(1);">晒单盖楼 </a>
     <a class="easyui-linkbutton setIsAccord" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.setIsAccord(0);">非晒单盖楼 </a>
-    <a class="easyui-linkbutton export" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.export();">导出记录 </a>
+    <a class="easyui-linkbutton export" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.exportRecord();">导出客户晒单记录 </a>
   </div> 
   
   <!-- datagrid-操作按钮 -->

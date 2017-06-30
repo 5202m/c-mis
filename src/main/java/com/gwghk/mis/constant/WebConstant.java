@@ -110,6 +110,8 @@ public class WebConstant {
 	public final static String CHAT_POINTS_RECORDS_TEMPLATE_PATH ="/template/chat_points_data.xls";
 	/**订阅模板的路径*/
 	public final static String CHAT_SUBSCRIBE_RECORDS_TEMPLATE_PATH ="/template/chat_subscribe_data.xls";
+	/**晒单模板的路径*/
+	public final static String CHAT_SHOWTRADE_RECORDS_TEMPLATE_PATH ="/template/chat_showtrade_data.xls";
 
 	/****
 	 * 分析师角色 编号前缀
