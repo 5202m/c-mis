@@ -35,6 +35,7 @@ public class ChatShowTrade extends BaseModelExt
 	private Integer praise;//点赞
 	private List<ChatShowTradeComments> comments = null;//评论
 	private Integer isAccord; //符合盖楼条件
+	private Integer sorted = 0; //排序
 	
 	public Integer getPraise() {
 		return praise;
@@ -129,5 +130,13 @@ public class ChatShowTrade extends BaseModelExt
 
 	public void setIsAccord(Integer isAccord) {
 		this.isAccord = isAccord;
+	}
+
+	public Integer getSorted() {
+		return sorted;
+	}
+
+	public void setSorted(Integer sorted) {
+		this.sorted = sorted;
 	}
 }
