@@ -131,7 +131,7 @@
     <form id="setLiveLinks_form" method="post">
         <input type="hidden" name="userId" id = "userId" value="${mngUser.userId}">
          <c:forEach var="row" items="${liveList}">
-              <div style='width: 265px;height:490px;float:left;'>
+              <div style='width: 355px;height:490px;float:left;'>
                 <strong>${row.nameCN}</strong>
                 <div class="live-tab-panel" tc="${row.value}">
                      <div class="live_sub_tab">
