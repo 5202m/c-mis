@@ -67,7 +67,7 @@
 				var tns = tn.split('_');
 				tl = pSelectBoxVal.formatStr(tns[0], tns[1]);
 			}
-    		if(tabNext.find(".live-sel-num[tn='"+tn+"'][tl='"+tl+"']").length>0){
+    		if(tabNext.find(".live-sel-num[tn='"+tn+"'][tl='"+tl+"']").length>0 || tabNext.find(".live-sel-num[tl='"+tl+"']").length>0){
     			alert("已选择该编号【"+tn+"】");
     		}else{
     			var cloneTmp=$(".live-sel-num-tmp").clone();
@@ -93,24 +93,17 @@
     		if(isDictSet){
     			$(this).nextAll(".liveSelect").val("").hide();
     			$(this).nextAll(".dictSetSelect").show().html('<option value="">--请选择--</option>');
-				//$(this).nextAll(".qqCloudLiveDictSetSelect").show().html('<option value="">--请选择--</option>');
     			var lval=this.value.split(";");
     			if(isValid(lval)){
     				lval=lval[1].split(",");
     				for(var i in lval){
-						//var isQCloudLive = lval[i].indexOf('_') != -1;
-						//if(isQCloudLive){
-
-						//}else {
-							$(this).nextAll(".dictSetSelect").append('<option value="' + lval[i] + '">' + lval[i] + '</option>');
-						//}
+						$(this).nextAll(".dictSetSelect").append('<option value="' + lval[i] + '">' + lval[i] + '</option>');
     				}
     			}
     			nbxVal=$(this).next().next().val();
     		}else{
     			nbxVal=isNotParamVal?"":$(this).next().val();
     			$(this).nextAll(".dictSetSelect").val("").hide();
-				//$(this).nextAll(".qqCloudLiveDictSetSelect").val("").hide();
     		}
     		if(!isNotParamVal && (isBlank(nbxVal) || (!isDictSet && nbxVal.indexOf("X")!=-1))){
     			return false;
