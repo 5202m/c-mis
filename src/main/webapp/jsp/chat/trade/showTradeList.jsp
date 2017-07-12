@@ -43,7 +43,7 @@
         </tr>
         <tr>
         <th width="10%">状态</th>
-        <td colspan="3">
+        <td>
         	<select name="status" id="showTrade_status_select">
    				<option value="">--请选择--</option>
    				<option value="1">通过</option>
@@ -51,6 +51,14 @@
    				<option value="-1">未通过</option>
    			</select>
         </td>
+            <th>晒单盖楼</th>
+            <td>
+                <select name="isAccord" id="isAccord">
+                    <option value="">--请选择--</option>
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                </select>
+            </td>
         </tr>
         <tr>
           	<td colspan="4" align="right">&nbsp;&nbsp;
@@ -73,8 +81,11 @@
     <a class="easyui-linkbutton add" data-options="plain:true,iconCls:'ope-add',disabled:false"  onclick="chatShowTrade.add();"><spring:message code="common.buttons.add" /><!-- 新增 --></a> 
     <a class="easyui-linkbutton delete" data-options="plain:true,iconCls:'ope-remove',disabled:false"    onclick="chatShowTrade.batchDel();"><spring:message code="common.buttons.delete" /><!-- 删除 --></a>
     <a class="easyui-linkbutton refresh" data-options="plain:true,iconCls:'ope-reload',disabled:false"   onclick="chatShowTrade.refresh();"><spring:message code="common.buttons.refresh" /><!-- 刷新 --></a>
-    <a class="easyui-linkbutton setStatus" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.setStatus(1)">审核通过 </a>
-    <a class="easyui-linkbutton setStatus" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.setStatus(-1)">审核不通过 </a> 
+    <a class="easyui-linkbutton setStatus" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.setStatus(1);">审核通过 </a>
+    <a class="easyui-linkbutton setStatus" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.setStatus(-1);">审核不通过 </a>
+    <a class="easyui-linkbutton setIsAccord" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.setIsAccord(1);">晒单盖楼 </a>
+    <a class="easyui-linkbutton setIsAccord" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.setIsAccord(0);">非晒单盖楼 </a>
+    <a class="easyui-linkbutton export" data-options="plain:true,iconCls:'ope-edit',disabled:false"  onclick="chatShowTrade.exportRecord();">导出客户晒单记录 </a>
   </div> 
   
   <!-- datagrid-操作按钮 -->

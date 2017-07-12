@@ -34,6 +34,8 @@ public class ChatShowTrade extends BaseModelExt
 	private Integer status;//状态：0 待审核， 1 审核通过， -1 审核不通过
 	private Integer praise;//点赞
 	private List<ChatShowTradeComments> comments = null;//评论
+	private Integer isAccord; //符合盖楼条件
+	private Integer sorted = 0; //排序
 	
 	public Integer getPraise() {
 		return praise;
@@ -120,5 +122,21 @@ public class ChatShowTrade extends BaseModelExt
 
 	public void setComments(List<ChatShowTradeComments> comments) {
 		this.comments = comments;
+	}
+
+	public Integer getIsAccord() {
+		return isAccord;
+	}
+
+	public void setIsAccord(Integer isAccord) {
+		this.isAccord = isAccord;
+	}
+
+	public Integer getSorted() {
+		return sorted;
+	}
+
+	public void setSorted(Integer sorted) {
+		this.sorted = sorted;
 	}
 }

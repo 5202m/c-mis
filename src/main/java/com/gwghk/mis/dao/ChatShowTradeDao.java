@@ -109,4 +109,17 @@ public class ChatShowTradeDao extends MongoDBBaseDao{
 				, new Update().pull("comments", comments), ChatShowTrade.class);
 		return wr != null && wr.getN() > 0;
 	}
+
+	/**
+	 * 批量更新晒单盖楼状态
+	 * @param ids
+	 * @param isAccord
+	 * @return
+	 */
+	public boolean modifyTradeIsAccordByIds(Object[] ids, int isAccord){
+		WriteResult wr = this.mongoTemplate.updateMulti(Query.query(Criteria.where("_id").in(ids))
+				, Update.update("isAccord", isAccord), ChatShowTrade.class);
+		return wr != null && wr.getN() > 0;
+	}
+
 }

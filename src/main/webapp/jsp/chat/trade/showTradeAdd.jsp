@@ -93,7 +93,10 @@ $(function() {
         <span class="red"> ( 若不填值视为"持仓中" )</span>
         </td>
       </tr>
-      
+      <tr>
+          <th>排序</th>
+          <td colspan="3"><input type="number" name="sorted" id="sorted" /></td>
+      </tr>
       <tr>
         <th>晒单图片<span class="red">*</span></th>
         <td colspan="3">

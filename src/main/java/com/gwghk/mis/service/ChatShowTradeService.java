@@ -116,6 +116,9 @@ public class ChatShowTradeService {
       if (chatShowTrade.getTradeType() != null && chatShowTrade.getTradeType() > 0) {
         criteria.and("tradeType").is(chatShowTrade.getTradeType());
       }
+      if(chatShowTrade.getIsAccord() != null && chatShowTrade.getIsAccord() > -1) {
+        criteria.and("isAccord").is(chatShowTrade.getIsAccord());
+      }
     }
     query.addCriteria(criteria);
     return chatShowTradeDao.getShowTradePage(query, dCriteria);
@@ -190,4 +193,18 @@ public class ChatShowTradeService {
 		}
 		return result;
 	}
+
+  /**
+   * 批量更新晒单盖楼状态
+   *
+   * @param tradeIds
+   * @param isAccord
+   * @return
+   */
+  public ApiResult modifyTradeIsAccordByIds(String[] tradeIds, int isAccord) {
+    ApiResult api = new ApiResult();
+    boolean isSuccess = chatShowTradeDao.modifyTradeIsAccordByIds(tradeIds, isAccord);
+    return api.setCode(isSuccess ? ResultCode.OK : ResultCode.FAIL);
+  }
+
 }

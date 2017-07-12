@@ -44,7 +44,7 @@ $(function() {
     <table class="tableForm_L" border="0" cellspacing="1" cellpadding="0">
     	<tr<c:if test="${chatTrade.tradeType==1}"> style="display:none"</c:if>>
     		<th>标题<span class="red">*</span></th>
-    		<td colspan="3"><input type="text" name="title" id="title" style="width:350px;" value="${chatTrade.title}" class="easyui-validatebox"<c:if test="${chatTrade.tradeType==2}"> data-options="required:true"</c:if> /></td>
+    		<td colspan="5"><input type="text" name="title" id="title" style="width:350px;" value="${chatTrade.title}" class="easyui-validatebox"<c:if test="${chatTrade.tradeType==2}"> data-options="required:true"</c:if> /></td>
     	</tr>
     	<tr<c:if test="${chatTrade.tradeType==1}"> style="display:none"</c:if>>
     		<th>类别</th>
@@ -65,11 +65,18 @@ $(function() {
     				<option value="-1"<c:if test="${chatTrade.status==-1}"> selected="selected"</c:if>>未通过</option>
     			</select>
     		</td>
+			<th>晒单盖楼</th>
+			<td>
+				<select name="isAccord" id="isAccord">
+					<option value="0"<c:if test="${chatTrade.isAccord==0}"> selected="selected"</c:if>>否</option>
+					<option value="1"<c:if test="${chatTrade.isAccord==1}"> selected="selected"</c:if>>是</option>
+				</select>
+			</td>
     	</tr>
       <tr>
       
       <th width="10%">房间组别<span class="red">*</span></th>
-		<td colspan="3">
+		<td colspan="5">
 			<select name="groupType" id="syllabus_groupType_select" style="width: 160px;">
 				<option value="">--请选择--</option>
 				<c:forEach var="row" items="${chatGroupList}">
@@ -84,21 +91,25 @@ $(function() {
       </tr>
       <tr<c:if test="${chatTrade.tradeType==2}"> style="display:none"</c:if>>
         <th width="10%">分析师<span class="red">*</span></th>
-        <td colspan="3">
+        <td colspan="5">
         <input type="hidden" name="userNo" id="chatTradeEditUserNoInput" value="${chatTrade.boUser.userNo}" data-userName="${chatTrade.boUser.userName}">
         <select  id="chatTradeEditUserNo" style="width:280px;"></select>
        </td>
       </tr>
       <tr<c:if test="${chatTrade.tradeType==2}"> style="display:none"</c:if>>
         <th>获利</th>
-        <td colspan="3"><input type="text" name="profit" id="profit" value="${chatTrade.profit}" />
+        <td colspan="5"><input type="text" name="profit" id="profit" value="${chatTrade.profit}" />
         <span class="red"> ( 若不填值视为"持仓中" )</span>
         </td>
       </tr>
-      
+
+		<tr>
+			<th>排序</th>
+			<td colspan="5"><input type="number" name="sorted" id="sorted" value="${chatTrade.sorted}" /></td>
+		</tr>
       <tr>
         <th>晒单图片<span class="red">*</span></th>
-        <td colspan="3">
+        <td colspan="5">
         	<div>图片路径：<input type="text" id="tradeImgPath" name="tradeImg" style="width:350px;margin-top:5px;" class="easyui-validatebox" data-options="required:true" value="${chatTrade.tradeImg}"/>
 	        	<input type="file"  id="tradeImgFile" style="width:155px">
 	        	<!-- 原图片路径 -->
@@ -115,7 +126,7 @@ $(function() {
       </tr>
       <tr>
         <th>备注</th>
-        <td colspan="3"><input type="text" name="remark" style="width:80%" value="${chatTrade.remark}"/></td>
+        <td colspan="5"><input type="text" name="remark" style="width:80%" value="${chatTrade.remark}"/></td>
       </tr>
     </table>
     <input type="hidden" name="id" value="${chatTrade.id}"/>

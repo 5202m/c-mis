@@ -33,10 +33,10 @@ var chatShowTrade = {
 							return $("#show_trade_datagrid_rowOperation").html();
 						}},
 						
-			            {title : '晒单人账号',field : 'boUser.userNo',formatter : function(value, rowData, rowIndex) {
+						{title : '晒单人账号',field : 'boUser.userNo',formatter : function(value, rowData, rowIndex) {
 							return rowData.boUser.userNo;
 						}},                   	
-			            {title : $.i18n.prop("user.name"),field : 'boUser.userName',sortable : true,formatter : function(value, rowData, rowIndex) {
+						{title : $.i18n.prop("user.name"),field : 'boUser.userName',sortable : true,formatter : function(value, rowData, rowIndex) {
 							return rowData.boUser.userName;
 						}},
 						{title:'类别',field:'tradeType', formatter:function(value, rowData, rowIndex){
@@ -50,7 +50,7 @@ var chatShowTrade = {
 							return chatShowTrade.getDictNameByCode("#showTrade_groupType_select",rowData.groupType);
 						}},
 						
-			            {title : "头像",field : 'boUser.avatar' ,formatter : function(value, rowData, rowIndex) {
+						{title : "头像",field : 'boUser.avatar' ,formatter : function(value, rowData, rowIndex) {
 							return '<img src="'+rowData.boUser.avatar+'" style="height:60px;">';
 						}},
 						
@@ -63,9 +63,12 @@ var chatShowTrade = {
 						}},
 			            
 						{title : "获利",field : 'profit',sortable : true , formatter : function(value, rowData, rowIndex) {
-							return rowData.profit == '' ? '持仓中' : rowData.profit}},		
+							return rowData.profit == '' ? '持仓中' : rowData.profit
+						}},
 						{title : "晒单图片",field : 'tradeImg' , formatter : function(value, rowData, rowIndex) {
-							return rowData.tradeImg ? '<a onclick="return chatShowTrade.setViewImage($(this));" class="chatShowTradePreImage" href="'+rowData.tradeImg+'" alt="image" target="_blank"><img src="'+rowData.tradeImg+'" style="height:60px;width:150px;"></a>' : '没有图片'}},
+							return rowData.tradeImg ? '<a onclick="return chatShowTrade.setViewImage($(this));" class="chatShowTradePreImage" href="'+rowData.tradeImg+'" alt="image" target="_blank"><img src="'+rowData.tradeImg+'" style="height:60px;width:150px;"></a>' : '没有图片'
+						}},
+						{title : "排序",field : 'sorted',sortable : true },
 						{title : "晒单时间", field : 'showDate' ,sortable : true, formatter : function(value, rowData, rowIndex) {
 							return rowData.showDate ? timeObjectUtil.longMsTimeConvertToDateTime(value) : '';
 						}},
@@ -79,6 +82,17 @@ var chatShowTrade = {
 									return '待审核';
 								}else{
 									return '不通过';
+								}
+							}
+						}},
+						{title: "晒单盖楼", field:'isAccord' ,formatter : function(value, rowData, rowIndex) {
+							if(rowData.tradeType==1){
+								return '';
+							}else{
+								if(rowData.isAccord==1){
+									return '是';
+								}else{
+									return '否';
 								}
 							}
 						}},
@@ -100,11 +114,13 @@ var chatShowTrade = {
 			var queryParams = $('#'+chatShowTrade.gridId).datagrid('options').queryParams;
 			var userName = $('#userName').val();
 			var tradeType = $('#tradeType').val();
+			var isAccord = $('#isAccord').val();
 			queryParams['userNo'] = userNo;
 			queryParams['groupType'] = groupType;
 			queryParams['status'] = status;
 			queryParams['tradeType'] = tradeType;
 			queryParams['userName'] = userName;
+			queryParams['isAccord'] = isAccord;
 			$('#'+chatShowTrade.gridId).datagrid({
 				url : basePath+'/chatShowTradeController/datagrid.do?opType=' + chatShowTrade.opType,
 				pageNumber : 1
@@ -315,6 +331,10 @@ var chatShowTrade = {
 			}
 		}); 
 	},
+	/**
+	 * 审核晒单
+	 * @param status
+	 */
 	setStatus:function(status){
 		var url = formatUrl(basePath + '/chatShowTradeController/batchSetStatus.do');
 		var rows = $("#"+chatShowTrade.gridId).datagrid('getSelections');
@@ -470,7 +490,62 @@ var chatShowTrade = {
 				});
 			}
 		});
-	}
+	},
+  /**
+   * 审核晒单盖楼
+   * @param isAccord
+   */
+	setIsAccord:function(isAccord){
+		var url = formatUrl(basePath + '/chatShowTradeController/batchSetIsAccord.do');
+		var rows = $("#"+chatShowTrade.gridId).datagrid('getSelections');
+		if(!rows || rows.length == 0) {
+			$.messager.alert($.i18n.prop("common.operate.tips"), '请选择记录进行操作!', 'warning');
+			return;
+		}
+		var message = '您确定要审核通过选中的晒单为晒单盖楼吗？';
+		if(isAccord==0){
+			message = '您确定要审核不通过选中的晒单为晒单盖楼吗？' ;
+		}
+		$.messager.confirm("操作提示", message, function(r) {
+			if (r) {
+				var tradeIds = [];
+				for(var i = 0; i < rows.length; i++) {
+					tradeIds.push(rows[i].id);
+				}
+				goldOfficeUtils.ajax({
+					url : url,
+					data: {tradeIds : tradeIds.join(','),isAccord : isAccord},
+					success : function(data){
+						if (data.success) {
+							$('#'+chatShowTrade.gridId).datagrid('reload');
+							$.messager.alert("操作提示","审核晒单盖楼成功!",'info');
+						}else{
+							$.messager.alert($.i18n.prop("common.operate.tips"),'审核晒单盖楼失败','error');  /**操作提示  修改失败!*/
+						}
+					}
+				});
+			}
+		});
+	},
+  /**
+   * 功能：导出记录
+   */
+  exportRecord : function(){
+    var groupType = $("#showTrade_groupType_select").val();
+    var status = $('#showTrade_status_select').val();
+    var queryParams = $('#'+chatShowTrade.gridId).datagrid('options').queryParams;
+    var userName = $('#userName').val();
+    //var tradeType = $('#tradeType').val();
+    var isAccord = $('#isAccord').val();
+    queryParams['groupType'] = groupType;
+    queryParams['status'] = status;
+    //queryParams['tradeType'] = tradeType;
+    queryParams['userName'] = userName;
+    queryParams['isAccord'] = isAccord;
+    
+    var path = basePath+ '/chatShowTradeController/exportRecord.do?'+$.param(queryParams);
+    window.location.href = path;
+  }
 };
 		
 //初始化

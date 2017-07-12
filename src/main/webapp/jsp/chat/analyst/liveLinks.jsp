@@ -63,7 +63,11 @@
     		var tabNext=$(this).parents(".live_sub_tab").next();
 			var pSelectBoxVal = isDict ? pSelectBox.val().split(';')[0] : pSelectBox.val();
 			var tl = pSelectBoxVal.formatStr(tn);
-    		if(tabNext.find(".live-sel-num[tn='"+tn+"'][tl='"+tl+"']").length>0){
+			if(tn.indexOf('_') != -1){
+				var tns = tn.split('_');
+				tl = pSelectBoxVal.formatStr(tns[0], tns[1]);
+			}
+    		if(tabNext.find(".live-sel-num[tn='"+tn+"'][tl='"+tl+"']").length>0 || tabNext.find(".live-sel-num[tl='"+tl+"']").length>0){
     			alert("已选择该编号【"+tn+"】");
     		}else{
     			var cloneTmp=$(".live-sel-num-tmp").clone();
@@ -93,7 +97,7 @@
     			if(isValid(lval)){
     				lval=lval[1].split(",");
     				for(var i in lval){
-    					$(this).nextAll(".dictSetSelect").append('<option value="'+lval[i]+'">'+lval[i]+'</option>');
+						$(this).nextAll(".dictSetSelect").append('<option value="' + lval[i] + '">' + lval[i] + '</option>');
     				}
     			}
     			nbxVal=$(this).next().next().val();
@@ -120,7 +124,7 @@
     <form id="setLiveLinks_form" method="post">
         <input type="hidden" name="userId" id = "userId" value="${mngUser.userId}">
          <c:forEach var="row" items="${liveList}">
-              <div style='width: 265px;height:490px;float:left;'>
+              <div style='width: 355px;height:490px;float:left;'>
                 <strong>${row.nameCN}</strong>
                 <div class="live-tab-panel" tc="${row.value}">
                      <div class="live_sub_tab">
@@ -150,6 +154,7 @@
 				                          </c:forEach>
                        		     </select>
                        		     <select class="dictSetSelect" style="display:none;"></select>
+						 		 <select class="qqCloudLiveDictSetSelect" style="display:none;"></select>
                        </div>
                        <div class="live-next-labdev">
                             <p>已选地址:</p>
