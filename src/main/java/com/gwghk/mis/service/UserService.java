@@ -1,5 +1,6 @@
 package com.gwghk.mis.service;
 
+import com.gwghk.mis.util.JSONHelper;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -186,8 +187,8 @@ public class UserService{
     				return result.setCode(ResultCode.Error105);
     			}
     		}
-    		if(userDao.isExsitUserNo(userParam.getUserId(),userParam.getUserNo()) 
-    			  || userDao.isExsitPhone(userParam.getUserId(),userParam.getTelephone())){
+    		if(userDao.isExsitUserNo(userParam.getUserId(),userParam.getUserNo(),userParam.getSystemCategory())
+    			  || userDao.isExsitPhone(userParam.getUserId(),userParam.getTelephone(),userParam.getSystemCategory())){
     			return result.setCode(ResultCode.Error102);
     		}
     		BeanUtils.copyExceptNull(user, userParam);
