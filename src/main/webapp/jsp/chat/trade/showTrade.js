@@ -324,7 +324,7 @@ var chatShowTrade = {
 				   $('#'+id+'Input').val(rowData.userNo);
 			},
 		    onChange:function(val){
-		    	$('#'+id+'Input').val(val);
+		    	//$('#'+id+'Input').val(val);
 		    },
 			onBeforeLoad:function(){
 				$('#'+id).next('span.combo').find('input').width(200);
