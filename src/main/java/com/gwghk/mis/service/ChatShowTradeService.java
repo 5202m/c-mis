@@ -1,6 +1,8 @@
 package com.gwghk.mis.service;
 
 
+import com.gwghk.mis.util.DateUtil;
+import com.gwghk.mis.util.StringUtil;
 import java.util.Date;
 import java.util.List;
 
@@ -92,10 +94,26 @@ public class ChatShowTradeService {
   /**
    * 功能：分页查询晒单数据
    */
-  public Page<ChatShowTrade> getShowTradePage(DetachedCriteria<ChatShowTrade> dCriteria) {
+  public Page<ChatShowTrade> getShowTradePage(DetachedCriteria<ChatShowTrade> dCriteria, Date showTradeStartDate, Date showTradeEndDate) {
     Query query = new Query();
     ChatShowTrade chatShowTrade = dCriteria.getSearchModel();
     Criteria criteria = Criteria.where("valid").is(1);
+    if(showTradeStartDate!=null){
+      criteria = criteria.and("showDate").gte(showTradeStartDate);
+    }
+    if(showTradeEndDate != null){
+      if(showTradeStartDate != null){
+        criteria.lte(showTradeEndDate);
+      }else{
+        criteria.and("showDate").lte(showTradeEndDate);
+      }
+    }
+    /*if(StringUtils.isNotEmpty(showTradeStartDate) && StringUtils.isNotEmpty(showTradeEndDate)){
+      criteria.and("showDate").gte(DateUtil.parseCalendarMilliFormat(showTradeStartDate)).lte(DateUtil.parseCalendarMilliFormat(showTradeEndDate));
+    }
+    if(StringUtils.isNotEmpty(showTradeEndDate)){
+      criteria.and("showDate").lte(showTradeEndDate);
+    }*/
     if (chatShowTrade != null) {
       criteria.and("systemCategory").is(chatShowTrade.getSystemCategory());
       if (StringUtils.isNotBlank(chatShowTrade.getGroupType())) {
@@ -120,7 +138,7 @@ public class ChatShowTradeService {
         criteria.and("isAccord").is(chatShowTrade.getIsAccord());
       }
     }
-    query.addCriteria(criteria);
+    query.addCriteria(criteria);System.out.println(JSONHelper.toJSONString(query));
     return chatShowTradeDao.getShowTradePage(query, dCriteria);
   }
 

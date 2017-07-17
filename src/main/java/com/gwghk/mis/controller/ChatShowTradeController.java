@@ -121,6 +121,8 @@ public class ChatShowTradeController extends BaseController{
 	public  Map<String,Object>  datagrid(HttpServletRequest request, DataGrid dataGrid,ChatShowTrade chatShowTrade, String opType){
 		 String userNo = request.getParameter("userNo");
 		 String userName = request.getParameter("userName");
+		 String showTradeStartDateStr = request.getParameter("showTradeStartDate");
+		String showTradeEndDateStr = request.getParameter("showTradeEndDate");
 		 BoUser user=new BoUser();
 		 if(userNo != null){
 		     user.setUserNo(userNo);
@@ -130,7 +132,14 @@ public class ChatShowTradeController extends BaseController{
 		 }
 	     chatShowTrade.setBoUser(user);
 	     setSystemFlag(chatShowTrade);
-		 Page<ChatShowTrade> page = chatShowTradeService.getShowTradePage(this.createDetachedCriteria(dataGrid, chatShowTrade));
+		Date showTradeStartDate = null, showTradeEndDate = null;
+		if(org.apache.commons.lang.StringUtils.isNotBlank(showTradeStartDateStr)){
+			showTradeStartDate=DateUtil.parseDateSecondFormat(showTradeStartDateStr);
+		}
+		if(org.apache.commons.lang.StringUtils.isNotBlank(showTradeEndDateStr)){
+			showTradeEndDate=DateUtil.parseDateSecondFormat(showTradeEndDateStr);
+		}
+		 Page<ChatShowTrade> page = chatShowTradeService.getShowTradePage(this.createDetachedCriteria(dataGrid, chatShowTrade), showTradeStartDate, showTradeEndDate);
 		 Map<String, Object> result = new HashMap<String, Object>();
 		 result.put("total",null == page ? 0  : page.getTotalSize());
 	     result.put("rows", null == page ? new ArrayList<ChatShowTrade>() : page.getCollection());
@@ -419,12 +428,21 @@ public class ChatShowTradeController extends BaseController{
 		try{
 			String userNo = request.getParameter("userNo");
 			String userName = request.getParameter("userName");
+			String showTradeStartDateStr = request.getParameter("showTradeStartDate");
+			String showTradeEndDateStr = request.getParameter("showTradeEndDate");
 			BoUser user=new BoUser();
 			if(userNo != null){
 				user.setUserNo(userNo);
 			}
 			if(userName != null){
 				user.setUserName(userName);
+			}
+			Date showTradeStartDate = null, showTradeEndDate = null;
+			if(org.apache.commons.lang.StringUtils.isNotBlank(showTradeStartDateStr)){
+				showTradeStartDate=DateUtil.parseDateSecondFormat(showTradeStartDateStr);
+			}
+			if(org.apache.commons.lang.StringUtils.isNotBlank(showTradeEndDateStr)){
+				showTradeEndDate=DateUtil.parseDateSecondFormat(showTradeEndDateStr);
 			}
 			chatShowTrade.setBoUser(user);
 			setSystemFlag(chatShowTrade);
@@ -434,7 +452,7 @@ public class ChatShowTradeController extends BaseController{
 			dataGrid.setRows(0);
 			dataGrid.setSort("updateDate");
 			dataGrid.setOrder("desc");
-			Page<ChatShowTrade> page = chatShowTradeService.getShowTradePage(this.createDetachedCriteria(dataGrid, chatShowTrade));
+			Page<ChatShowTrade> page = chatShowTradeService.getShowTradePage(this.createDetachedCriteria(dataGrid, chatShowTrade), showTradeStartDate, showTradeEndDate);
 			List<ChatShowTrade> chatShowTradeList = page.getCollection();
 			//创建HSSFWorkbook对象(excel的文档对象)
 			HSSFWorkbook wb = new HSSFWorkbook();
