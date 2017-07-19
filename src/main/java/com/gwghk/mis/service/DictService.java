@@ -107,14 +107,14 @@ public class DictService{
     /**
 	 * 功能：删除字典信息
 	 */
-    public ApiResult deleteDict(String id,boolean isParentId){
+    public ApiResult deleteDict(String id, String cid, boolean isParentId){
     	ApiResult result = new ApiResult();
     	boolean isSuccess=false;
     	if(isParentId){
     		isSuccess=dictDao.deleteParentById(id);
-		}else{
-			isSuccess=dictDao.deleteChildById(id);
-		}
+			}else{
+				isSuccess=dictDao.deleteChildById(id, cid);
+			}
     	this.synchDictCache();
     	return result.setCode(isSuccess?ResultCode.OK:ResultCode.FAIL);
     }

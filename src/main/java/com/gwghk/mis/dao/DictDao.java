@@ -49,7 +49,8 @@ public class DictDao extends MongoDBBaseDao{
 	
 	/**
      * 通过子类字典code找记录
-     * @param childId
+     * @param parentCode
+	 * @param childCode
      * @return
      */
 	public BoDict getDictByChildCode(String parentCode,String childCode) {
@@ -58,7 +59,8 @@ public class DictDao extends MongoDBBaseDao{
 	
 	/**
 	 * 新增子类字典记录
-	 * @param dictParam
+	 * @param parentCode
+	 * @param childDict
 	 */
 	public void addChildDict(String parentCode,BoDict childDict) {
 		childDict.setCreateDate(new Date());
@@ -69,7 +71,8 @@ public class DictDao extends MongoDBBaseDao{
 	
 	/**
 	 * 更新子字典条目
-	 * @param dict
+	 * @param parentCode
+	 * @param childDict
 	 */
     public void updateChild(String parentCode,BoDict childDict) {
     	childDict.setUpdateDate(new Date());
@@ -85,18 +88,19 @@ public class DictDao extends MongoDBBaseDao{
      */
     public boolean deleteParentById(String id) {
     	//更新父类为删除
-    	WriteResult wr=this.mongoTemplate.updateFirst(new Query(Criteria.where("id").is(id)), new Update().set("valid", 0).unset("children"), BoDict.class);
+    	WriteResult wr=this.mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(id)), new Update().set("valid", 0).unset("children"), BoDict.class);
     	return (wr!=null&&wr.getN()>0);
 	}
 	
     /**
      * 删除子类记录
      * @param id
+		 * @param cid
      */
-    public boolean deleteChildById(String id) {
+    public boolean deleteChildById(String id, String cid) {
     	BoDict boDict=new BoDict();
-    	boDict.setId(id);
-    	WriteResult wr=this.mongoTemplate.updateFirst(new Query(Criteria.where("children.id").is(id)), new Update().pull("children",boDict), BoDict.class);
+    	boDict.setId(cid);
+    	WriteResult wr=this.mongoTemplate.updateMulti(Query.query(Criteria.where("_id").is(id)), new Update().pull("children",boDict), BoDict.class);
     	return (wr!=null&&wr.getN()>0);
     }
     
