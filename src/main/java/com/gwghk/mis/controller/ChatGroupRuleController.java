@@ -110,11 +110,13 @@ public class ChatGroupRuleController extends BaseController{
        	TreeBean tbean=null;
        	List<ChatGroupRule> list=chatGroupRuleService.getChatGroupRuleList(getSystemFlag(),"id","name","type");
        	for(ChatGroupRule row:list){
-       		 tbean=new TreeBean();
-       		 tbean.setId(row.getId());
-       		 tbean.setText(row.getName() + "【" + chatGroupRuleType.get(row.getType()).getNameCN() + "】");
-       		 tbean.setParentId("");
-   			 treeList.add(tbean);
+					if(chatGroupRuleType.get(row.getType())!=null) {
+						tbean = new TreeBean();
+						tbean.setId(row.getId());
+						tbean.setText(row.getName() + "【" + chatGroupRuleType.get(row.getType()).getNameCN() + "】");
+						tbean.setParentId("");
+						treeList.add(tbean);
+					}
        	}
        	return JsonUtil.formatListToTreeJson(treeList,false);
      }
@@ -225,7 +227,7 @@ public class ChatGroupRuleController extends BaseController{
     /**
      * 设置规则通用参数
      * @param request
-     * @param chatGroup
+     * @param chatGroupRule
      */
     private void setCommonChatGroupRuleParam(HttpServletRequest request, ChatGroupRule chatGroupRule){
     	String[] clientGroupArr=request.getParameterValues("clientGroupStr");
