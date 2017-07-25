@@ -367,4 +367,21 @@ public class MemberService{
 	public Member getMemberByNickeName(String systemCategory, String nickName){
 		return memberDao.getMemberByNickeName(systemCategory, nickName);
 	}
+
+	/**
+	 * 批量设置用户为vip或价值用户、用户解绑、用户级别设置
+	 * @param memberIds
+	 * @param groupId
+	 * @param type
+	 * @param value
+	 * @param remark
+	 * @param clientGroup
+	 * @param accountNo
+	 * @return
+	 */
+	public ApiResult bacthUserSetting(String[] memberIds,String groupId,String type,boolean value,String remark, String clientGroup, String accountNo){
+		boolean isOk=memberDao.updateBacthUserSetting(memberIds, groupId,type,value,remark, clientGroup, accountNo);
+		return new ApiResult().setCode(isOk?ResultCode.OK:ResultCode.FAIL);
+	}
+
 }

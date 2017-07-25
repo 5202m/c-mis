@@ -481,4 +481,58 @@ public class ChatUserController extends BaseController{
 		row.set("gagTimes", userGroup.getGagTimes());
 		row.set("sendMsgCount", room.getSendMsgCount()==null?0:room.getSendMsgCount());
 	}
+
+  /**
+   * 功能：进入批量用户设置页面
+   */
+  @RequestMapping(value="/chatUserController/toBacthVIPSetting", method = RequestMethod.GET)
+  @ActionVerification(key="vipSetting")
+  public String toBacthVIPSetting(HttpServletRequest request,ModelMap map) throws Exception {
+    String groupType = request.getParameter("groupType"),
+        type=request.getParameter("type");
+    map.put("memberId", "");
+    map.put("vipUser", false);
+    map.put("vipUserRemark", "");
+    map.put("groupType", groupType);
+    map.put("type", type);
+    return "chat/member/userSetting";
+  }
+
+  /**
+   * 功能：设置用户
+   */
+  @RequestMapping(value="/chatUserController/bacthVIPSetting",method=RequestMethod.POST)
+  @ResponseBody
+  @ActionVerification(key="vipSetting")
+  public AjaxJson bacthVIPSetting(HttpServletRequest request){
+    AjaxJson j = new AjaxJson();
+    String memberId = request.getParameter("memberId"),
+        groupType = request.getParameter("groupType"),
+        type=request.getParameter("type"),
+        value=request.getParameter("value"),
+        remark=request.getParameter("remark"),
+        clientGroup=request.getParameter("clientGroup"),
+        accountNo=request.getParameter("accountNo");
+    ApiResult apiResult = memberService.bacthUserSetting(memberId.split(","), groupType, type,Boolean.valueOf(value), remark, clientGroup, accountNo);
+    if(type.equals("1")){
+      remark += "  价值用户状态";
+    }else if(type.equals("2")){
+      remark += "  VIP用户状态";
+    }else if(type.equals("3")){
+      remark += "  用户级别状态：" + clientGroup + "，用户账号：" + accountNo;
+    }
+    if(apiResult.isOk()){
+      j.setSuccess(true);
+      String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量设置用户："+memberId+"  "+remark+"成功";
+      addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
+      logger.info("<<method:userSetting()|"+message);
+    }else{
+      j.setSuccess(false);
+      j.setMsg(ResourceBundleUtil.getByMessage(apiResult.getCode()));
+      String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量设置用户："+memberId+"  "+remark+"失败";
+      addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE);
+      logger.error("<<method:userSetting()|"+message+",ErrorMsg:"+apiResult.toString());
+    }
+    return j;
+  }
 }
