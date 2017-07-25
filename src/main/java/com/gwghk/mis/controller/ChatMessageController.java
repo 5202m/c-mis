@@ -217,7 +217,7 @@ public class ChatMessageController extends BaseController{
 			builder.parse();
 			String title=ExcelUtil.wrapExcelExportResponse("聊天记录", request, response);
 			builder.write(response.getOutputStream());
-			addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出聊天记录操作成功！", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT);
+			addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出聊天记录操作成功,excel密码【"+pwd+"】！", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT);
 		}catch(Exception e){
 			logger.error("<<method:exportRecord()|chat message export error!",e);
 		}
