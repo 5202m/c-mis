@@ -425,21 +425,27 @@ public class ChatGroupController extends BaseController{
     public String bookingUserList(@PathVariable String chatGroupId , ModelMap map) throws Exception {
     	ChatGroup chatGroup = chatGroupService.getChatGroupById(chatGroupId);
     	List<TraninClient>  TraninClientList = chatGroup.getTraninClient();
+      List<TraninClient> newTraninClientList = new ArrayList<TraninClient>();
 		List<TraninClient> authTraninClientList = new ArrayList<TraninClient>();
 		List<TraninClient> unAuthTraninClientList = new ArrayList<TraninClient>();
 		if(null != TraninClientList){
 			for (TraninClient traninClient : TraninClientList) {
 				if(traninClient.getClientId() == null){
 					Member member = memberService.getMemberByNickeName(getSystemFlag(), traninClient.getNickname());
-					traninClient.setClientId(member.getLoginPlatform().getChatUserGroup().get(0).getUserId());
-					chatGroupService.modifyChatGroupTraninClient(chatGroupId, traninClient.getId(), traninClient.getClientId());
+          ChatUserGroup chatUserGroup = member != null && member.getLoginPlatform().getChatUserGroup().size() > 0 ? member.getLoginPlatform().getChatUserGroup().get(0) : null;
+          if(chatUserGroup != null) {
+            traninClient.setClientId(chatUserGroup.getUserId());
+          }
 				}
+        newTraninClientList.add(traninClient);
 				if(traninClient.getIsAuth() == 0){
 					unAuthTraninClientList.add(traninClient);
 				}else{
 					authTraninClientList.add(traninClient);
 				}
 			}
+      chatGroup.setTraninClient(newTraninClientList);
+			chatGroupService.modifyChatGroupTraninClient(chatGroup);
 		}
     	
     	map.put("chatGroup", chatGroup); 	
