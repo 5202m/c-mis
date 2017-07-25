@@ -429,6 +429,11 @@ public class ChatGroupController extends BaseController{
 		List<TraninClient> unAuthTraninClientList = new ArrayList<TraninClient>();
 		if(null != TraninClientList){
 			for (TraninClient traninClient : TraninClientList) {
+				if(traninClient.getClientId() == null){
+					Member member = memberService.getMemberByNickeName(getSystemFlag(), traninClient.getNickname());
+					traninClient.setClientId(member.getLoginPlatform().getChatUserGroup().get(0).getUserId());
+					chatGroupService.modifyChatGroupTraninClient(chatGroupId, traninClient.getId(), traninClient.getClientId());
+				}
 				if(traninClient.getIsAuth() == 0){
 					unAuthTraninClientList.add(traninClient);
 				}else{

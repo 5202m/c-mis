@@ -369,4 +369,22 @@ public class ChatGroupService{
 		return result;
 	}
 
+  /**
+   * 更新培训班报名用户不存在用户id的数据
+   * @param groupId
+   * @param tcId
+   * @param userId
+   */
+	public void modifyChatGroupTraninClient(String groupId, String tcId, String userId){
+		ChatGroup chatGroup = this.getChatGroupById(groupId);
+		List<TraninClient> traninClientList =new ArrayList<TraninClient>();
+		for(TraninClient tc : chatGroup.getTraninClient()){
+			if(tcId.equals(tc.getId())){
+				tc.setClientId(userId);
+			}
+			traninClientList.add(tc);
+		}
+		chatGroup.setTraninClient(traninClientList);
+		chatGroupDao.update(chatGroup);
+	}
 }

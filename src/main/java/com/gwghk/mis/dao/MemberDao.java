@@ -209,4 +209,15 @@ public class MemberDao extends MongoDBBaseDao{
 		return this.findOne(Member.class,Query.query(new Criteria().andOperator(Criteria.where("memberId").is(memberId),
 						   Criteria.where("valid").is(1),Criteria.where("loginPlatform.chatUserGroup.id").is(groupId))));
 	}
+
+  /**
+   * 根据昵称查询用户
+   * @param systemCategory
+   * @param nickName
+   * @return
+   */
+	public Member getMemberByNickeName(String systemCategory, String nickName){
+		return this.findOne(Member.class, Query.query(new Criteria().andOperator(Criteria.where("loginPlatform.chatUserGroup.nickname").is(nickName),
+				Criteria.where("systemCategory").is(systemCategory))));
+	}
 }

@@ -69,7 +69,7 @@ public class MemberService{
 
 	/**
 	 * 按照指定的用户编号查询用户列表
-	 * @param userNos
+	 * @param mobiles
 	 * @return
 	 */
 	public List<Member> getMemberListByMobiles(String systemCategory,String[] mobiles, String groupType)
@@ -356,5 +356,15 @@ public class MemberService{
 		Query query = new Query();
 		query.addCriteria(criteria);
 		return memberDao.findOneInclude(Member.class, query, "mobilePhone");
+	}
+
+  /**
+   * 根据昵称查询用户
+   * @param systemCategory
+   * @param nickName
+   * @return
+   */
+	public Member getMemberByNickeName(String systemCategory, String nickName){
+		return memberDao.getMemberByNickeName(systemCategory, nickName);
 	}
 }
