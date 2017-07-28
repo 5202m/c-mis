@@ -224,13 +224,13 @@ public class MemberDao extends MongoDBBaseDao{
 
 	/**
 	 * 批量更新用户设置，包括设置用户为价值用户或vip用户, 用户解绑
-	 * @param memberIds
+	 * @param mobiles
 	 * @param groupType
 	 * @param type 类型：1为价值用户，2为vip用户, 3为用户级别, unbind为用户解绑
 	 * @param isTrue
 	 * @return
 	 */
-	public boolean updateBacthUserSetting(Object[] memberIds,String groupType,String type,Boolean isTrue,String remark, String clientGroup, String accountNo){
+	public boolean updateBacthUserSetting(Object[] mobiles,String groupType,String type,Boolean isTrue,String remark, String clientGroup){
     boolean isSuccess=false;
     Update update=new Update();
 		if("1".equals(type)){
@@ -241,7 +241,7 @@ public class MemberDao extends MongoDBBaseDao{
 			update.set("loginPlatform.chatUserGroup.$.vipUserRemark", remark);
 		}else if("3".equals(type)){
 			update.set("loginPlatform.chatUserGroup.$.clientGroup", clientGroup);
-			update.set("loginPlatform.chatUserGroup.$.accountNo", accountNo);
+			//update.set("loginPlatform.chatUserGroup.$.accountNo", accountNo);
 		}else if("unbind".equals(type)){
 			ChatUserGroup chatUserGroup = new ChatUserGroup();
 			chatUserGroup.setId(groupType);
@@ -252,7 +252,7 @@ public class MemberDao extends MongoDBBaseDao{
 
 		update.set("updateDate",new Date());
     //for(String memberId : memberIds) {
-      WriteResult wr = this.mongoTemplate.updateMulti(Query.query(new Criteria().andOperator(Criteria.where("_id").in(memberIds), Criteria.where("loginPlatform.chatUserGroup._id").is(groupType))), update, Member.class);
+      WriteResult wr = this.mongoTemplate.updateMulti(Query.query(new Criteria().andOperator(Criteria.where("mobilePhone").in(mobiles), Criteria.where("loginPlatform.chatUserGroup._id").is(groupType))), update, Member.class);
       isSuccess = (wr != null && wr.getN() > 0);
     //}
 		return isSuccess;

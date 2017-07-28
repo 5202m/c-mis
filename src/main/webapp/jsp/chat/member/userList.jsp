@@ -101,7 +101,7 @@
   <div id="chatUser_datagrid_toolbar" style="display:none;">
       <a class="easyui-linkbutton refresh" data-options="plain:true,iconCls:'ope-reload',disabled:false"  onclick="chatUser.refresh()"><spring:message code="common.buttons.refresh" /></a>
       <a class="easyui-linkbutton export" data-options="plain:true,iconCls:'ope-export',disabled:false"  onclick="chatUser.exportRecord();">导出记录</a>
-      <a class="easyui-linkbutton vipSetting" data-options="plain:true,iconCls:'ope-export',disabled:false"  onclick="chatUser.bacthUserSetting(this);" t="2">批量VIP用户设置</a>
+      <a class="easyui-linkbutton vipSetting" data-options="plain:true,iconCls:'ope-export',disabled:false"  onclick="chatUser.bacthUserSetting(this);" t="2">批量修改用户级别</a>
  </div> 
   
   <!-- datagrid-操作按钮 -->

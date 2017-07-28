@@ -374,43 +374,42 @@ var chatUser = {
 	 * 批量用户设置
 	 */
 	bacthUserSetting:function(_this){
-		var selections = $("#chatUser_datagrid").datagrid('getSelections');
-		if(selections.length > 0) {
-			var memberIds = [];
-			$.each(selections, function(i, row){
-				memberIds.push(row.memberId);
-			});console.log(memberIds);
-			var url = formatUrl(basePath + '/chatUserController/toBacthVIPSetting.do?type=' + $(_this).attr("t") + "&groupType=" + $('#chatUserGroupId option:first').val().replace(',',''));
-			var submitUrl = formatUrl(basePath + '/chatUserController/bacthVIPSetting.do');
+			var url = formatUrl(basePath + '/chatUserController/toBacthUserGroupSetting.do?type=' + $(_this).attr("t") + "&groupType=" + $('#chatUserGroupId option:first').val().replace(',',''));
+			var submitUrl = formatUrl(basePath + '/chatUserController/bacthUserGroupSetting.do');
 			goldOfficeUtils.openEditorDialog({
-				title: '批量用户设置',
-				width: 350,
-				height: 140,
+				title: '批量修改用户级别',
+				width: 550,
+				height: 480,
 				href: url,
 				iconCls: 'ope-redo',
 				handler: function () {    //提交时处理
-					$('#userSettingForm input[name="memberId"]').val(memberIds.join(','));
-					if ($("#userSettingForm").form('validate')) {
+					var radioVal = $('#userClientGroupSet_form input[name="userGroup"]:checked').val();
+					if(isBlank(radioVal)) {
+						$.messager.alert($.i18n.prop("common.operate.tips"), '请选择用户等级或VIP用户!', 'info');
+					}else if(radioVal=='3' && isBlank($('#userClientGroupSet_form #clientGroup').val())){
+						$.messager.alert($.i18n.prop("common.operate.tips"), '请选择用户等级!', 'info');
+					}else if(radioVal=='2' && isBlank($('#userClientGroupSet_form #vipUser').val())){
+						$.messager.alert($.i18n.prop("common.operate.tips"), '请选择设置VIP用户!', 'info');
+					}else if(isBlank($('#userClientGroupSet_form #mobiles').val())){
+						$.messager.alert($.i18n.prop("common.operate.tips"), '请正确输入内容!', 'info');
+					}else{
 						goldOfficeUtils.ajaxSubmitForm({
 							url: submitUrl,
-							formId: 'userSettingForm',
+							formId: 'userClientGroupSet_form',
 							onSuccess: function (data) {   //提交成功后处理
 								var d = $.parseJSON(data);
 								if (d.success) {
 									$("#myWindow").dialog("close");
 									chatUser.refresh();
-									$.messager.alert($.i18n.prop("common.operate.tips"), '设置成功!', 'info');
+									$.messager.alert($.i18n.prop("common.operate.tips"), '批量修改用户级别成功!', 'info');
 								} else {
-									$.messager.alert($.i18n.prop("common.operate.tips"), '设置失败', 'error');
+									$.messager.alert($.i18n.prop("common.operate.tips"), '批量修改用户级别失败', 'error');
 								}
 							}
 						});
 					}
 				}
 			});
-		} else {
-			$.messager.alert($.i18n.prop("common.operate.tips"), '请选择需要设置的数据!', 'info');
-		}
 	},
 	/**
 	 * 用户解除绑定
