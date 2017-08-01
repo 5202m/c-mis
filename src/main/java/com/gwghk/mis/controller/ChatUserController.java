@@ -512,7 +512,17 @@ public class ChatUserController extends BaseController{
 				mobiles=request.getParameter("mobiles"),
         clientGroup=request.getParameter("clientGroup"),
 				remark = "";
-    ApiResult apiResult = memberService.bacthUserSetting(mobiles.split(","), groupType, type,Boolean.valueOf(value), remark, clientGroup);
+		String[] mobileArr = null;
+		if(mobiles.indexOf(",") > -1){
+			mobileArr = mobiles.split(",");
+		}else if (mobiles.indexOf("\r\n") > -1) {
+				mobileArr = mobiles.split("\r\n");
+		} else if (mobiles.indexOf("\r") > -1) {
+			mobileArr = mobiles.split("\r");
+		} else if (mobiles.indexOf("\n") > -1) {
+			mobileArr = mobiles.split("\n");
+		}
+    ApiResult apiResult = memberService.bacthUserSetting(mobileArr, groupType, type,Boolean.valueOf(value), remark, clientGroup);
     if(type.equals("1")){
       remark += "  价值用户状态";
     }else if(type.equals("2")){
