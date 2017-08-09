@@ -6,7 +6,7 @@
 	//初始化
 	$(function() {
 		 $("#chatGroupTypeId").change(function(){
-			 if(this.value.indexOf('studio')!=-1){
+			 if(this.value.indexOf('studio')!=-1 || this.value.indexOf('stock')!=-1){
 				 $("#clientGroupTreeId").show();
 			 }else{
 				 $("#clientGroupTreeId").hide();
