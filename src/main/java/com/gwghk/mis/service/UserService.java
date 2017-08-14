@@ -123,10 +123,10 @@ public class UserService{
 	 * @param userNos
 	 * @return
 	 */
-	public List<BoUser> getUserListByNo(String... userNos)
+	public List<BoUser> getUserListByNo(String systemCategory, String... userNos)
 	{
 		Query query=new Query();
-		Criteria criteria = Criteria.where("valid").is(1);
+		Criteria criteria = Criteria.where("valid").is(1).and("systemCategory").is(systemCategory);
 		if(userNos != null && userNos.length > 0)
 		{
 			criteria.and("userNo").in((Object[])userNos);
@@ -154,7 +154,7 @@ public class UserService{
 	/**
 	 * 新增用户信息
 	 * @param userParam
-	 * @param boolean isUpdate 是否更新，true为更新，false为插入
+	 * @param isUpdate 是否更新，true为更新，false为插入
 	 * @return
 	 * @throws Exception 
 	 */

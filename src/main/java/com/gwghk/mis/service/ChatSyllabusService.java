@@ -1,5 +1,6 @@
 package com.gwghk.mis.service;
 
+import com.gwghk.mis.util.JSONHelper;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -94,7 +95,7 @@ public class ChatSyllabusService {
 
     List<BoUser> loc_authUsers = null;
     if (loc_userNos != null && loc_userNos.isEmpty() == false) {
-      loc_authUsers = userService.getUserListByNo(loc_userNos.toArray(new String[0]));
+      loc_authUsers = userService.getUserListByNo(systemCategory, loc_userNos.toArray(new String[0]));
       for (int i = (loc_authUsers == null) ? -1 : loc_authUsers.size() - 1; i >= 0; i--) {
         if (loc_authUsers.get(i) == null
             || loc_authUsers.get(i).getRole() == null
