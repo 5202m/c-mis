@@ -129,7 +129,7 @@ public class ChatMessageController extends BaseController{
 	@ResponseBody
 	public  Map<String,Object>  datagrid(HttpServletRequest request, DataGrid dataGrid,ChatMessage chatMessage){
 		 this.setComSearch(request,chatMessage);
-		 Page<ChatMessage> page = chatMessageService.getChatMessagePage(this.createDetachedCriteria(dataGrid, chatMessage));
+		 Page<ChatMessage> page = chatMessageService.getChatMessagePage(this.createDetachedCriteria(dataGrid, chatMessage), false);
 		 Map<String, Object> result = new HashMap<String, Object>();
 		 result.put("total",null == page ? 0  : page.getTotalSize());
 	     result.put("rows", null == page ? new ArrayList<ChatMessage>() : page.getCollection());
@@ -150,7 +150,7 @@ public class ChatMessageController extends BaseController{
 			dataGrid.setSort("publishTime");
 			dataGrid.setOrder("desc");
 			chatMessage.getContent().setMsgType("text");  //默认只导出文本类型
-			Page<ChatMessage> page = chatMessageService.getChatMessagePage(this.createDetachedCriteria(dataGrid, chatMessage));
+			Page<ChatMessage> page = chatMessageService.getChatMessagePage(this.createDetachedCriteria(dataGrid, chatMessage), true);
 			List<ChatGroup> groupList=chatGroupService.getChatGroupList(getSystemFlag(),"id","name","groupType");
 			List<ChatMessage>  chatMessageList = page.getCollection();
 			ChatMsgToUser toUser=null;

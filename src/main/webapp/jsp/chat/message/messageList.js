@@ -158,6 +158,16 @@ var chatMessage = {
 			 
 		});
 		$("#chatMessageGroupId").trigger("change");
+		$('#toUserLabel').change(function(){
+			var val = $(this).val();
+			if($.inArray(val, ['1','2','3']) > -1){
+				chatMessage.setAuthorList(val);
+				$('#toUser').next('.combo').show();
+			}else{
+				$('#toUser').combogrid({destroy:function(){}});
+				$('#toUser').next('.combo').hide();
+			}
+		});
 	},
 	/**
 	 * 功能：刷新
@@ -254,6 +264,41 @@ var chatMessage = {
 		loc_params['hasOther'] = true;
 		var path = basePath+ '/chatMessageController/exportRecord.do?'+$.param(loc_params);
 		window.location.href = path;
+	},
+	/**
+	 * 设置作者选择列表
+	 * @param id
+	 */
+	setAuthorList:function(userType){
+		$('#toUser').combogrid({
+			idField:'userNo',
+			textField:'userName',
+			panelWidth: 200,
+			url:basePath+'/userController/getAnalystList.do?hasOther=true&userType='+userType,
+			columns:[[
+				{field : 'userNo', hidden:true},
+				{field : 'author_Key_id',hidden:true,formatter : function(value, rowData, rowIndex) {
+					return 'author_Key_id';
+				}},
+				{field : 'userName',title : '姓名', width:100},
+				{field : 'position', hidden:true},
+				{field : 'avatar',title : '头像',width:40,formatter : function(value, rowData, rowIndex) {
+					if(isBlank(value)){
+						return '';
+					}
+					return '<img src="'+value+'" style="height:35px;width:35px;"/>';
+				}}
+			]],
+			onSelect:function(rowIndex, rowData){
+				$('#toUserInput').val(rowData.userNo);
+			},
+			onChange:function(val){
+				//$('#'+id+'Input').val(val);
+			},
+			onBeforeLoad:function(){
+				$('#toUser').next('span.combo').find('input').width(200);
+			}
+		});
 	}
 };
 		
