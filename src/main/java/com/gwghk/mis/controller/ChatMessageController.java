@@ -158,9 +158,12 @@ public class ChatMessageController extends BaseController{
 			List<ChatGroup> groupList=chatGroupService.getChatGroupList(getSystemFlag(),"id","name","groupType");
 			List<ChatMessage>  chatMessageList = page.getCollection();
       List<ChatMessage> exportList=new ArrayList<ChatMessage>(),tmpList=null,filterList=null;
-      if(chatMessage.getToUser() != null && chatMessage.getToUser().getUserId() != null) {
+      if(chatMessage.getUserId() != null) {
         Map<String, List<ChatMessage>> lstGrp = chatMessageList.stream().filter(r -> !r.getToUser().getUserId().equals(chatMessage.getUserId())).collect(Collectors.groupingBy(p -> p.getToUser().getUserId()));
         Object[] keyStr = lstGrp.keySet().toArray();
+				ChatMessage empty=new ChatMessage();
+				empty.setAccountNo("　");
+				empty.setNickname("　");
         for (Object e : keyStr) {
           tmpList = lstGrp.get(e);
           filterList = chatMessageList.stream().filter(t -> e.equals(t.getUserId()))
@@ -169,6 +172,7 @@ public class ChatMessageController extends BaseController{
             tmpList.addAll(filterList);
           }
           tmpList.sort((a, b) -> a.getPublishTime().compareTo(b.getPublishTime()));
+					tmpList.add(empty);
           exportList.addAll(tmpList);
         }
       }else{
@@ -201,9 +205,13 @@ public class ChatMessageController extends BaseController{
 					}else if("-1".equals(userType)){
 						userTypeVal = "游客";
 					}else{
-						userTypeVal = "真实";
-						if(clientGroupMap.containsKey(cm.getClientGroup())){
-							userTypeVal = clientGroupMap.get(cm.getClientGroup());
+						if(cm.getMobilePhone() != null){
+							userTypeVal = "真实";
+							if(clientGroupMap.containsKey(cm.getClientGroup())){
+								userTypeVal = clientGroupMap.get(cm.getClientGroup());
+							}
+						} else {
+							userTypeVal = "　";
 						}
 					}
 					row.set("mobilePhone", cm.getMobilePhone());
@@ -217,14 +225,14 @@ public class ChatMessageController extends BaseController{
 						}
 					}
 					row.set("fromPlatform", cm.getFromPlatform());
-					row.set("msgType", "文本");
-					row.set("content", cm.getContent().getValue());
-					row.set("publishTime",DateUtil.longMsTimeConvertToDateTime(Long.valueOf(cm.getPublishTime().split("_")[0])));
+					row.set("msgType", cm.getMobilePhone() == null ? "　" :"文本");
+					row.set("content", cm.getContent() == null ? "　" : cm.getContent().getValue());
+					row.set("publishTime",cm.getPublishTime() == null ? "　" : DateUtil.longMsTimeConvertToDateTime(Long.valueOf(cm.getPublishTime().split("_")[0])));
 					row.set("approvalUserNo", cm.getApprovalUserNo());
-					row.set("status", cm.getStatus()==1?"通过":(cm.getStatus()==2?"拒绝":"等待审批"));//0、等待审批，1、通过 ；2、拒绝
-					row.set("valid", cm.getValid()==1?"正常":"删除");
+					row.set("status", cm.getStatus() == null ? "　" : (cm.getStatus()==1?"通过":(cm.getStatus()==2?"拒绝":"等待审批")));//0、等待审批，1、通过 ；2、拒绝
+					row.set("valid", cm.getValid() == null ? "　" : cm.getValid()==1?"正常":"删除");
 					toUser=cm.getToUser();
-					row.set("talkStyle", "公聊");
+					row.set("talkStyle", toUser == null ? "　" :"公聊");
 					if(toUser!=null && StringUtils.isNotBlank(toUser.getUserId())){
 						toUserName=toUser.getNickname();
 						row.set("talkStyle", toUser.getTalkStyle()==1?"私聊":"@TA");
