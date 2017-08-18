@@ -1,5 +1,6 @@
 package com.gwghk.mis.service;
 
+import com.gwghk.mis.util.JSONHelper;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -150,16 +151,22 @@ public class ChatMessgeService{
 			}
 			ChatMsgToUser toUser=model.getToUser();
 			if(toUser!=null){
-				if(toUser.getTalkStyle()==1){
-					criteria.and("toUser.talkStyle").is(1);
-					criteria.orOperator(Criteria.where("nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())),
-							Criteria.where("toUser.nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())));	
-				}else if(toUser.getTalkStyle()==2){
-					criteria.and("toUser.talkStyle").is(0).and("toUser.userId").in("",null);
-				}else if(toUser.getTalkStyle()==3){
-					criteria.and("toUser.talkStyle").is(0).and("toUser.userId").nin("",null);
-				}else{
-					criteria.and("toUser.talkStyle").is(0);
+				if(toUser.getTalkStyle() != null) {
+					if (toUser.getTalkStyle() == 1) {
+						criteria.and("toUser.talkStyle").is(1);
+						if(StringUtils.isNotBlank(model.getNickname())) {
+							criteria.orOperator(Criteria.where("nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())), Criteria.where("toUser.nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())));
+						}
+					} else if (toUser.getTalkStyle() == 2) {
+						criteria.and("toUser.talkStyle").is(0).and("toUser.userId").in("", null);
+					} else if (toUser.getTalkStyle() == 3) {
+						criteria.and("toUser.talkStyle").is(0).and("toUser.userId").nin("", null);
+					} else {
+						criteria.and("toUser.talkStyle").is(0);
+					}
+				}
+				if(toUser.getUserType() != null && StringUtils.isBlank(model.getUserId())){
+					criteria.orOperator(Criteria.where("userType").is(toUser.getUserType()), Criteria.where("toUser.userType").is(toUser.getUserType()));
 				}
 			}
 			if(model.getValid()!=null){
@@ -177,9 +184,10 @@ public class ChatMessgeService{
 					criteria.and("createDate").lte(DateUtil.parseDateSecondFormat(model.getPublishEndDateStr()));
 				}
 			}
-			
+
 			if(StringUtils.isNotBlank(model.getNickname()) && (toUser==null || (toUser!=null && toUser.getTalkStyle()!=1))){
-				criteria.and("nickname").regex(StringUtil.toFuzzyMatch(model.getNickname()));
+				//criteria.and("nickname").regex(StringUtil.toFuzzyMatch(model.getNickname()));
+				criteria.and("toUser.nickname").nin("", null).orOperator(Criteria.where("nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())), Criteria.where("toUser.nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())));
 			}		
 		}
 		if(year<2005){

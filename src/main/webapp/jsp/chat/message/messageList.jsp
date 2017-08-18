@@ -85,9 +85,9 @@
           	从&nbsp; <input name="publishStartDateStr" id="publishStartDate" class="Wdate"  onFocus="WdatePicker({maxDate:'#F{$dp.$D(\'publishEndDate\')}',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width:150px" />
              &nbsp;&nbsp;&nbsp;&nbsp; 到&nbsp;<input name="publishEndDateStr" id="publishEndDate" class="Wdate" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'publishStartDate\')}',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width:150px" />
 		  </td>
-             <th>接收者</th>
+             <th>会话参与者</th>
              <td>
-                 <select id="toUserLabel">
+                 <select name="toUserLabel" id="toUserLabel">
                      <option value="">--请选择--</option>
                      <option value="1">管理员</option>
                      <option value="2">分析师</option>

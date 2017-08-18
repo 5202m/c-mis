@@ -1,26 +1,5 @@
 package com.gwghk.mis.controller;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.gwghk.mis.authority.ActionVerification;
 import com.gwghk.mis.common.model.AjaxJson;
 import com.gwghk.mis.common.model.ApiResult;
@@ -45,6 +24,26 @@ import com.gwghk.mis.util.StringUtil;
 import com.sdk.orm.DataRowSet;
 import com.sdk.orm.IRow;
 import com.sdk.poi.POIExcelBuilder;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 聊天室信息管理
@@ -103,7 +102,6 @@ public class ChatMessageController extends BaseController{
 	/**
 	 * 设置通用查询
 	 * @param request
-	 * @param dataGrid
 	 * @param chatMessage
 	 */
 	private void setComSearch(HttpServletRequest request,ChatMessage chatMessage){
@@ -111,9 +109,15 @@ public class ChatMessageController extends BaseController{
 		 chatMessage.setPublishStartDateStr(request.getParameter("publishStartDateStr"));
 		 chatMessage.setPublishEndDateStr(request.getParameter("publishEndDateStr"));
 		 String talkStyle=request.getParameter("talkStyle");
+		 String userType = request.getParameter("toUserLabel");
+		 ChatMsgToUser msgToUser=new ChatMsgToUser();
 		 if(StringUtils.isNotBlank(talkStyle)){
-			 ChatMsgToUser msgToUser=new ChatMsgToUser();
 			 msgToUser.setTalkStyle(Integer.parseInt(talkStyle));
+		 }
+		 if(StringUtils.isNotBlank(userType)){
+			 msgToUser.setUserType(Integer.parseInt(userType));
+		 }
+		 if(msgToUser.getTalkStyle() != null || msgToUser.getUserType() != null) {
 			 chatMessage.setToUser(msgToUser);
 		 }
 	}
@@ -153,6 +157,23 @@ public class ChatMessageController extends BaseController{
 			Page<ChatMessage> page = chatMessageService.getChatMessagePage(this.createDetachedCriteria(dataGrid, chatMessage), true);
 			List<ChatGroup> groupList=chatGroupService.getChatGroupList(getSystemFlag(),"id","name","groupType");
 			List<ChatMessage>  chatMessageList = page.getCollection();
+      List<ChatMessage> exportList=new ArrayList<ChatMessage>(),tmpList=null,filterList=null;
+      if(chatMessage.getToUser() != null && chatMessage.getToUser().getUserId() != null) {
+        Map<String, List<ChatMessage>> lstGrp = chatMessageList.stream().filter(r -> !r.getToUser().getUserId().equals(chatMessage.getUserId())).collect(Collectors.groupingBy(p -> p.getToUser().getUserId()));
+        Object[] keyStr = lstGrp.keySet().toArray();
+        for (Object e : keyStr) {
+          tmpList = lstGrp.get(e);
+          filterList = chatMessageList.stream().filter(t -> e.equals(t.getUserId()))
+              .collect(Collectors.toList());
+          if (filterList != null && filterList.size() > 0) {
+            tmpList.addAll(filterList);
+          }
+          tmpList.sort((a, b) -> a.getPublishTime().compareTo(b.getPublishTime()));
+          exportList.addAll(tmpList);
+        }
+      }else{
+        exportList = chatMessageList;
+      }
 			ChatMsgToUser toUser=null;
 			String toUserName="房间所有人";
 			List<ChatClientGroup> clientGroups = chatClientGroupService.getClientGroupList(chatMessage.getGroupId().replaceAll("[,_].*$", ""),getSystemFlag());
@@ -163,9 +184,9 @@ public class ChatMessageController extends BaseController{
 			String pwd=StringUtil.random(6);
 			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.CHAT_RECORDS_TEMPLATE_PATH)));
             builder.getHSSFWorkbook().getSheetAt(0).protectSheet(pwd);
-			if(chatMessageList != null && chatMessageList.size() > 0){
+			if(exportList != null && exportList.size() > 0){
 				DataRowSet dataSet = new DataRowSet();
-				for(ChatMessage cm : chatMessageList){
+				for(ChatMessage cm : exportList){
 					IRow row = dataSet.append();
 					//row.set("userId", cm.getGroupType().contains("studio")?cm.getUserId():(StringUtils.isBlank(cm.getAccountNo())?cm.getUserId():cm.getAccountNo()));
 					row.set("userId", StringUtils.isBlank(cm.getAccountNo())?cm.getUserId():cm.getAccountNo());

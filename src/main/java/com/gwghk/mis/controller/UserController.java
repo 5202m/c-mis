@@ -320,12 +320,14 @@ public class UserController extends BaseController{
     public String getAnalystList(HttpServletRequest request,ModelMap map) throws Exception {
 			String userType = request.getParameter("userType");
 			String roleNo = "analyst";
-			if(userType.equals("1")){
-				roleNo = "admin";
-			}else if(userType.equals("2")){
-				roleNo = "analyst";
-			}else if(userType.equals("3")){
-				roleNo = "cs";
+			if(StringUtils.isNotBlank(userType)) {
+				if (userType.equals("1")) {
+					roleNo = "admin";
+				} else if (userType.equals("2")) {
+					roleNo = "analyst";
+				} else if (userType.equals("3")) {
+					roleNo = "cs";
+				}
 			}
     	List<BoUser> allAnalysts = userService.getUserListByRole(getSystemFlag(),roleNo,"userNo","userName","avatar","position");
     	String hasOther=request.getParameter("hasOther");

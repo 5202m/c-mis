@@ -138,7 +138,7 @@ public class ChatShowTradeService {
         criteria.and("isAccord").is(chatShowTrade.getIsAccord());
       }
     }
-    query.addCriteria(criteria);System.out.println(JSONHelper.toJSONString(query));
+    query.addCriteria(criteria);
     return chatShowTradeDao.getShowTradePage(query, dCriteria);
   }
 
