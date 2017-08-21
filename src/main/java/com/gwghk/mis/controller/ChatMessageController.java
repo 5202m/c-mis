@@ -158,7 +158,7 @@ public class ChatMessageController extends BaseController{
 			List<ChatGroup> groupList=chatGroupService.getChatGroupList(getSystemFlag(),"id","name","groupType");
 			List<ChatMessage>  chatMessageList = page.getCollection();
       List<ChatMessage> exportList=new ArrayList<ChatMessage>(),tmpList=null,filterList=null;
-      if(chatMessage.getUserId() != null) {
+      if(chatMessage.getUserId() != null && StringUtils.isNotBlank(chatMessage.getUserId())) {
         Map<String, List<ChatMessage>> lstGrp = chatMessageList.stream().filter(r -> !r.getToUser().getUserId().equals(chatMessage.getUserId())).collect(Collectors.groupingBy(p -> p.getToUser().getUserId()));
         Object[] keyStr = lstGrp.keySet().toArray();
 				ChatMessage empty=new ChatMessage();
