@@ -115,12 +115,16 @@ var chatShowTrade = {
 			var userName = $('#userName').val();
 			var tradeType = $('#tradeType').val();
 			var isAccord = $('#isAccord').val();
+			var showTradeStartDate = $('#showTradeStartDate').val();
+			var showTradeEndDate = $('#showTradeEndDate').val();
 			queryParams['userNo'] = userNo;
 			queryParams['groupType'] = groupType;
 			queryParams['status'] = status;
 			queryParams['tradeType'] = tradeType;
 			queryParams['userName'] = userName;
 			queryParams['isAccord'] = isAccord;
+			queryParams['showTradeStartDate'] = showTradeStartDate;
+			queryParams['showTradeEndDate'] = showTradeEndDate;
 			$('#'+chatShowTrade.gridId).datagrid({
 				url : basePath+'/chatShowTradeController/datagrid.do?opType=' + chatShowTrade.opType,
 				pageNumber : 1
@@ -324,7 +328,7 @@ var chatShowTrade = {
 				   $('#'+id+'Input').val(rowData.userNo);
 			},
 		    onChange:function(val){
-		    	$('#'+id+'Input').val(val);
+		    	//$('#'+id+'Input').val(val);
 		    },
 			onBeforeLoad:function(){
 				$('#'+id).next('span.combo').find('input').width(200);
@@ -537,11 +541,15 @@ var chatShowTrade = {
     var userName = $('#userName').val();
     //var tradeType = $('#tradeType').val();
     var isAccord = $('#isAccord').val();
+		var showTradeStartDate = $('#showTradeStartDate').val();
+		var showTradeEndDate = $('#showTradeEndDate').val();
     queryParams['groupType'] = groupType;
     queryParams['status'] = status;
     //queryParams['tradeType'] = tradeType;
     queryParams['userName'] = userName;
     queryParams['isAccord'] = isAccord;
+		queryParams['showTradeStartDate'] = showTradeStartDate;
+		queryParams['showTradeEndDate'] = showTradeEndDate;
     
     var path = basePath+ '/chatShowTradeController/exportRecord.do?'+$.param(queryParams);
     window.location.href = path;

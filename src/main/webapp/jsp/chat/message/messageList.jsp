@@ -9,15 +9,31 @@
       <table class="tableForm_L" style="margin-top:3px" width="99%" heigth="auto"  border="0" cellpadding="0" cellspacing="1">
         <tr>
           <th width="10%">手机号码</th>
-          <td width="40%"><input type="text" name="mobilePhone"/></td>
+          <td width="20%"><input type="text" name="mobilePhone"/></td>
+            <th width="10%">账号</th>
+            <td width="20%"><input type="text" name="accountNo"/></td>
           <th width="10%">昵称</th>
-          <td width="40%"><input type="text" name="nickname"/></td>
+          <td width="30%"><input type="text" name="nickname"/></td>
         </tr>
         <tr>
-          <th width="10%">账号</th>
-          <td width="40%"><input type="text" name="accountNo"/></td>
+            <th width="10%">所属房间</th>
+            <td width="">
+                <select name="groupId" id="chatMessageGroupId" style="width:160px;">
+                    <c:forEach var="row" items="${chatGroupList}">
+                        <option value="${row.id}<c:if test="${empty row.groupType}">,</c:if>">${row.name}</option>
+                    </c:forEach>
+                </select>
+            </td>
+            <th width="10%">信息类型</th>
+            <td width="">
+                <select name="content.msgType" id="chatMessageMsgType" style="width:160px;">
+                    <option value="">--请选择--</option>
+                    <option value="text">文本</option>
+                    <option value="img">图片</option>
+                </select>
+            </td>
           <th width="10%">用户类型</th>
-          <td width="40%">
+          <td width="">
 	          <select name="clientGroup" id="chatMessageUserType" style="width:160px;">
           		<option value="">--请选择--</option>
           		<option value="0">普通会员</option>
@@ -33,24 +49,6 @@
 	          </select>
           </td>
         </tr>
-         <tr>
-          <th width="10%">所属房间</th>
-          <td width="40%">
-	          <select name="groupId" id="chatMessageGroupId" style="width:160px;">
-	              <c:forEach var="row" items="${chatGroupList}">
-	                 <option value="${row.id}<c:if test="${empty row.groupType}">,</c:if>">${row.name}</option>
-	              </c:forEach>
-	          </select>
-          </td>
-          <th width="10%">信息类型</th>
-          <td width="40%"> 
-             <select name="content.msgType" id="chatMessageMsgType" style="width:160px;">
-                  <option value="">--请选择--</option>
-	              <option value="text">文本</option>
-	              <option value="img">图片</option>
-             </select>
-          </td>
-        </tr>
         <tr>
           <!-- <th width="10%">审核状态</th>
           <td width="40%">
@@ -61,7 +59,7 @@
 	          </select>
           </td> -->
           <th width="10%">聊天方式</th>
-          <td width="40%">
+          <td width="">
 	          <select name="talkStyle" style="width:160px;">
 	            <option value="">--请选择--</option>
           		<option value="0">公聊</option>
@@ -71,22 +69,33 @@
 	          </select>
           </td>
           <th width="10%">内容关键词</th>
-          <td width="40%"><input type="text" name="content.value"/></td>
+          <td width=""><input type="text" name="content.value"/></td>
+            <th width="10%">数据状态</th>
+            <td width="">
+                <select name="valid" style="width:160px;" id="chatMessageValidId">
+                    <option value="1">正常</option>
+                    <option value="0">删除</option>
+                    <option value="">所有</option>
+                </select>
+            </td>
         </tr>
          <tr>
           <th width="10%">发布时间</th>
-          <td width="40%"> 
+          <td width="" colspan="3">
           	从&nbsp; <input name="publishStartDateStr" id="publishStartDate" class="Wdate"  onFocus="WdatePicker({maxDate:'#F{$dp.$D(\'publishEndDate\')}',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width:150px" />
              &nbsp;&nbsp;&nbsp;&nbsp; 到&nbsp;<input name="publishEndDateStr" id="publishEndDate" class="Wdate" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'publishStartDate\')}',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width:150px" />
 		  </td>
-		  <th width="10%">数据状态</th>
-          <td width="40%"> 
-            <select name="valid" style="width:160px;" id="chatMessageValidId">
-          		<option value="1">正常</option>
-          		<option value="0">删除</option>
-          		<option value="">所有</option>
-	        </select>
-          </td>
+             <th>会话参与者</th>
+             <td>
+                 <select name="toUserLabel" id="toUserLabel">
+                     <option value="">--请选择--</option>
+                     <option value="1">管理员</option>
+                     <option value="2">分析师</option>
+                     <option value="3">客服</option>
+                 </select>
+                 <input type="hidden" name="userId" id="toUserInput">
+                 <select id="toUser" style="display:none;"></select>
+             </td>
         </tr>
         <tr>
           <td colspan="6" align="right">&nbsp;&nbsp;

@@ -128,7 +128,7 @@ public class ChatGroupRuleService{
 		if(selectField!=null){
 			return chatGroupRuleDao.findListInclude(ChatGroupRule.class, Query.query(Criteria.where("valid").is(1).and("systemCategory").is(systemCategory)),selectField);
 		}
-		return chatGroupRuleDao.findList(ChatGroupRule.class, Query.query(Criteria.where("valid").is(1)));
+		return chatGroupRuleDao.findList(ChatGroupRule.class, Query.query(Criteria.where("valid").is(1).and("systemCategory").is(systemCategory)));
 	}
 
 }

@@ -211,14 +211,20 @@ var systemDictionary = {
 		$(thisObj).parent().click();//先触发父类点击事件使其选中
 		var node = $('#'+systemDictionary.gridId).treegrid('getSelected');
 		var type = node.type , message = $.i18n.prop("common.confirmdel");  /**您确定要删除记录吗?*/
+		var parentId = '', childId = '';
 		if(type == 1){
+			parentId = node.id;
 			message = $.i18n.prop("menu.delete");	/**确定要删除该节点及对应的子节点吗?*/
+		}else{
+			parentId = node._parentId;
+			childId = node.id;
 		}
 		goldOfficeUtils.deleteTreeGridOne({
 			message : message,
 			url : basePath + '/dictionaryController/oneDel.do',
 			data : {
-				id : node.id,
+				pid : parentId,
+				cid : childId,
 				type : type
 			},
 			success : function(data){

@@ -119,15 +119,22 @@ var chatMessage = {
 	setEvent:function(){
 		// 列表查询
 		$("#chatMessage_queryForm_search").on("click",function(){
-			var startDate=$("#publishStartDate").val(),endDate=$("#publishEndDate").val();
+			var startDate=$("#publishStartDate").val(),
+					endDate=$("#publishEndDate").val(),
+					toUserLabel = $('#toUserLabel').val(),
+					userId = $('#toUserInput').val();
 			if((isValid(startDate) && isBlank(endDate))||(isValid(endDate) && isBlank(startDate))){
-				alert("请输入完整的发布时间段！");
+				$.messager.alert("操作提示","请输入完整的发布时间段！",'info');
 				return false;
 			}
 			if(isValid(startDate)&& isValid(endDate) && startDate.substring(0,4)!= endDate.substring(0,4)){
-				alert("暂不支持查询跨年数据！");
+				$.messager.alert("操作提示","暂不支持查询跨年数据！",'info');
 				return false;
 			}
+			/*if(isValid(toUserLabel) && isBlank(userId)){
+				$.messager.alert("操作提示","请选择一个接收者!",'info');
+				return false;
+			}*/
 			var queryParams = $('#'+chatMessage.gridId).datagrid('options').queryParams;
 			$("#chatMessage_queryForm input[name],#chatMessage_queryForm select[name]").each(function(){
 				queryParams[this.name] = $(this).val();
@@ -158,6 +165,16 @@ var chatMessage = {
 			 
 		});
 		$("#chatMessageGroupId").trigger("change");
+		$('#toUserLabel').change(function(){
+			var val = $(this).val();
+			if($.inArray(val, ['1','2','3']) > -1){
+				chatMessage.setAuthorList(val);
+				$('#toUser').next('.combo').show();
+			}else{
+				$('#toUser').combogrid({destroy:function(){}});
+				$('#toUser').next('.combo').hide();
+			}
+		});
 	},
 	/**
 	 * 功能：刷新
@@ -190,7 +207,7 @@ var chatMessage = {
 	              }
 			}
 			if(!isWait){
-				alert("请选择待审核的记录！");
+				$.messager.alert("操作提示","请选择待审核的记录！",'info');
 				return;
 			}
 			goldOfficeUtils.ajax({
@@ -242,18 +259,53 @@ var chatMessage = {
 	exportRecord : function(){
 		var loc_params = $('#'+chatMessage.gridId).datagrid('options').queryParams;
 		if(isBlank(loc_params.publishStartDateStr)||isBlank(loc_params.publishEndDateStr)){
-			alert("请输入发布时间查询后再导出");
+			$.messager.alert("操作提示","请输入发布时间查询后再导出",'info');
 			return;
 		}
 		var beginDate=new Date(loc_params.publishStartDateStr),endDate=new Date(loc_params.publishEndDateStr);
 		beginDate.setMonth(beginDate.getMonth()+1);
 		if(endDate>beginDate){
-			alert("目前导出数据暂支持发布时间段为一个月，请检查发布时间段！");
+			$.messager.alert("操作提示","目前导出数据暂支持发布时间段为一个月，请检查发布时间段！",'info');
 			return;
 		}
 		loc_params['hasOther'] = true;
 		var path = basePath+ '/chatMessageController/exportRecord.do?'+$.param(loc_params);
 		window.location.href = path;
+	},
+	/**
+	 * 设置作者选择列表
+	 * @param id
+	 */
+	setAuthorList:function(userType){
+		$('#toUser').combogrid({
+			idField:'userNo',
+			textField:'userName',
+			panelWidth: 200,
+			url:basePath+'/userController/getAnalystList.do?hasOther=true&userType='+userType,
+			columns:[[
+				{field : 'userNo', hidden:true},
+				{field : 'author_Key_id',hidden:true,formatter : function(value, rowData, rowIndex) {
+					return 'author_Key_id';
+				}},
+				{field : 'userName',title : '姓名', width:100},
+				{field : 'position', hidden:true},
+				{field : 'avatar',title : '头像',width:40,formatter : function(value, rowData, rowIndex) {
+					if(isBlank(value)){
+						return '';
+					}
+					return '<img src="'+value+'" style="height:35px;width:35px;"/>';
+				}}
+			]],
+			onSelect:function(rowIndex, rowData){
+				$('#toUserInput').val(rowData.userNo);
+			},
+			onChange:function(val){
+				//$('#'+id+'Input').val(val);
+			},
+			onBeforeLoad:function(){
+				$('#toUser').next('span.combo').find('input').width(200);
+			}
+		});
 	}
 };
 		

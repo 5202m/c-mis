@@ -50,6 +50,7 @@
     	$(".liveSelect,.dictSetSelect").change(function(){
     		var pSelectBox=null;
 			var tn = this.value;
+			var tnText = $(this).children('option[selected="selected"]').text();
 			var isDict = $(this).hasClass("dictSetSelect");
     		if(isDict){
     			pSelectBox=$(this).prev().prev();
@@ -63,15 +64,20 @@
     		var tabNext=$(this).parents(".live_sub_tab").next();
 			var pSelectBoxVal = isDict ? pSelectBox.val().split(';')[0] : pSelectBox.val();
 			var tl = pSelectBoxVal.formatStr(tn);
+			var isQCloud = /\.myqcloud\./.test(pSelectBoxVal);//是否腾讯云直播
 			if(tn.indexOf('_') != -1){
 				var tns = tn.split('_');
 				tl = pSelectBoxVal.formatStr(tns[0], tns[1]);
 			}
     		if(tabNext.find(".live-sel-num[tn='"+tn+"'][tl='"+tl+"']").length>0 || tabNext.find(".live-sel-num[tl='"+tl+"']").length>0){
-    			alert("已选择该编号【"+tn+"】");
+				if(isQCloud){
+					alert("已选择该编号【" + tnText + "】");
+				}else {
+					alert("已选择该编号【" + tn + "】");
+				}
     		}else{
     			var cloneTmp=$(".live-sel-num-tmp").clone();
-    			cloneTmp.removeClass("live-sel-num-tmp").addClass("live-sel-num").attr("tc",$(this).parents(".live-tab-panel").attr("tc")).attr("tn",tn).attr("tl",tl).find("label").text(pSelectBox.find("option[value='"+pSelectBox.val()+"']").text()+"："+tn);
+    			cloneTmp.removeClass("live-sel-num-tmp").addClass("live-sel-num").attr("tc",$(this).parents(".live-tab-panel").attr("tc")).attr("tn",tn).attr("tl",tl).find("label").text(pSelectBox.find("option[value='"+pSelectBox.val()+"']").text()+"："+(isQCloud ? tnText : tn));
     			tabNext.append(cloneTmp);
     		}
     	});
@@ -86,21 +92,29 @@
     			});
     		}
     		$(this).nextAll(".liveSelect").show();
-    		var nSelectBox=null;
-    		var isDictSet=this.value && this.value.indexOf(";")!=-1;//数据字典设置有默认值的项
-    		var isNotParamVal=!/\{0\}/g.test(this.value);//数据字典设置没有带参数的项，如{0}
-    		var nbxVal="";
+    		var nSelectBox=null,thisVal = this.value;
+    		var isDictSet=thisVal && thisVal.indexOf(";")!=-1;//数据字典设置有默认值的项
+    		var isNotParamVal=!/\{0\}/g.test(thisVal);//数据字典设置没有带参数的项，如{0}
+    		var nbxVal="",nbxText = '';
+			var isQCloud = /\.myqcloud\./.test(thisVal);//是否腾讯云直播
     		if(isDictSet){
     			$(this).nextAll(".liveSelect").val("").hide();
-    			$(this).nextAll(".dictSetSelect").show().html('<option value="">--请选择--</option>');
-    			var lval=this.value.split(";");
+    			//$(this).nextAll(".dictSetSelect").show().html('<option value="">--请选择--</option>');
+    			var lval=thisVal.split(";");
     			if(isValid(lval)){
     				lval=lval[1].split(",");
+					var options = ['<option value="">--请选择--</option>'];
     				for(var i in lval){
-						$(this).nextAll(".dictSetSelect").append('<option value="' + lval[i] + '">' + lval[i] + '</option>');
+						if(isQCloud){
+							options.push('<option value="' + lval[i].split(':')[1] + '">' + lval[i].split(':')[0] + '</option>');
+						}else {
+							options.push('<option value="' + lval[i] + '">' + lval[i] + '</option>');
+						}
     				}
+					$(this).nextAll(".dictSetSelect").show().html(options.join(''));
     			}
-    			nbxVal=$(this).next().next().val();
+    			nbxVal = $(this).next().next().val();
+				nbxText = $(this).next().next().text();
     		}else{
     			nbxVal=isNotParamVal?"":$(this).next().val();
     			$(this).nextAll(".dictSetSelect").val("").hide();
@@ -108,12 +122,12 @@
     		if(!isNotParamVal && (isBlank(nbxVal) || (!isDictSet && nbxVal.indexOf("X")!=-1))){
     			return false;
     		}
-    		var tl = this.value.formatStr(nbxVal);
+    		var tl = thisVal.formatStr(nbxVal);
     		if((isValid(nbxVal) && tabNext.find(".live-sel-num[tn='"+nbxVal+"'][tl='"+tl+"']").length>0)||(isNotParamVal&& tabNext.find(".live-sel-num[tl='"+tl+"']").length>0)){
     			alert("已选择该地址");
     		}else{
     			var cloneTmp=$(".live-sel-num-tmp").clone();
-    			cloneTmp.removeClass("live-sel-num-tmp").addClass("live-sel-num").attr("tc",$(this).parents(".live-tab-panel").attr("tc")).attr("tn",nbxVal).attr("tl",tl).find("label").text($(this).find("option[value='"+this.value+"']").text()+(isValid(nbxVal)?"："+nbxVal:""));
+    			cloneTmp.removeClass("live-sel-num-tmp").addClass("live-sel-num").attr("tc",$(this).parents(".live-tab-panel").attr("tc")).attr("tn",nbxVal).attr("tl",tl).find("label").text($(this).find("option[value='"+this.value+"']").text()+(isValid(nbxVal) ? ("：" + (isQCloud ? nbxText : nbxVal)) : ''));
     			tabNext.append(cloneTmp);
     		}
     	});

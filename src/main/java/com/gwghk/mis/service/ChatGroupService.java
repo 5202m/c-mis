@@ -369,4 +369,11 @@ public class ChatGroupService{
 		return result;
 	}
 
+  /**
+   * 更新培训班报名用户不存在用户id的数据
+   * @param chatGroup
+   */
+	public void modifyChatGroupTraninClient(ChatGroup chatGroup){
+		chatGroupDao.update(chatGroup);
+	}
 }

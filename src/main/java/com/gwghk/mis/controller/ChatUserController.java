@@ -481,4 +481,67 @@ public class ChatUserController extends BaseController{
 		row.set("gagTimes", userGroup.getGagTimes());
 		row.set("sendMsgCount", room.getSendMsgCount()==null?0:room.getSendMsgCount());
 	}
+
+  /**
+   * 功能：进入批量用户设置页面
+   */
+  @RequestMapping(value="/chatUserController/toBacthUserGroupSetting", method = RequestMethod.GET)
+  @ActionVerification(key="vipSetting")
+  public String toBacthUserGroupSetting(HttpServletRequest request,ModelMap map) throws Exception {
+		DictConstant dict=DictConstant.getInstance();
+		List<ChatClientGroup> chatClientGroupList = chatClientGroupService.getClientGroupList(null,getSystemFlag());
+		String groupType = request.getParameter("groupType"),
+				type=request.getParameter("type");
+		map.put("groupType", groupType);
+		map.put("type", type);
+		map.put("clientGroupList", chatClientGroupList);
+    return "chat/member/userClientGroupSet";
+  }
+
+  /**
+   * 功能：设置用户
+   */
+  @RequestMapping(value="/chatUserController/bacthUserGroupSetting",method=RequestMethod.POST)
+  @ResponseBody
+  @ActionVerification(key="vipSetting")
+  public AjaxJson bacthUserGroupSetting(HttpServletRequest request){
+    AjaxJson j = new AjaxJson();
+    String groupType = request.getParameter("groupType"),
+        type=request.getParameter("userGroup"),
+        value=request.getParameter("vipUser"),
+				mobiles=request.getParameter("mobiles"),
+        clientGroup=request.getParameter("clientGroup"),
+				remark = "";
+		String[] mobileArr = null;
+		if(mobiles.indexOf(",") > -1){
+			mobileArr = mobiles.split(",");
+		}else if (mobiles.indexOf("\r\n") > -1) {
+				mobileArr = mobiles.split("\r\n");
+		} else if (mobiles.indexOf("\r") > -1) {
+			mobileArr = mobiles.split("\r");
+		} else if (mobiles.indexOf("\n") > -1) {
+			mobileArr = mobiles.split("\n");
+		}
+    ApiResult apiResult = memberService.bacthUserSetting(mobileArr, groupType, type,Boolean.valueOf(value), remark, clientGroup);
+    if(type.equals("1")){
+      remark += "  价值用户状态";
+    }else if(type.equals("2")){
+      remark += "  VIP用户状态";
+    }else if(type.equals("3")){
+      remark += "  用户级别状态：" + clientGroup;
+    }
+    if(apiResult.isOk()){
+      j.setSuccess(true);
+      String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量设置用户："+mobiles+"  "+remark+"成功";
+      addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
+      logger.info("<<method:userSetting()|"+message);
+    }else{
+      j.setSuccess(false);
+      j.setMsg(ResourceBundleUtil.getByMessage(apiResult.getCode()));
+      String message = "用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 批量设置用户："+mobiles+"  "+remark+"失败";
+      addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE);
+      logger.error("<<method:userSetting()|"+message+",ErrorMsg:"+apiResult.toString());
+    }
+    return j;
+  }
 }

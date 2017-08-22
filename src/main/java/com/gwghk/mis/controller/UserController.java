@@ -318,10 +318,21 @@ public class UserController extends BaseController{
     @RequestMapping(value = "/userController/getAnalystList", method = RequestMethod.POST,produces = "plain/text; charset=UTF-8")
    	@ResponseBody
     public String getAnalystList(HttpServletRequest request,ModelMap map) throws Exception {
-    	List<BoUser> allAnalysts = userService.getUserListByRole(getSystemFlag(),"analyst","userNo","userName","avatar","position");
+			String userType = request.getParameter("userType");
+			String roleNo = "analyst";
+			if(StringUtils.isNotBlank(userType)) {
+				if (userType.equals("1")) {
+					roleNo = "admin";
+				} else if (userType.equals("2")) {
+					roleNo = "analyst";
+				} else if (userType.equals("3")) {
+					roleNo = "cs";
+				}
+			}
+    	List<BoUser> allAnalysts = userService.getUserListByRole(getSystemFlag(),roleNo,"userNo","userName","avatar","position");
     	String hasOther=request.getParameter("hasOther");
-		String apiUrl = PropertiesUtil.getInstance().getProperty("pmApiUrl");
-    	if(StringUtils.isNotBlank(hasOther) && !apiUrl.contains("hx9999.com")){
+			String apiUrl = PropertiesUtil.getInstance().getProperty("pmApiUrl");
+    	if(StringUtils.isNotBlank(hasOther) && !getSystemFlag().equals("hx") && roleNo.equals("analyst")){
     		String path=PropertiesUtil.getInstance().getProperty("pmfilesDomain")+"/upload/pic/header/chat/201508";
         	String[] nameArr={"梁育诗","罗恩•威廉","黃湛铭","赵相宾","周游","刘敏","陈杭霞","金道研究院"};
         	BoUser user=null;

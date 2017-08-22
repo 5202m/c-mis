@@ -1,5 +1,6 @@
 package com.gwghk.mis.service;
 
+import com.gwghk.mis.util.JSONHelper;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -122,10 +123,10 @@ public class UserService{
 	 * @param userNos
 	 * @return
 	 */
-	public List<BoUser> getUserListByNo(String... userNos)
+	public List<BoUser> getUserListByNo(String systemCategory, String... userNos)
 	{
 		Query query=new Query();
-		Criteria criteria = Criteria.where("valid").is(1);
+		Criteria criteria = Criteria.where("valid").is(1).and("systemCategory").is(systemCategory);
 		if(userNos != null && userNos.length > 0)
 		{
 			criteria.and("userNo").in((Object[])userNos);
@@ -153,7 +154,7 @@ public class UserService{
 	/**
 	 * 新增用户信息
 	 * @param userParam
-	 * @param boolean isUpdate 是否更新，true为更新，false为插入
+	 * @param isUpdate 是否更新，true为更新，false为插入
 	 * @return
 	 * @throws Exception 
 	 */
@@ -186,8 +187,8 @@ public class UserService{
     				return result.setCode(ResultCode.Error105);
     			}
     		}
-    		if(userDao.isExsitUserNo(userParam.getUserId(),userParam.getUserNo()) 
-    			  || userDao.isExsitPhone(userParam.getUserId(),userParam.getTelephone())){
+    		if(userDao.isExsitUserNo(userParam.getUserId(),userParam.getUserNo(),userParam.getSystemCategory())
+    			  || userDao.isExsitPhone(userParam.getUserId(),userParam.getTelephone(),userParam.getSystemCategory())){
     			return result.setCode(ResultCode.Error102);
     		}
     		BeanUtils.copyExceptNull(user, userParam);

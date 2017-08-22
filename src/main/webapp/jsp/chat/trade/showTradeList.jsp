@@ -60,6 +60,13 @@
                 </select>
             </td>
         </tr>
+          <tr>
+              <th>晒单时间</th>
+              <td colspan="3">
+                  从&nbsp; <input name="showTradeStartDate" id="showTradeStartDate" class="Wdate"  onFocus="WdatePicker({maxDate:'#F{$dp.$D(\'showTradeEndDate\')}',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width:150px" />
+                  &nbsp;&nbsp;&nbsp;&nbsp; 到&nbsp;<input name="showTradeEndDate" id="showTradeEndDate" class="Wdate" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'showTradeStartDate\')}',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width:150px" />
+              </td>
+          </tr>
         <tr>
           	<td colspan="4" align="right">&nbsp;&nbsp;
 	        	<a href="#" class="easyui-linkbutton" id="show_trade_queryForm_search" data-options="iconCls:'ope-search'" ><spring:message code="common.buttons.search" /><!-- 查询 --> </a> 

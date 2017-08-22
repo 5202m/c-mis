@@ -1,26 +1,5 @@
 package com.gwghk.mis.controller;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.gwghk.mis.authority.ActionVerification;
 import com.gwghk.mis.common.model.AjaxJson;
 import com.gwghk.mis.common.model.ApiResult;
@@ -45,6 +24,26 @@ import com.gwghk.mis.util.StringUtil;
 import com.sdk.orm.DataRowSet;
 import com.sdk.orm.IRow;
 import com.sdk.poi.POIExcelBuilder;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 聊天室信息管理
@@ -103,7 +102,6 @@ public class ChatMessageController extends BaseController{
 	/**
 	 * 设置通用查询
 	 * @param request
-	 * @param dataGrid
 	 * @param chatMessage
 	 */
 	private void setComSearch(HttpServletRequest request,ChatMessage chatMessage){
@@ -111,9 +109,15 @@ public class ChatMessageController extends BaseController{
 		 chatMessage.setPublishStartDateStr(request.getParameter("publishStartDateStr"));
 		 chatMessage.setPublishEndDateStr(request.getParameter("publishEndDateStr"));
 		 String talkStyle=request.getParameter("talkStyle");
+		 String userType = request.getParameter("toUserLabel");
+		 ChatMsgToUser msgToUser=new ChatMsgToUser();
 		 if(StringUtils.isNotBlank(talkStyle)){
-			 ChatMsgToUser msgToUser=new ChatMsgToUser();
 			 msgToUser.setTalkStyle(Integer.parseInt(talkStyle));
+		 }
+		 if(StringUtils.isNotBlank(userType)){
+			 msgToUser.setUserType(Integer.parseInt(userType));
+		 }
+		 if(msgToUser.getTalkStyle() != null || msgToUser.getUserType() != null) {
 			 chatMessage.setToUser(msgToUser);
 		 }
 	}
@@ -129,7 +133,7 @@ public class ChatMessageController extends BaseController{
 	@ResponseBody
 	public  Map<String,Object>  datagrid(HttpServletRequest request, DataGrid dataGrid,ChatMessage chatMessage){
 		 this.setComSearch(request,chatMessage);
-		 Page<ChatMessage> page = chatMessageService.getChatMessagePage(this.createDetachedCriteria(dataGrid, chatMessage));
+		 Page<ChatMessage> page = chatMessageService.getChatMessagePage(this.createDetachedCriteria(dataGrid, chatMessage), false);
 		 Map<String, Object> result = new HashMap<String, Object>();
 		 result.put("total",null == page ? 0  : page.getTotalSize());
 	     result.put("rows", null == page ? new ArrayList<ChatMessage>() : page.getCollection());
@@ -150,9 +154,30 @@ public class ChatMessageController extends BaseController{
 			dataGrid.setSort("publishTime");
 			dataGrid.setOrder("desc");
 			chatMessage.getContent().setMsgType("text");  //默认只导出文本类型
-			Page<ChatMessage> page = chatMessageService.getChatMessagePage(this.createDetachedCriteria(dataGrid, chatMessage));
+			Page<ChatMessage> page = chatMessageService.getChatMessagePage(this.createDetachedCriteria(dataGrid, chatMessage), true);
 			List<ChatGroup> groupList=chatGroupService.getChatGroupList(getSystemFlag(),"id","name","groupType");
 			List<ChatMessage>  chatMessageList = page.getCollection();
+      List<ChatMessage> exportList=new ArrayList<ChatMessage>(),tmpList=null,filterList=null;
+      if(chatMessage.getUserId() != null && StringUtils.isNotBlank(chatMessage.getUserId())) {
+        Map<String, List<ChatMessage>> lstGrp = chatMessageList.stream().filter(r -> !r.getToUser().getUserId().equals(chatMessage.getUserId())).collect(Collectors.groupingBy(p -> p.getToUser().getUserId()));
+        Object[] keyStr = lstGrp.keySet().toArray();
+				ChatMessage empty=new ChatMessage();
+				empty.setAccountNo("　");
+				empty.setNickname("　");
+        for (Object e : keyStr) {
+          tmpList = lstGrp.get(e);
+          filterList = chatMessageList.stream().filter(t -> e.equals(t.getUserId()))
+              .collect(Collectors.toList());
+          if (filterList != null && filterList.size() > 0) {
+            tmpList.addAll(filterList);
+          }
+          tmpList.sort((a, b) -> a.getPublishTime().compareTo(b.getPublishTime()));
+					tmpList.add(empty);
+          exportList.addAll(tmpList);
+        }
+      }else{
+        exportList = chatMessageList;
+      }
 			ChatMsgToUser toUser=null;
 			String toUserName="房间所有人";
 			List<ChatClientGroup> clientGroups = chatClientGroupService.getClientGroupList(chatMessage.getGroupId().replaceAll("[,_].*$", ""),getSystemFlag());
@@ -163,9 +188,9 @@ public class ChatMessageController extends BaseController{
 			String pwd=StringUtil.random(6);
 			POIExcelBuilder builder = new POIExcelBuilder(new File(request.getServletContext().getRealPath(WebConstant.CHAT_RECORDS_TEMPLATE_PATH)));
             builder.getHSSFWorkbook().getSheetAt(0).protectSheet(pwd);
-			if(chatMessageList != null && chatMessageList.size() > 0){
+			if(exportList != null && exportList.size() > 0){
 				DataRowSet dataSet = new DataRowSet();
-				for(ChatMessage cm : chatMessageList){
+				for(ChatMessage cm : exportList){
 					IRow row = dataSet.append();
 					//row.set("userId", cm.getGroupType().contains("studio")?cm.getUserId():(StringUtils.isBlank(cm.getAccountNo())?cm.getUserId():cm.getAccountNo()));
 					row.set("userId", StringUtils.isBlank(cm.getAccountNo())?cm.getUserId():cm.getAccountNo());
@@ -180,9 +205,13 @@ public class ChatMessageController extends BaseController{
 					}else if("-1".equals(userType)){
 						userTypeVal = "游客";
 					}else{
-						userTypeVal = "真实";
-						if(clientGroupMap.containsKey(cm.getClientGroup())){
-							userTypeVal = clientGroupMap.get(cm.getClientGroup());
+						if(cm.getMobilePhone() != null){
+							userTypeVal = "真实";
+							if(clientGroupMap.containsKey(cm.getClientGroup())){
+								userTypeVal = clientGroupMap.get(cm.getClientGroup());
+							}
+						} else {
+							userTypeVal = "　";
 						}
 					}
 					row.set("mobilePhone", cm.getMobilePhone());
@@ -196,14 +225,14 @@ public class ChatMessageController extends BaseController{
 						}
 					}
 					row.set("fromPlatform", cm.getFromPlatform());
-					row.set("msgType", "文本");
-					row.set("content", cm.getContent().getValue());
-					row.set("publishTime",DateUtil.longMsTimeConvertToDateTime(Long.valueOf(cm.getPublishTime().split("_")[0])));
+					row.set("msgType", cm.getMobilePhone() == null ? "　" :"文本");
+					row.set("content", cm.getContent() == null ? "　" : cm.getContent().getValue());
+					row.set("publishTime",cm.getPublishTime() == null ? "　" : DateUtil.longMsTimeConvertToDateTime(Long.valueOf(cm.getPublishTime().split("_")[0])));
 					row.set("approvalUserNo", cm.getApprovalUserNo());
-					row.set("status", cm.getStatus()==1?"通过":(cm.getStatus()==2?"拒绝":"等待审批"));//0、等待审批，1、通过 ；2、拒绝
-					row.set("valid", cm.getValid()==1?"正常":"删除");
+					row.set("status", cm.getStatus() == null ? "　" : (cm.getStatus()==1?"通过":(cm.getStatus()==2?"拒绝":"等待审批")));//0、等待审批，1、通过 ；2、拒绝
+					row.set("valid", cm.getValid() == null ? "　" : cm.getValid()==1?"正常":"删除");
 					toUser=cm.getToUser();
-					row.set("talkStyle", "公聊");
+					row.set("talkStyle", toUser == null ? "　" :"公聊");
 					if(toUser!=null && StringUtils.isNotBlank(toUser.getUserId())){
 						toUserName=toUser.getNickname();
 						row.set("talkStyle", toUser.getTalkStyle()==1?"私聊":"@TA");
@@ -217,7 +246,7 @@ public class ChatMessageController extends BaseController{
 			builder.parse();
 			String title=ExcelUtil.wrapExcelExportResponse("聊天记录", request, response);
 			builder.write(response.getOutputStream());
-			addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出聊天记录操作成功！", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT);
+			addLog("用户：" + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 导出聊天记录操作成功,excel密码【"+pwd+"】！", WebConstant.Log_Leavel_INFO, WebConstant.LOG_TYPE_EXPORT);
 		}catch(Exception e){
 			logger.error("<<method:exportRecord()|chat message export error!",e);
 		}

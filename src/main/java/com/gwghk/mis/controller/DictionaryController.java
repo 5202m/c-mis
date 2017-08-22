@@ -234,10 +234,11 @@ public class DictionaryController extends BaseController{
     @ResponseBody
     @ActionVerification(key="delete")
     public AjaxJson oneDel(HttpServletRequest request){
-    	String delId = request.getParameter("id");
+    	String parentId = request.getParameter("pid");
     	String type = request.getParameter("type");
+			String cid = request.getParameter("cid");
     	AjaxJson j = new AjaxJson();
-    	ApiResult result=dictService.deleteDict(delId,"1".equals(type));
+    	ApiResult result=dictService.deleteDict(parentId, cid, "1".equals(type));
     	if(result.isOk()){
     		j.setSuccess(true);
     		String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 删除数据字典成功";

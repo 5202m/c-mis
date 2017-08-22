@@ -117,6 +117,7 @@ var mediaEdit = {
 	setAuthorList:function(id){
 		var lang=id.replace("media_authorList_","");
 		var author=$('#media_detail_'+lang+' form[name=mediaDetailForm] input[name=userId]').val();
+		var userName = $('#media_detail_'+lang+' form[name=mediaDetailForm] input[name=name]').val();
 		$('#'+id).combogrid({
 		    idField:'userNo',
 		    textField:'userName',
@@ -156,6 +157,9 @@ var mediaEdit = {
 					$('form[name="mediaDetailForm"] table tr td span.combo input').width(200);
 				}
 		}); 
+		if(isBlank(author)){
+			$('#'+id).combogrid('setValue', userName);
+		}
 	},
 	/**
 	 * 上传文件

@@ -69,7 +69,7 @@ public class MemberService{
 
 	/**
 	 * 按照指定的用户编号查询用户列表
-	 * @param userNos
+	 * @param mobiles
 	 * @return
 	 */
 	public List<Member> getMemberListByMobiles(String systemCategory,String[] mobiles, String groupType)
@@ -357,4 +357,30 @@ public class MemberService{
 		query.addCriteria(criteria);
 		return memberDao.findOneInclude(Member.class, query, "mobilePhone");
 	}
+
+  /**
+   * 根据昵称查询用户
+   * @param systemCategory
+   * @param nickName
+   * @return
+   */
+	public Member getMemberByNickeName(String systemCategory, String nickName){
+		return memberDao.getMemberByNickeName(systemCategory, nickName);
+	}
+
+	/**
+	 * 批量设置用户为vip或价值用户、用户解绑、用户级别设置
+	 * @param mobiles
+	 * @param groupId
+	 * @param type
+	 * @param value
+	 * @param remark
+	 * @param clientGroup
+	 * @return
+	 */
+	public ApiResult bacthUserSetting(String[] mobiles,String groupId,String type,boolean value,String remark, String clientGroup){
+		boolean isOk=memberDao.updateBacthUserSetting(mobiles, groupId,type,value,remark, clientGroup);
+		return new ApiResult().setCode(isOk?ResultCode.OK:ResultCode.FAIL);
+	}
+
 }

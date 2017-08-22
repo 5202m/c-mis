@@ -1,5 +1,6 @@
 package com.gwghk.mis.dao;
 
+import com.gwghk.mis.util.JSONHelper;
 import java.util.Date;
 import java.util.List;
 
@@ -208,5 +209,52 @@ public class MemberDao extends MongoDBBaseDao{
 	public Member getByIdAndGroupId(String memberId,String groupId){
 		return this.findOne(Member.class,Query.query(new Criteria().andOperator(Criteria.where("memberId").is(memberId),
 						   Criteria.where("valid").is(1),Criteria.where("loginPlatform.chatUserGroup.id").is(groupId))));
+	}
+
+  /**
+   * 根据昵称查询用户
+   * @param systemCategory
+   * @param nickName
+   * @return
+   */
+	public Member getMemberByNickeName(String systemCategory, String nickName){
+		return this.findOne(Member.class, Query.query(new Criteria().andOperator(Criteria.where("loginPlatform.chatUserGroup.nickname").is(nickName),
+				Criteria.where("systemCategory").is(systemCategory))));
+	}
+
+	/**
+	 * 批量更新用户设置，包括设置用户为价值用户或vip用户, 用户解绑
+	 * @param mobiles
+	 * @param groupType
+	 * @param type 类型：1为价值用户，2为vip用户, 3为用户级别, unbind为用户解绑
+	 * @param isTrue
+	 * @return
+	 */
+	public boolean updateBacthUserSetting(Object[] mobiles,String groupType,String type,Boolean isTrue,String remark, String clientGroup){
+    boolean isSuccess=false;
+    Update update=new Update();
+		if("1".equals(type)){
+			update.set("loginPlatform.chatUserGroup.$.valueUser", isTrue);
+			update.set("loginPlatform.chatUserGroup.$.valueUserRemark", remark);
+		}else if("2".equals(type)){
+			update.set("loginPlatform.chatUserGroup.$.vipUser", isTrue);
+			update.set("loginPlatform.chatUserGroup.$.vipUserRemark", remark);
+		}else if("3".equals(type)){
+			update.set("loginPlatform.chatUserGroup.$.clientGroup", clientGroup);
+			//update.set("loginPlatform.chatUserGroup.$.accountNo", accountNo);
+		}else if("unbind".equals(type)){
+			ChatUserGroup chatUserGroup = new ChatUserGroup();
+			chatUserGroup.setId(groupType);
+			update.pull("loginPlatform.chatUserGroup", chatUserGroup);
+		}else{
+			return false;
+		}
+
+		update.set("updateDate",new Date());
+    //for(String memberId : memberIds) {
+      WriteResult wr = this.mongoTemplate.updateMulti(Query.query(new Criteria().andOperator(Criteria.where("mobilePhone").in(mobiles), Criteria.where("loginPlatform.chatUserGroup._id").is(groupType))), update, Member.class);
+      isSuccess = (wr != null && wr.getN() > 0);
+    //}
+		return isSuccess;
 	}
 }

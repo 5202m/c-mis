@@ -1,11 +1,13 @@
 package com.gwghk.mis.service;
 
+import com.gwghk.mis.util.JSONHelper;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -101,13 +103,15 @@ public class ChatMessgeService{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public Page<ChatMessage> getChatMessagePage(
-			DetachedCriteria<ChatMessage> dCriteria) {
-		Criteria criteria=new Criteria();
-		ChatMessage model=dCriteria.getSearchModel();
+	public Page<ChatMessage> getChatMessagePage(DetachedCriteria<ChatMessage> dCriteria, boolean isExport) {
+		Criteria criteria = new Criteria();
+		ChatMessage model = dCriteria.getSearchModel();
 		int year = DateUtil.getFullYear(null);	
 		if(model!=null){
 			criteria.and("systemCategory").is(model.getSystemCategory());
+			if(StringUtils.isNotBlank(model.getUserId())){
+				criteria.and("toUser.userId").nin("",null).orOperator(Criteria.where("userId").is(model.getUserId()), Criteria.where("toUser.userId").is(model.getUserId()));
+			}
 			if(StringUtils.isNotBlank(model.getMobilePhone())){
 				criteria.and("mobilePhone").regex(StringUtil.toFuzzyMatch(model.getMobilePhone()));
 			}
@@ -147,16 +151,22 @@ public class ChatMessgeService{
 			}
 			ChatMsgToUser toUser=model.getToUser();
 			if(toUser!=null){
-				if(toUser.getTalkStyle()==1){
-					criteria.and("toUser.talkStyle").is(1);
-					criteria.orOperator(Criteria.where("nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())),
-							Criteria.where("toUser.nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())));	
-				}else if(toUser.getTalkStyle()==2){
-					criteria.and("toUser.talkStyle").is(0).and("toUser.userId").in("",null);
-				}else if(toUser.getTalkStyle()==3){
-					criteria.and("toUser.talkStyle").is(0).and("toUser.userId").nin("",null);
-				}else{
-					criteria.and("toUser.talkStyle").is(0);
+				if(toUser.getTalkStyle() != null) {
+					if (toUser.getTalkStyle() == 1) {
+						criteria.and("toUser.talkStyle").is(1);
+						if(StringUtils.isNotBlank(model.getNickname())) {
+							criteria.orOperator(Criteria.where("nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())), Criteria.where("toUser.nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())));
+						}
+					} else if (toUser.getTalkStyle() == 2) {
+						criteria.and("toUser.talkStyle").is(0).and("toUser.userId").in("", null);
+					} else if (toUser.getTalkStyle() == 3) {
+						criteria.and("toUser.talkStyle").is(0).and("toUser.userId").nin("", null);
+					} else {
+						criteria.and("toUser.talkStyle").is(0);
+					}
+				}
+				if(toUser.getUserType() != null && StringUtils.isBlank(model.getUserId())){
+					criteria.orOperator(Criteria.where("userType").is(toUser.getUserType()), Criteria.where("toUser.userType").is(toUser.getUserType()));
 				}
 			}
 			if(model.getValid()!=null){
@@ -174,9 +184,10 @@ public class ChatMessgeService{
 					criteria.and("createDate").lte(DateUtil.parseDateSecondFormat(model.getPublishEndDateStr()));
 				}
 			}
-			
+
 			if(StringUtils.isNotBlank(model.getNickname()) && (toUser==null || (toUser!=null && toUser.getTalkStyle()!=1))){
-				criteria.and("nickname").regex(StringUtil.toFuzzyMatch(model.getNickname()));
+				//criteria.and("nickname").regex(StringUtil.toFuzzyMatch(model.getNickname()));
+				criteria.and("toUser.nickname").nin("", null).orOperator(Criteria.where("nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())), Criteria.where("toUser.nickname").regex(StringUtil.toFuzzyMatch(model.getNickname())));
 			}		
 		}
 		if(year<2005){
@@ -184,6 +195,11 @@ public class ChatMessgeService{
 		}
 		@SuppressWarnings("rawtypes")
 		Class classObj=getChatMessageClass(year);
-		return chatMessageDao.findPage(classObj, Query.query(criteria),dCriteria.clone(classObj)).clone(ChatMessage.class);
+		Query query = new Query();
+		query.addCriteria(criteria);
+		if(isExport){
+			query.with(new Sort(Sort.Direction.ASC, "createDate"));
+		}
+		return chatMessageDao.findPage(classObj, query,dCriteria.clone(classObj)).clone(ChatMessage.class);
 	}
 }

@@ -75,17 +75,17 @@ public class UserDao extends MongoDBBaseDao{
 	/**
 	 * 是否存在用户编号
 	 */
-	public boolean isExsitUserNo(String userId,String userNo) {
+	public boolean isExsitUserNo(String userId,String userNo,String systemCategory) {
 		return this.findOne(BoUser.class,Query.query(
-			   new Criteria().andOperator(Criteria.where("userNo").is(userNo),Criteria.where("userId").ne(userId)))) != null;
+			   new Criteria().andOperator(Criteria.where("userNo").is(userNo).and("systemCategory").is(systemCategory),Criteria.where("userId").ne(userId)))) != null;
 	}
 	
 	/**
 	 * 是否存在手机号
 	 */
-	public boolean isExsitPhone(String userId,String phone) {
+	public boolean isExsitPhone(String userId,String phone,String systemCategory) {
 		return this.findOne(BoUser.class,Query.query(
-			   new Criteria().andOperator(Criteria.where("telephone").is(phone),Criteria.where("userId").ne(userId)))) != null;
+			   new Criteria().andOperator(Criteria.where("telephone").is(phone).and("systemCategory").is(systemCategory),Criteria.where("userId").ne(userId)))) != null;
 	}
 	
 	/**

@@ -1,5 +1,7 @@
 package com.gwghk.mis.dao;
 
+import com.gwghk.mis.model.TraninClient;
+import com.gwghk.mis.util.JSONHelper;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,7 +80,7 @@ public class ChatGroupDao extends MongoDBBaseDao{
 	
 	/**
 	 * 查询规则所在房间
-	 * @param group
+	 * @param ruleId
 	 */
 	public List<String> getRoomIdByRuleId(String systemCategory,String ruleId){
 		if(StringUtils.isNotBlank(ruleId)){
