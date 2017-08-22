@@ -60,11 +60,13 @@ var chatShowTrade = {
 						
 						{title : "待审核评论",field : 'commentsCount' ,formatter : function(value, rowData, rowIndex) {
 							var cnt = 0;
-							$.each(rowData.comments, function(i, row){
-								if(row.status === 0){
-									cnt++;
-								}
-							});
+							if(isValid(rowData.comments) && rowData.comments && rowData.comments.length > 0) {
+								$.each(rowData.comments, function (i, row) {
+									if (row.status === 0) {
+										cnt++;
+									}
+								});
+							}
 							return '<label style="color:red;">'+cnt+'</label>';
 						}},
 
