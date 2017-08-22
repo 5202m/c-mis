@@ -71,20 +71,25 @@ var chatSubscribe = {
 		setEvent:function(){
 			// 列表查询
 			$("#subscribe_queryForm_search").on("click",function(){
-				var userNo = $("#chatSubscribeSearchAnalystInput").val(); 
+				var userNo = $("#analystsSelectId").combo("getValues") || ""; 
 				if(userNo == '请选择'){
 					userNo = '';
 				}
-				var groupType = $("#subscribe_queryForm #subscribe_groupType_select").val();  
-				var status = $('#subscribe_queryForm #subscribe_status_select').val();
-				var userId = $('#subscribe_queryForm #mobilePhone').val();
-				var type = $('#subscribe_queryForm #type').val();
+				var $subscribe_queryForm = $("#subscribe_queryForm");
+				var groupType = $("#subscribe_groupType_select").val();  
+				var status = $('#subscribe_status_select').val();
+				var userId = $subscribe_queryForm.find("[name='userId']").val();
+				var accountNo = $subscribe_queryForm.find("[name='accountNo']").val();
+				var nickname = $subscribe_queryForm.find("[name='nickname']").val();
+				var type = $subscribe_queryForm.find("[name='type']").val();
 				var queryParams = $('#'+chatSubscribe.gridId).datagrid('options').queryParams;
 				queryParams['analyst'] = userNo;
 				queryParams['groupType'] = groupType;
 				queryParams['status'] = status;
 				queryParams['type'] = type;
 				queryParams['userId'] = userId;
+				queryParams['accountNo'] = accountNo;
+				queryParams['nickname'] = nickname;
 				$('#'+chatSubscribe.gridId).datagrid({
 					url : basePath+'/chatSubscribeController/datagrid.do?opType=' + chatSubscribe.opType,
 					pageNumber : 1
