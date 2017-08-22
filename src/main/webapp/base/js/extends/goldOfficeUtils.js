@@ -33,7 +33,8 @@ var goldOfficeUtils = {
 			resizable : true,
 			loadingMessage : '正在加载数据，请稍等片刻......',
 			onLoad : $.noop,
-			onOpen : $.noop
+			onOpen : $.noop,
+			onClose : $.noop
         },config);
 		var dialogId = config.dialogId === undefined ? 'myWindow' : config.dialogId;
 		$('#'+dialogId).dialog({
@@ -56,6 +57,7 @@ var goldOfficeUtils = {
 			loadingMessage : config.loadingMessage,
 			onLoad :config.onLoad,
 			onOpen : config.onOpen,
+			onClose : config.onClose,
 			buttons : config.buttons === undefined ? [{
 				text : '关闭',
 				iconCls : "ope-close",

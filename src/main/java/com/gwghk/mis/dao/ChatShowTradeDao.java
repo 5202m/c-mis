@@ -2,7 +2,6 @@ package com.gwghk.mis.dao;
 
 
 import com.gwghk.mis.model.ChatShowTradeComments;
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -121,5 +120,21 @@ public class ChatShowTradeDao extends MongoDBBaseDao{
 				, Update.update("isAccord", isAccord), ChatShowTrade.class);
 		return wr != null && wr.getN() > 0;
 	}
+
+  /**
+   * 更新晒单评论状态
+   * @param tradeId
+   * @param commentId
+   * @return
+   */
+	public boolean modifyTradeCommentStatus(String tradeId, String commentId){
+		Criteria criteria = new Criteria();
+		criteria.and("_id").is(tradeId);
+		criteria.and("comments").elemMatch(new Criteria().and("id").is(commentId));
+		Update update = new Update();
+		update.set("comments.$.status", 1);
+		WriteResult wr = this.mongoTemplate.updateFirst(Query.query(criteria), update, ChatShowTrade.class);
+		return wr != null && wr.getN() > 0;
+  }
 
 }

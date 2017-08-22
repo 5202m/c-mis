@@ -62,9 +62,17 @@
         </tr>
           <tr>
               <th>晒单时间</th>
-              <td colspan="3">
+              <td>
                   从&nbsp; <input name="showTradeStartDate" id="showTradeStartDate" class="Wdate"  onFocus="WdatePicker({maxDate:'#F{$dp.$D(\'showTradeEndDate\')}',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width:150px" />
                   &nbsp;&nbsp;&nbsp;&nbsp; 到&nbsp;<input name="showTradeEndDate" id="showTradeEndDate" class="Wdate" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'showTradeStartDate\')}',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width:150px" />
+              </td>
+              <th>评论状态</th>
+              <td>
+                  <select name="commentStatus" id="commentStatus">
+                      <option value="">--请选择--</option>
+                      <option value="1">已审核</option>
+                      <option value="0">待审核</option>
+                  </select>
               </td>
           </tr>
         <tr>
@@ -108,6 +116,22 @@
         <div data-options="region:'center'" id="showTradeCommentView_panel">
             <input type="hidden" name="sid" value="" />
             <div>
+                <table class="tableForm_L" style="margin-top:3px" width="99%" heigth="auto"  border="0" cellpadding="0" cellspacing="1">
+                    <tr>
+                        <th>
+                            状态
+                        </th>
+                        <td>
+                            <select name="status" id="status">
+                                <option value="0">待审核</option>
+                                <option value="1">通过</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                    <td colspan="2" align="right"><a href="javascript:void(0);" class="easyui-linkbutton" id="searchComments" data-options="iconCls:'ope-search'" ><spring:message code="common.buttons.search" /><!-- 查询 --> </a></td>
+                    </tr>
+                </table>
                 <div data-options="region:'center',title:'评论列表',iconCls:'pag-list'">
                     <div id="showTradeComment_datagrid" style="display: none"></div>
                     <div id="showTradeComment_page" class="datagrid-pager pagination"></div>
@@ -118,6 +142,7 @@
 
     <!-- showTradeCommentView_datagrid-操作按钮 -->
     <div id="showTradeComment_datagrid_rowOperation" style="display: none;">
+        <a class="easyui-linkbutton setStatus" data-options="plain:true,iconCls:'ope-edit',disabled:false" onclick="chatShowTrade.approveComment(this.id);">通过</a>
         <input type="hidden" value="" />
         <a class="easyui-linkbutton delete" data-options="plain:true,iconCls:'ope-remove',disabled:false" onclick="chatShowTrade.delComment(this);">删除</a>
     </div>

@@ -27,6 +27,8 @@ public class ChatShowTradeComments extends BaseModel {
 
   private Integer valid;//是否有效，1有效，0无效
 
+  private Integer status;//审核状态，1已审核，0待审核
+
   public String getId() {
     return id;
   }
@@ -89,5 +91,13 @@ public class ChatShowTradeComments extends BaseModel {
 
   public void setValid(Integer valid) {
     this.valid = valid;
+  }
+
+  public Integer getStatus() {
+    return status;
+  }
+
+  public void setStatus(Integer status) {
+    this.status = status;
   }
 }

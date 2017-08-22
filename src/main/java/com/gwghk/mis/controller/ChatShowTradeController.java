@@ -1,15 +1,11 @@
 package com.gwghk.mis.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.gwghk.mis.model.ChatShowTradeComments;
 import com.gwghk.mis.util.ExcelUtil;
 import com.gwghk.mis.util.HttpClientUtils;
-import com.sdk.orm.DataRowSet;
-import com.sdk.orm.IRow;
-import com.sdk.poi.POIExcelBuilder;
-import java.io.File;
+import com.gwghk.mis.util.StringUtil;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -122,7 +118,8 @@ public class ChatShowTradeController extends BaseController{
 		 String userNo = request.getParameter("userNo");
 		 String userName = request.getParameter("userName");
 		 String showTradeStartDateStr = request.getParameter("showTradeStartDate");
-		String showTradeEndDateStr = request.getParameter("showTradeEndDate");
+		 String showTradeEndDateStr = request.getParameter("showTradeEndDate");
+		 String commentStatus = request.getParameter("commentStatus");
 		 BoUser user=new BoUser();
 		 if(userNo != null){
 		     user.setUserNo(userNo);
@@ -139,7 +136,7 @@ public class ChatShowTradeController extends BaseController{
 		if(org.apache.commons.lang.StringUtils.isNotBlank(showTradeEndDateStr)){
 			showTradeEndDate=DateUtil.parseDateSecondFormat(showTradeEndDateStr);
 		}
-		 Page<ChatShowTrade> page = chatShowTradeService.getShowTradePage(this.createDetachedCriteria(dataGrid, chatShowTrade), showTradeStartDate, showTradeEndDate);
+		 Page<ChatShowTrade> page = chatShowTradeService.getShowTradePage(this.createDetachedCriteria(dataGrid, chatShowTrade), showTradeStartDate, showTradeEndDate, commentStatus);
 		 Map<String, Object> result = new HashMap<String, Object>();
 		 result.put("total",null == page ? 0  : page.getTotalSize());
 	     result.put("rows", null == page ? new ArrayList<ChatShowTrade>() : page.getCollection());
@@ -419,8 +416,37 @@ public class ChatShowTradeController extends BaseController{
 		return j;
 	}
 
+  /**
+   * 批量审核晒单状态
+   * @param request
+   * @param response
+   * @return
+   */
+  @RequestMapping(value="/chatShowTradeController/approveCommentStatus",method=RequestMethod.POST)
+  @ResponseBody
+  @ActionVerification(key="setStatus")
+  public AjaxJson modifyTradeCommentStatus(HttpServletRequest request, HttpServletResponse response){
+    String tradeId = request.getParameter("tId");
+    String commentId = request.getParameter("cId");
+    AjaxJson j = new AjaxJson();
+    ApiResult result = chatShowTradeService.modifyTradeCommentsStatus(tradeId, commentId);
+    if(result.isOk()){
+      j.setSuccess(true);
+      String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 审核晒单评论成功";
+      addLog(message, WebConstant.Log_Leavel_INFO, WebConstant.Log_Type_UPDATE);
+      logger.info("<<method:batchDel()|"+message);
+    }else{
+      j.setSuccess(false);
+      j.setMsg(ResourceBundleUtil.getByMessage(result.getCode()));
+      String message = " 用户: " + userParam.getUserNo() + " "+DateUtil.getDateSecondFormat(new Date()) + " 审核晒单评论失败";
+      addLog(message, WebConstant.Log_Leavel_ERROR, WebConstant.Log_Type_UPDATE);
+      logger.error("<<method:batchDel()|"+message+",ErrorMsg:"+result.toString());
+    }
+    return j;
+  }
+
 	/**
-	 * 功能：导出晒单(以模板的方式导出)
+	 * 功能：导出晒单(非模板的方式导出)
 	 */
 	@RequestMapping(value = "/chatShowTradeController/exportRecord", method = RequestMethod.GET)
 	@ActionVerification(key="export")
@@ -430,6 +456,7 @@ public class ChatShowTradeController extends BaseController{
 			String userName = request.getParameter("userName");
 			String showTradeStartDateStr = request.getParameter("showTradeStartDate");
 			String showTradeEndDateStr = request.getParameter("showTradeEndDate");
+			String commentStatus = request.getParameter("commentStatus");
 			BoUser user=new BoUser();
 			if(userNo != null){
 				user.setUserNo(userNo);
@@ -452,7 +479,7 @@ public class ChatShowTradeController extends BaseController{
 			dataGrid.setRows(0);
 			dataGrid.setSort("updateDate");
 			dataGrid.setOrder("desc");
-			Page<ChatShowTrade> page = chatShowTradeService.getShowTradePage(this.createDetachedCriteria(dataGrid, chatShowTrade), showTradeStartDate, showTradeEndDate);
+			Page<ChatShowTrade> page = chatShowTradeService.getShowTradePage(this.createDetachedCriteria(dataGrid, chatShowTrade), showTradeStartDate, showTradeEndDate, commentStatus);
 			List<ChatShowTrade> chatShowTradeList = page.getCollection();
 			//创建HSSFWorkbook对象(excel的文档对象)
 			HSSFWorkbook wb = new HSSFWorkbook();

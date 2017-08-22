@@ -58,10 +58,20 @@ var chatShowTrade = {
 							return rowData.boUser.wechatCode;
 						}},
 						
+						{title : "待审核评论",field : 'commentsCount' ,formatter : function(value, rowData, rowIndex) {
+							var cnt = 0;
+							$.each(rowData.comments, function(i, row){
+								if(row.status === 0){
+									cnt++;
+								}
+							});
+							return '<label style="color:red;">'+cnt+'</label>';
+						}},
+
 						{title : "胜率",field : 'boUser.winRate' ,formatter : function(value, rowData, rowIndex) {
 							return rowData.boUser.winRate;
 						}},
-			            
+
 						{title : "获利",field : 'profit',sortable : true , formatter : function(value, rowData, rowIndex) {
 							return rowData.profit == '' ? '持仓中' : rowData.profit
 						}},
@@ -117,6 +127,7 @@ var chatShowTrade = {
 			var isAccord = $('#isAccord').val();
 			var showTradeStartDate = $('#showTradeStartDate').val();
 			var showTradeEndDate = $('#showTradeEndDate').val();
+			var commentStatus = $('#commentStatus').val();
 			queryParams['userNo'] = userNo;
 			queryParams['groupType'] = groupType;
 			queryParams['status'] = status;
@@ -125,6 +136,7 @@ var chatShowTrade = {
 			queryParams['isAccord'] = isAccord;
 			queryParams['showTradeStartDate'] = showTradeStartDate;
 			queryParams['showTradeEndDate'] = showTradeEndDate;
+			queryParams['commentStatus'] = commentStatus;
 			$('#'+chatShowTrade.gridId).datagrid({
 				url : basePath+'/chatShowTradeController/datagrid.do?opType=' + chatShowTrade.opType,
 				pageNumber : 1
@@ -382,11 +394,17 @@ var chatShowTrade = {
 			idField : "id",
 			columns : [[
 				{title : $.i18n.prop("common.operate"), field:'op', formatter: function(value, rowData, rowIndex){
+          $("#showTradeComment_datagrid_rowOperation a").each(function(){
+            $(this).attr("id",rowData.id);
+          });
 					$("#showTradeComment_datagrid_rowOperation input").val(rowIndex);
 					return $("#showTradeComment_datagrid_rowOperation").html();
 				}},
 				{title : "序号",field : 'id'},
 				{title : "昵称",field : 'userName'},
+        {title : "状态",field: 'status', formatter : function(value, rowData, rowIndex){
+          return value === 1 ? '通过' : '未审核';
+        }},
 				{title : "评论内容",field: 'content'},
 				{title : "评论时间",field: 'dateTime', formatter : function(value, rowData, rowIndex) {
 					return rowData.dateTime ? timeObjectUtil.longMsTimeConvertToDateTime(value) : '';
@@ -417,16 +435,32 @@ var chatShowTrade = {
 					goldOfficeUtils.openSimpleDialog({
 						dialogId : "showTradeCommentView_win",
 						title : '评论数据',
-						width : 600,
+						width : 700,
 						height : 400,
 						onOpen : function(){
+              var status = $('#showTradeCommentView_win #status').val();
+              $('#showTradeCommentView_win #searchComments').click(function(){
+                var id = $('#showTradeCommentView_win input[name="sid"]').val();
+                chatShowTrade.openViewComment(id);
+              });
+              var comments = [];
+              $.each(loc_dataInfo.comments, function(i, row){
+                if(row.status == status){
+                  comments.push(row);
+                }
+              });
+              loc_dataInfo.comments = comments;
 							chatShowTrade.viewComments(loc_dataInfo);
+						},
+						onClose : function(){
+							$('#showTradeCommentView_win #status').val('0');
 						},
 						buttons	 : [
 							{
 								text : '关闭',
 								iconCls : "ope-close",
 								handler : function() {
+									$('#showTradeCommentView_win #status').val('0');
 									$("#showTradeCommentView_win").dialog("close");
 								}
 							}]
@@ -543,6 +577,7 @@ var chatShowTrade = {
     var isAccord = $('#isAccord').val();
 		var showTradeStartDate = $('#showTradeStartDate').val();
 		var showTradeEndDate = $('#showTradeEndDate').val();
+		//var commentStatus = $('#commentStatus').val();
     queryParams['groupType'] = groupType;
     queryParams['status'] = status;
     //queryParams['tradeType'] = tradeType;
@@ -550,9 +585,36 @@ var chatShowTrade = {
     queryParams['isAccord'] = isAccord;
 		queryParams['showTradeStartDate'] = showTradeStartDate;
 		queryParams['showTradeEndDate'] = showTradeEndDate;
+		//queryParams['commentStatus'] = commentStatus;
     
     var path = basePath+ '/chatShowTradeController/exportRecord.do?'+$.param(queryParams);
     window.location.href = path;
+  },
+  /**
+   * 功能： 审核晒单评论
+   */
+  approveComment : function(recordId){
+    var url = formatUrl(basePath + '/chatShowTradeController/approveCommentStatus.do');
+    var tradeId = $('#showTradeCommentView_win input[name="sid"]').val();
+    var message = '您确定要审核通过该评论吗？';
+    $.messager.confirm("操作提示", message, function(r) {
+      if (r) {
+        goldOfficeUtils.ajax({
+          url : url,
+          data: { tId : tradeId, cId : recordId },
+          success : function(data){
+            if (data.success) {
+              $.messager.alert("操作提示","审核成功!",'info', function(){
+								chatShowTrade.openViewComment(tradeId);
+								$('#'+chatShowTrade.gridId).datagrid('reload');
+							});
+            }else{
+              $.messager.alert($.i18n.prop("common.operate.tips"),'审核失败','error');  /**操作提示  修改失败!*/
+            }
+          }
+        });
+      }
+    });
   }
 };
 		

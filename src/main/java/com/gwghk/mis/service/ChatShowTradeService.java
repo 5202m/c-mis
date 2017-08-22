@@ -94,7 +94,7 @@ public class ChatShowTradeService {
   /**
    * 功能：分页查询晒单数据
    */
-  public Page<ChatShowTrade> getShowTradePage(DetachedCriteria<ChatShowTrade> dCriteria, Date showTradeStartDate, Date showTradeEndDate) {
+  public Page<ChatShowTrade> getShowTradePage(DetachedCriteria<ChatShowTrade> dCriteria, Date showTradeStartDate, Date showTradeEndDate, String commentStatus) {
     Query query = new Query();
     ChatShowTrade chatShowTrade = dCriteria.getSearchModel();
     Criteria criteria = Criteria.where("valid").is(1);
@@ -137,6 +137,9 @@ public class ChatShowTradeService {
       if(chatShowTrade.getIsAccord() != null && chatShowTrade.getIsAccord() > -1) {
         criteria.and("isAccord").is(chatShowTrade.getIsAccord());
       }
+    }
+    if(StringUtils.isNotBlank(commentStatus)){
+      criteria.and("comments.status").is(Integer.parseInt(commentStatus));
     }
     query.addCriteria(criteria);
     return chatShowTradeDao.getShowTradePage(query, dCriteria);
@@ -225,4 +228,15 @@ public class ChatShowTradeService {
     return api.setCode(isSuccess ? ResultCode.OK : ResultCode.FAIL);
   }
 
+  /**
+   * 更新晒单评论状态
+   * @param tradeId
+   * @param commentId
+   * @return
+   */
+  public ApiResult modifyTradeCommentsStatus(String tradeId, String commentId){
+    ApiResult api = new ApiResult();
+    boolean isSuccess = chatShowTradeDao.modifyTradeCommentStatus(tradeId, commentId);
+    return api.setCode(isSuccess ? ResultCode.OK : ResultCode.FAIL);
+  }
 }
