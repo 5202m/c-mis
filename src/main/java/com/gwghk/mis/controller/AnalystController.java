@@ -162,6 +162,7 @@ public class AnalystController extends BaseController{
     public AjaxJson create(HttpServletRequest request,BoUser user){
     	user.setCreateUser(userParam.getUserNo());
     	user.setCreateIp(IPUtil.getClientIP(request));
+			user.setSystemCategory(getSystemFlag());
     	AjaxJson j = new AjaxJson();
     	ApiResult result =userService.saveUser(user, false);
     	if(result.isOk()){

@@ -118,7 +118,7 @@ public class ChatPointsController extends BaseController{
 		if(StringUtils.isNotBlank(param)){
 			params.put("timeEnd", DateUtil.parseDateSecondFormat(param));
 		}
-		
+		chatPoints.setSystemCategory(getSystemFlag());
 		Page<ChatPoints> page = chatPointsService.getChatPoints(this.createDetachedCriteria(dataGrid, chatPoints), params, false);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("total", null == page ? 0 : page.getTotalSize());
@@ -268,6 +268,7 @@ public class ChatPointsController extends BaseController{
 		if(StringUtils.isNotBlank(param)){
 			params.put("timeEnd", DateUtil.parseDateSecondFormat(param));
 		}
+		chatPoints.setSystemCategory(getSystemFlag());
 		DataGrid dataGrid = new DataGrid();
 		dataGrid.setPage(0);
 		dataGrid.setRows(0);
