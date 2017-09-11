@@ -553,7 +553,7 @@ var Syllabus = {
           if (txt) {
             txt = txt.replace("请选择", "");
           }
-          var currContent = $(this).find("textarea[name='context']").val();
+          var currContent = $.trim($(this).find("textarea[name='context']").val());
           currContent = isValid(currContent) ? currContent.replace(/[\r\n]/g, "") : '';
           var userId = $(this).find('select[userId]').attr('userId');//加载直播地址的分析师userNo
           var liveLinks = [];
@@ -563,7 +563,7 @@ var Syllabus = {
             }
           });
           return {
-            title: $(this).find("input[name='title']").val().replace(/["']+/g, ""),
+            title: $.trim($(this).find("input[name='title']").val().replace(/["']+/g, "")),
             status: parseInt($(this).find("select[name='status']").val()),
             courseType: parseInt($(this).find("select[name='courseType']").val()),
             lecturer: txt, lecturerId: lectDom.combotree("getValues").join(","),
