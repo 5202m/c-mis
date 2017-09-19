@@ -245,6 +245,12 @@ public class ChatShowTradeController extends BaseController{
     	chatShowTrade.setCreateUser(userParam.getUserNo());
     	chatShowTrade.setCreateIp(IPUtil.getClientIP(request));
 			chatShowTrade.setSystemCategory(getSystemFlag());
+			String sorted = request.getParameter("sorted");
+			if(StringUtils.isEmpty(sorted)){
+				chatShowTrade.setSorted(0);
+			}else {
+				chatShowTrade.setSorted(StringUtils.stringToInteger(sorted));
+			}
     	AjaxJson j = new AjaxJson();
     	String userNo = request.getParameter("userNo");
 		 if(userNo != null){
@@ -252,7 +258,7 @@ public class ChatShowTradeController extends BaseController{
 		     user.setUserNo(userNo);
 		     chatShowTrade.setBoUser(user);
 		 }
-    	
+
     	ApiResult result =chatShowTradeService.saveTrade(chatShowTrade, false);
     	if(result.isOk()){
     		j.setSuccess(true);
@@ -278,6 +284,12 @@ public class ChatShowTradeController extends BaseController{
     public AjaxJson update(HttpServletRequest request,ChatShowTrade chatShowTrade){
     	chatShowTrade.setUpdateUser(userParam.getUserNo());
     	chatShowTrade.setUpdateIp(IPUtil.getClientIP(request));
+			String sorted = request.getParameter("sorted");
+			if(StringUtils.isEmpty(sorted)){
+				chatShowTrade.setSorted(0);
+			}else {
+				chatShowTrade.setSorted(StringUtils.stringToInteger(sorted));
+			}
     	AjaxJson j = new AjaxJson();
     	String userNo = request.getParameter("userNo");
 		 if(userNo != null){

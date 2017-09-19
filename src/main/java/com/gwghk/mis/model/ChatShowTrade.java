@@ -35,7 +35,7 @@ public class ChatShowTrade extends BaseModelExt
 	private Integer praise;//点赞
 	private List<ChatShowTradeComments> comments = null;//评论
 	private Integer isAccord; //符合盖楼条件
-	private Integer sorted = 0; //排序
+	private Integer sorted; //排序
 	
 	public Integer getPraise() {
 		return praise;
