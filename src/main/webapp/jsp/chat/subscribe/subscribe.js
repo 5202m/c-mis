@@ -83,7 +83,7 @@ var chatSubscribe = {
 				var nickname = $subscribe_queryForm.find("[name='nickname']").val();
 				var type = $subscribe_queryForm.find("[name='type']").val();
 				var queryParams = $('#'+chatSubscribe.gridId).datagrid('options').queryParams;
-				queryParams['analyst'] = userNo;
+				queryParams['analyst'] = isValid(userNo)?userNo.join(','):'';
 				queryParams['groupType'] = groupType;
 				queryParams['status'] = status;
 				queryParams['type'] = type;
